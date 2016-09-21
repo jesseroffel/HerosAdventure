@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/JesseWorkplace.unity
+- path: Assets/AxeyWorks/Low Poly v2/DemoScene/DemoSceneOcean.unity
   isLoaded: 1
   isActive: 1
