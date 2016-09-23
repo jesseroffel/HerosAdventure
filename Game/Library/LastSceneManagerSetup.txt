@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/JesseWorkplace.unity
+- path: Assets/Scenes/Demo Scene.unity
   isLoaded: 1
   isActive: 1
