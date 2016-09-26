@@ -174,7 +174,9 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nDefault bone length found in this file is different
+      form the one found in the source avatar:\n\t'LeftLeg' : position error = 7.696520
+      mm\n\t'LeftFoot' : position error = 15.233778 mm\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
@@ -187,8 +189,8 @@ ModelImporter:
     - serializedVersion: 16
       name: RunForwardTurnRight_NtrlMedium
       takeName: _31_a_U1_M_P_RunForwardTurnRight_NtrlMedium__Fb_Dia2m_No_0_PJ_4
-      firstFrame: 0
-      lastFrame: 235
+      firstFrame: 14
+      lastFrame: 194
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

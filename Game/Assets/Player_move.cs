@@ -4,43 +4,53 @@ using System.Collections;
 public class Player_move : MonoBehaviour
 {
     public float speed = 1;
-    bool CanJump;
-    bool isWalking;
+    public float rotationspeed;
+
+    Quaternion targetrotation;
 
     public Animator anim;
-    public Rigidbody RB;
+    public Rigidbody rb;
 
+    float forwardInput, turnInput;
+
+    public Quaternion TargetRotation
+    {
+        get { return targetrotation; }
+    }
+    
 	void Start ()
     {
-        
+        targetrotation = transform.rotation;
+        forwardInput = turnInput = 0;
 	}
-	
 
-	void FixedUpdate ()
+    void GetInput()
     {
-	    if(Input.GetKey(KeyCode.W))
-        {
-            isWalking = true;
-           // transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            anim.SetFloat("speed", 1.1f);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            isWalking = true;
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            isWalking = true;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            isWalking = true;
-        }
-
-
-        if(RB.velocity.magnitude == 0.0)
-        {
-            anim.SetFloat("speed", 0.0f);
-        }
+        forwardInput = Input.GetAxis("Vertical");
+        turnInput = Input.GetAxis("Horizontal");
     }
+
+    void Update()
+    {
+        GetInput();
+        Turn();
+    }
+
+    void FixedUpdate()
+    {
+        Run();
+    }
+
+    void Run()
+    {
+        rb.velocity = transform.forward * forwardInput * speed;
+    }
+
+    void Turn()
+    {
+        targetrotation *= Quaternion.AngleAxis(rotationspeed * turnInput * Time.deltaTime, Vector3.up);
+        transform.rotation = targetrotation;
+    }
+
+
 }
