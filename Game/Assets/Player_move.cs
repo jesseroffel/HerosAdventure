@@ -54,9 +54,25 @@ public class Player_move : MonoBehaviour
     {
         Vector3 rootDir = root.forward;
 
-        Vector3 moveDir = new Vector3(horizontal, 0, vertical);
+        Vector3 moveKeyDir = new Vector3(horizontal, 0, vertical);
 
-        speedOut = moveDir.sqrMagnitude;
+        speedOut = moveKeyDir.sqrMagnitude;
+
+        //get camera rotation
+        Vector3 cameraDirection = cam.forward;
+        cameraDirection.y = 0.0f; // kill y
+        Quaternion referentislShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
+
+        //convert movekeys to worldspace cords
+        Vector3 moveDir = referentislShift * moveKeyDir;
+        Vector3 axisSign = Vector3.Cross(moveDir, rootDir);
+
+        float angleRootToMove = Vector3.Angle(rootDir, moveDir) * (axisSign.y >= 0 ? -1f : 1f);
+
+        angleRootToMove /= 180f;
+
+        dirOut = angleRootToMove * speed;
+
     }
 
 
