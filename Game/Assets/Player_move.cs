@@ -3,20 +3,17 @@ using System.Collections;
 
 public class Player_move : MonoBehaviour
 {
-    public float speed = 1;
     public float rotationspeed;
-
     Quaternion targetrotation;
-
-    public Animator anim;
     public Rigidbody rb;
-
     float forwardInput, turnInput;
 
-    public Quaternion TargetRotation
-    {
-        get { return targetrotation; }
-    }
+    public camera_controler cam;
+    public float speed = 1;
+    float dir;
+    float horizontal;
+    float vertical;
+
     
 	void Start ()
     {
@@ -28,6 +25,7 @@ public class Player_move : MonoBehaviour
     {
         GetInput();
         Turn();
+        Orbit(transform, cam.transform, dir, speed);
     }
 
     void FixedUpdate()
@@ -50,6 +48,15 @@ public class Player_move : MonoBehaviour
     {
         targetrotation *= Quaternion.AngleAxis(rotationspeed * turnInput * Time.deltaTime, Vector3.up);
         transform.rotation = targetrotation;
+    }
+
+    void Orbit(Transform root, Transform cam, float dirOut, float speedOut)
+    {
+        Vector3 rootDir = root.forward;
+
+        Vector3 moveDir = new Vector3(horizontal, 0, vertical);
+
+        speedOut = moveDir.sqrMagnitude;
     }
 
 
