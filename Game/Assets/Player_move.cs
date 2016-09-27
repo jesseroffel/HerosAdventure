@@ -24,12 +24,6 @@ public class Player_move : MonoBehaviour
         forwardInput = turnInput = 0;
 	}
 
-    void GetInput()
-    {
-        forwardInput = Input.GetAxis("Vertical");
-        turnInput = Input.GetAxis("Horizontal");
-    }
-
     void Update()
     {
         GetInput();
@@ -39,6 +33,12 @@ public class Player_move : MonoBehaviour
     void FixedUpdate()
     {
         Run();
+    }
+
+    void GetInput()
+    {
+        forwardInput = Input.GetAxis("Vertical");
+        turnInput = Input.GetAxis("Horizontal");
     }
 
     void Run()
