@@ -36,7 +36,7 @@ public class camera_controler : MonoBehaviour
 
          if (distance > maxDist)
          {
-             //follow
+             //fololw
              transform.position = Vector3.Lerp(transform.position, target.transform.position, smooth) + offset;
              Debug.Log("folowing");
          }
@@ -57,6 +57,7 @@ public class camera_controler : MonoBehaviour
     #region tutorial shit
     
     public float distance;
+
     public float upDistance;
     public float smooth;
     public Transform target;

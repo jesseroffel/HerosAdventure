@@ -3,54 +3,65 @@ using System.Collections;
 
 public class Player_move : MonoBehaviour
 {
-    public float rotationspeed;
-    Quaternion targetrotation;
+  //  public float rotationspeed;
+   // Quaternion targetrotation;
     public Rigidbody rb;
-    float forwardInput, turnInput;
+    float forwardInput, sideInput;
 
     public camera_controler cam;
     public float speed = 1;
-    float dir;
-    float horizontal;
-    float vertical;
+    float angle;
+
+  //  float dir;
+    //float horizontal;
+   // float vertical;
 
     
 	void Start ()
     {
-        targetrotation = transform.rotation;
-        forwardInput = turnInput = 0;
+     //   targetrotation = transform.rotation;
+        forwardInput = sideInput = 0;
 	}
 
     void Update()
     {
         GetInput();
-        Turn();
-        Orbit(transform, cam.transform, dir, speed);
+        //Turn();
+     //   Orbit(transform, cam.transform, dir, speed);
     }
 
     void FixedUpdate()
     {
-        Run();
+        Move();
     }
 
     void GetInput()
     {
         forwardInput = Input.GetAxis("Vertical");
-        turnInput = Input.GetAxis("Horizontal");
+        sideInput = Input.GetAxis("Horizontal");
     }
 
-    void Run()
+    void Move()
     {
-        rb.velocity = transform.forward * forwardInput * speed;
+        transform.Translate(Vector3.forward * forwardInput * speed * Time.deltaTime);
+       // transform.Translate(Vector3.right * sideInput * speed * Time.deltaTime);
+
+        Debug.Log(sideInput);
+        if (sideInput < 0)
+        {
+            angle = -1;
+            transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
+        }
+        if(sideInput > 0)
+        {
+            angle = 1;
+            transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
+        }
+
+       
     }
 
-    void Turn()
-    {
-        targetrotation *= Quaternion.AngleAxis(rotationspeed * turnInput * Time.deltaTime, Vector3.up);
-        transform.rotation = targetrotation;
-    }
-
-    void Orbit(Transform root, Transform cam, float dirOut, float speedOut)
+    /*void Orbit(Transform root, Transform cam, float dirOut, float speedOut)
     {
         Vector3 rootDir = root.forward;
 
@@ -72,8 +83,8 @@ public class Player_move : MonoBehaviour
         angleRootToMove /= 180f;
 
         dirOut = angleRootToMove * speed;
-
+        
     }
 
-
+    */
 }
