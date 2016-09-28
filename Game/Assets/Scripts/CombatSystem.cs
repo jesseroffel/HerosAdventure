@@ -12,12 +12,25 @@ public class CombatSystem : MonoBehaviour {
     private float WaitForSpawn = 0.35f;
     private float SpawnCollitionBlock = 0.0f;
     private bool Countdown = false;
+    private int CombatState = 1;
+
+    enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
 
     // Use this for initialization
     void Start() {
         //myTransform = gameObject.position;
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
+    }
+
+    void SetCombatState(int value)
+    {
+        CombatState = value;
+    }
+
+    void SwitchCombatStyle()
+    {
+
     }
 	
 	// Update is called once per frame
@@ -26,9 +39,17 @@ public class CombatSystem : MonoBehaviour {
 	    if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
         {
             NextAttack = Time.time + AttackRate;
-            PlayerAnimator.SetTrigger("AttackMelee01Trigger");
             Countdown = true;
-            SpawnCollitionBlock = Time.time + WaitForSpawn;
+            switch(CombatState) {
+                case (int)CombatStyle.Melee:
+                    SpawnCollitionBlock = Time.time + WaitForSpawn;
+                    PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                    break;
+                case (int)CombatStyle.Range:
+                    break;
+                case (int)CombatStyle.Magic:
+                    break;
+            }
         }
         if (Countdown)
         {
