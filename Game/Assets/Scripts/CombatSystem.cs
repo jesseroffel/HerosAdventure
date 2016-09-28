@@ -3,16 +3,21 @@ using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
 public class CombatSystem : MonoBehaviour {
-
+    public Player_move playermovescript;
     public Animator PlayerAnimator;
     public Transform HitRegBlock;
-    public float AttackRate = 0.5f;
+    public float AttackSwing = 0.5f;
+    public float AttackBuildup = 0.5f;
     private Transform myTransform;
     private float NextAttack = 0.0f;
     private float WaitForSpawn = 0.35f;
-    private float SpawnCollitionBlock = 0.0f;
-    private bool Countdown = false;
+    private float AttackTime = 0.0f;
+    private bool PrepareAttack = false;
+    private bool Attacking = false;
+    private float PlayerSpeed = 0;
     private int CombatState = 1;
+
+    private float AttackPower = 24.6f;
 
     enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
 
@@ -21,6 +26,7 @@ public class CombatSystem : MonoBehaviour {
         //myTransform = gameObject.position;
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
+        if (playermovescript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
     }
 
     void SetCombatState(int value)
@@ -38,11 +44,17 @@ public class CombatSystem : MonoBehaviour {
 
 	    if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
         {
-            NextAttack = Time.time + AttackRate;
-            Countdown = true;
+            NextAttack = Time.time + AttackBuildup;
+            PrepareAttack = true;
+            if (playermovescript)
+            {
+                PlayerSpeed = playermovescript.GetSpeed();
+                playermovescript.SetSpeed(0);
+            }
+            //Set animation
             switch(CombatState) {
                 case (int)CombatStyle.Melee:
-                    SpawnCollitionBlock = Time.time + WaitForSpawn;
+                    AttackTime = Time.time + WaitForSpawn;
                     PlayerAnimator.SetTrigger("AttackMelee01Trigger");
                     break;
                 case (int)CombatStyle.Range:
@@ -51,14 +63,30 @@ public class CombatSystem : MonoBehaviour {
                     break;
             }
         }
-        if (Countdown)
+        if (PrepareAttack)
         {
-            if (Time.time > SpawnCollitionBlock)
+            // Melee
+            if (Time.time > AttackTime)
             {
-                Countdown = false;
-                Debug.Log("Spawn block");
-                Instantiate(HitRegBlock, new Vector3(0.15f, 0.7f, 0.5f), Quaternion.identity);
+                Attacking = true;
+                PrepareAttack = false;
+                NextAttack = Time.time + AttackSwing;
+                Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                HitDec.transform.position += new Vector3(0, 0.4f, 0);
+                //HitDec.transform.rotation = transform.rotation;
+                HitDec.GetComponent<HitRegistrator>().Init(0.5f, AttackPower);
+                //
+            }
+            // Range
+            // Magic
+        }
+        if (Attacking)
+        {
+            if (Time.time > NextAttack)
+            {
+                Attacking = false;
+                if (playermovescript) { playermovescript.SetSpeed(PlayerSpeed); }
             }
         }
-	}
+    }
 }

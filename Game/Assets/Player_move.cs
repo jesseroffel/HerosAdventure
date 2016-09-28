@@ -16,6 +16,7 @@ public class Player_move : MonoBehaviour
     {
      //   targetrotation = transform.rotation;
         forwardInput = sideInput = 0;
+        if (cam == null) { Debug.LogError("Player has no camera target!"); }
 	}
 
     void Update()
@@ -38,23 +39,29 @@ public class Player_move : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(Vector3.forward * forwardInput * speed * Time.deltaTime);
+        if (cam)
+        {
+            transform.Translate(Vector3.forward * forwardInput * speed * Time.deltaTime);
 
-        if (sideInput < 0)
-        {
-            angle = -1;
-            transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
+            if (sideInput < 0)
+            {
+                angle = -1;
+                transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
+            }
+            if (sideInput > 0)
+            {
+                angle = 1;
+                transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
+            }
+            anim.SetFloat("speed", 2);
         }
-        if(sideInput > 0)
-        {
-            angle = 1;
-            transform.RotateAround(cam.transform.position, new Vector3(0, 1, 0), angle);
-        }
-        anim.SetFloat("speed", 2);
     }
 
     void Jump()
     {
 
     }
+
+    public float GetSpeed(){ return speed; }
+    public void SetSpeed(float newspeed) { speed = newspeed; }
 }

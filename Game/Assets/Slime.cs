@@ -8,42 +8,44 @@ public class Slime : MonoBehaviour {
     public float agroRange;
     public float attackRange;
     public float speed;
-    public int HP;
-    public float damping;
     public bool IsRanged;
-
+    public float damping;
 
 	void Start ()
     {
-	    
-	}
+        if (target == null) { Debug.LogWarning("Enemy: Slime has no Target!!"); }
+    }
 
 
     void FixedUpdate()
     {
-        targetDist = Vector3.Distance(target.position, transform.position);
-
-        if (targetDist < agroRange && !IsRanged)
+        if (target != null)
         {
-            Quaternion rotation = Quaternion.LookRotation(target.position - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * damping);      
-            if (IsRanged)
-            {             
-                RangedAttck();
-            }
-            else
+            targetDist = Vector3.Distance(target.position, transform.position);
+
+            if (targetDist < agroRange && !IsRanged)
             {
-                Debug.Log("melee attack");
-                MeleeAttack();
+                Quaternion rotation = Quaternion.LookRotation(target.position - transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * damping);
+                if (IsRanged)
+                {
+                    RangedAttck();
+                }
+                else
+                {
+                    //Debug.Log("melee attack");
+                    MeleeAttack();
+                }
             }
         }
+        
     }
 
     void MeleeAttack()
     {
         if(targetDist > attackRange)
         {
-            Debug.Log("attack");
+            //Debug.Log("attack");
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
         }
         else
@@ -56,4 +58,6 @@ public class Slime : MonoBehaviour {
     {
 
     }
+
+ 
 }
