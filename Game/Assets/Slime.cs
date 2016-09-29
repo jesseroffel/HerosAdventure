@@ -48,10 +48,10 @@ public class Slime : MonoBehaviour {
     {
         nav.speed = roamingSpeed;
 
-        if()
-        {
-            nav.destination = roamingPoints[pointIndex].position;
-        }
+       // if()
+      //  {
+       //     nav.destination = roamingPoints[pointIndex].position;
+       // }
     }
 
  
