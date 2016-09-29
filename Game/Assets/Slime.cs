@@ -3,60 +3,55 @@ using System.Collections;
 
 public class Slime : MonoBehaviour {
 
-    public Transform target;
-    float targetDist;
-    public float agroRange;
-    public float attackRange;
-    public float speed;
-    public bool IsRanged;
-    public float damping;
+    public float roamingSpeed;
+    public float chaseSpeed;
+    public float chaseWaitTime;
+    public float roamingWaitTime;
+    public Transform[] roamingPoints;
 
-	void Start ()
+    private NavMeshAgent nav;
+    private Transform player;
+
+    private float roamTimer;
+    private float chaseTimer;
+    private int pointIndex;
+
+    void Awake()
     {
-        if (target == null) { Debug.LogWarning("Enemy: Slime has no Target!!"); }
+        nav = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+
     }
 
-
-    void FixedUpdate()
+    void Update()
     {
-        if (target != null)
-        {
-            targetDist = Vector3.Distance(target.position, transform.position);
-
-            if (targetDist < agroRange && !IsRanged)
-            {
-                Quaternion rotation = Quaternion.LookRotation(target.position - transform.position);
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * damping);
-                if (IsRanged)
-                {
-                    RangedAttck();
-                }
-                else
-                {
-                    //Debug.Log("melee attack");
-                    MeleeAttack();
-                }
-            }
-        }
         
     }
 
     void MeleeAttack()
     {
-        if(targetDist > attackRange)
-        {
-            //Debug.Log("attack");
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        }
-        else
-        {
 
-        }
     }
 
     void RangedAttck()
     {
 
+    }
+
+    void Chasing()
+    {
+
+    }
+
+    void freeRoaming()
+    {
+        nav.speed = roamingSpeed;
+
+        if()
+        {
+            nav.destination = roamingPoints[pointIndex].position;
+        }
     }
 
  
