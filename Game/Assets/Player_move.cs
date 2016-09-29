@@ -8,13 +8,13 @@ public class Player_move : MonoBehaviour
 
     public camera_controler cam;
     public float speed = 1;
+    public bool CanMove;
     float angle;
 
     public Animator anim;
   
 	void Start ()
     {
-     //   targetrotation = transform.rotation;
         forwardInput = sideInput = 0;
         if (cam == null) { Debug.LogError("Player has no camera target!"); }
 	}
@@ -22,13 +22,14 @@ public class Player_move : MonoBehaviour
     void Update()
     {
         GetInput();
-        //Turn();
-     //   Orbit(transform, cam.transform, dir, speed);
     }
 
     void FixedUpdate()
     {
-        Move();
+        if(CanMove)
+        {
+            Move();
+        }       
     }
 
     void GetInput()
@@ -61,7 +62,4 @@ public class Player_move : MonoBehaviour
     {
 
     }
-
-    public float GetSpeed(){ return speed; }
-    public void SetSpeed(float newspeed) { speed = newspeed; }
 }
