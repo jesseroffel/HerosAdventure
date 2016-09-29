@@ -14,7 +14,6 @@ public class CombatSystem : MonoBehaviour {
     private float AttackTime = 0.0f;
     private bool PrepareAttack = false;
     private bool Attacking = false;
-    private float PlayerSpeed = 0;
     private int CombatState = 1;
     private int AttackOrder = 0;
 
@@ -47,7 +46,7 @@ public class CombatSystem : MonoBehaviour {
         {
             NextAttack = Time.time + AttackBuildup;
             PrepareAttack = true;
-            if (playermovescript) {  playermovescript.CanMove = true; }
+            if (playermovescript) {  playermovescript.CanMove = false; }
             //Set animation
             switch(CombatState) {
                 case (int)CombatStyle.Melee:
@@ -78,16 +77,15 @@ public class CombatSystem : MonoBehaviour {
                 Attacking = true;
                 PrepareAttack = false;
                 NextAttack = Time.time + AttackSwing;
+                //Vector3 Addpos = transform.position + (transform.forward);
                 Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
                 switch (CombatState)
                 {
                     case (int)CombatStyle.Melee:
-                        AttackOrder++;
-                        AttackTime = Time.time + WaitForSpawn;
                         switch (AttackOrder)
                         {
                             case 1:
-                                PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                                HitDec.transform.position += new Vector3(0, 0.4f, 0);
                                 break;
                             case 2:
                                 break;
@@ -100,7 +98,6 @@ public class CombatSystem : MonoBehaviour {
                     case (int)CombatStyle.Magic:
                         break;
                 }
-                HitDec.transform.position += new Vector3(0, 0.4f, 0);
                 HitDec.transform.parent = transform.FindChild("guy") ;
                 //HitDec.transform.rotation = transform.rotation;
                 HitDec.GetComponent<HitRegistrator>().Init(0.5f, AttackPower);
