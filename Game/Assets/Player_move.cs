@@ -4,14 +4,15 @@ using System.Collections;
 public class Player_move : MonoBehaviour
 {
     public Rigidbody rb;
-    float forwardInput, sideInput;
-
     public camera_controler cam;
+    public Animator anim;
     public float speed = 1;
     public bool CanMove;
+
+    float forwardInput, sideInput;
     float angle;
 
-    public Animator anim;
+    Vector3 lastPosition;
   
 	void Start ()
     {
@@ -22,14 +23,22 @@ public class Player_move : MonoBehaviour
     void Update()
     {
         GetInput();
+
+        if (lastPosition == transform.position)
+        {
+            anim.SetFloat("speed", 0);
+        }
+        lastPosition = transform.position;
+        Debug.Log("LastPosition is: " + lastPosition);
+        Debug.Log("transform.position is: " + transform.position);
     }
 
     void FixedUpdate()
     {
-        if(CanMove)
+        if (CanMove)
         {
-            Move();
-        }       
+             Move();
+        }      
     }
 
     void GetInput()
