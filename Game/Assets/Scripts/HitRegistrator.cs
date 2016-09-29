@@ -27,13 +27,13 @@ public class HitRegistrator : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Enemy")
-        {
-            collision.gameObject.GetComponent<EnemyHP>().GiveDamage(DamageValue);
-        }
-    }
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.gameObject.tag == "Enemy")
+    //    {
+    //        collision.gameObject.GetComponent<EnemyHP>().GiveDamage(DamageValue);
+     //   }
+    //}
 
     void OnTriggerEnter(Collider collision)
     {
