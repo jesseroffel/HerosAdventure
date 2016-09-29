@@ -25,7 +25,7 @@ public class CombatSystem : MonoBehaviour {
     private int AttackOrder = 0;
     private bool HandEmpty = true;
 
-    private float AttackPower = 25.0f;
+    private float AttackPower = 15.0f;
 
     enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
 
