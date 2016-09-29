@@ -63,6 +63,13 @@ ModelImporter:
     100110: Upper Leg.L
     100112: Upper Leg.R
     100114: Cube.001
+    100116: Weapon_Hand
+    100118: Weapon_Hand_end
+    100120: WeaponSocket01
+    100122: WeaponSocket01_end
+    100124: WeaponSocket02
+    100126: WeaponSocket02_end
+    100128: Body
     400000: Armature
     400002: //RootNode
     400004: Bone
@@ -121,8 +128,16 @@ ModelImporter:
     400110: Upper Leg.L
     400112: Upper Leg.R
     400114: Cube.001
+    400116: Weapon_Hand
+    400118: Weapon_Hand_end
+    400120: WeaponSocket01
+    400122: WeaponSocket01_end
+    400124: WeaponSocket02
+    400126: WeaponSocket02_end
+    400128: Body
     4300000: Cube
     4300002: Cube.001
+    4300004: Body
     7400000: Walk_Backwards
     7400002: Armature|Attack_Sword01
     7400004: Armature|Attack_Sword02
@@ -135,6 +150,7 @@ ModelImporter:
     9500000: //RootNode
     13700000: Cube
     13700002: Cube.001
+    13700004: Body
   materials:
     importMaterials: 1
     materialName: 0

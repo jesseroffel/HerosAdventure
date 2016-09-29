@@ -40,6 +40,7 @@ ModelImporter:
     100064: Upper_Leg_L
     100066: Upper_Leg_R
     100068: Cube_001
+    100070: Body
     400000: Armature
     400002: //RootNode
     400004: Bone
@@ -75,8 +76,10 @@ ModelImporter:
     400064: Upper_Leg_L
     400066: Upper_Leg_R
     400068: Cube_001
+    400070: Body
     4300000: Cube
     4300002: Cube_001
+    4300004: Body
     7400000: Default Take
     7400002: Attack_Sword01
     7400004: Attack_Sword02
@@ -87,6 +90,7 @@ ModelImporter:
     9500000: //RootNode
     13700000: Cube
     13700002: Cube_001
+    13700004: Body
   materials:
     importMaterials: 1
     materialName: 0

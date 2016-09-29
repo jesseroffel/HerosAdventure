@@ -3,19 +3,18 @@ using System.Collections;
 
 public class HitRegistrator : MonoBehaviour
 {
-    float AliveTime = 0.3f;
+    float AliveTime = 0.0f;
     float currentTime = 0.0f;
     float DamageValue = 0.0f;
-    // Use this for initialization
-    void Start()
-    {
-        currentTime = Time.time + AliveTime;
-    }
+    private Vector3 PlayerForce;
 
-    public void Init(float alive, float damage)
+
+    public void SetSettings(float alive, float damage, Vector3 playerf)
     {
         AliveTime = alive;
         DamageValue = damage;
+        PlayerForce = playerf;
+        currentTime = Time.time + AliveTime;
     }
 
     // Update is called once per frame
@@ -39,7 +38,7 @@ public class HitRegistrator : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            collision.gameObject.GetComponent<EnemyHP>().GiveDamage(DamageValue);
+            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
         }
     }
 }

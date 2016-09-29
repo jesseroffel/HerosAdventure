@@ -29,8 +29,7 @@ public class Player_move : MonoBehaviour
             anim.SetFloat("speed", 0);
         }
         lastPosition = transform.position;
-        Debug.Log("LastPosition is: " + lastPosition);
-        Debug.Log("transform.position is: " + transform.position);
+
     }
 
     void FixedUpdate()

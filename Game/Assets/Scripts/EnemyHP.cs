@@ -27,20 +27,20 @@ public class EnemyHP : MonoBehaviour {
         }
 	}
 
-    public void GiveDamage(float damage)
+    public void HitTarget(float damage, Vector3 force)
     {
-        float curval = currentHP;
         currentHP = currentHP - damage;
         if (currentHP > 0)
         {
-            Debug.Log(gameObject.name + " took damage, old hp: " + curval + ", new hp: " + currentHP);
+            Debug.Log(gameObject.name + " damaged, HP:" + currentHP + " D: "+ damage + " MHP: " + MaxHP);
         }
         else
         {
             if (currentHP < 0) { currentHP = 0; }
-            Debug.Log(gameObject.name + " defeated, old hp: " + curval + ", new hp: " + currentHP);
+            Debug.Log(gameObject.name + " defeated, HP: " + currentHP + "D: " + damage + "MHP: " + MaxHP);
             defeated = true;
         }
+        transform.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
     }
 
     void shrinkobject()
