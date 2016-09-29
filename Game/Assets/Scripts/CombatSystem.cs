@@ -16,8 +16,9 @@ public class CombatSystem : MonoBehaviour {
     private bool Attacking = false;
     private float PlayerSpeed = 0;
     private int CombatState = 1;
+    private int AttackOrder = 0;
 
-    private float AttackPower = 24.6f;
+    private float AttackPower = 25.0f;
 
     enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
 
@@ -46,16 +47,22 @@ public class CombatSystem : MonoBehaviour {
         {
             NextAttack = Time.time + AttackBuildup;
             PrepareAttack = true;
-            if (playermovescript)
-            {
-                PlayerSpeed = playermovescript.GetSpeed();
-                playermovescript.SetSpeed(0);
-            }
+            if (playermovescript) {  playermovescript.CanMove = true; }
             //Set animation
             switch(CombatState) {
                 case (int)CombatStyle.Melee:
+                    AttackOrder++;
                     AttackTime = Time.time + WaitForSpawn;
-                    PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                    switch (AttackOrder)
+                    {
+                        case 1:
+                            PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                    }
                     break;
                 case (int)CombatStyle.Range:
                     break;
@@ -72,7 +79,29 @@ public class CombatSystem : MonoBehaviour {
                 PrepareAttack = false;
                 NextAttack = Time.time + AttackSwing;
                 Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                switch (CombatState)
+                {
+                    case (int)CombatStyle.Melee:
+                        AttackOrder++;
+                        AttackTime = Time.time + WaitForSpawn;
+                        switch (AttackOrder)
+                        {
+                            case 1:
+                                PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                        }
+                        break;
+                    case (int)CombatStyle.Range:
+                        break;
+                    case (int)CombatStyle.Magic:
+                        break;
+                }
                 HitDec.transform.position += new Vector3(0, 0.4f, 0);
+                HitDec.transform.parent = transform.FindChild("guy") ;
                 //HitDec.transform.rotation = transform.rotation;
                 HitDec.GetComponent<HitRegistrator>().Init(0.5f, AttackPower);
                 //
@@ -85,7 +114,8 @@ public class CombatSystem : MonoBehaviour {
             if (Time.time > NextAttack)
             {
                 Attacking = false;
-                if (playermovescript) { playermovescript.SetSpeed(PlayerSpeed); }
+                AttackOrder = 0;
+                if (playermovescript) { playermovescript.CanMove = true; }
             }
         }
     }
