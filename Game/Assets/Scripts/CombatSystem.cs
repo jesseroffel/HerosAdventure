@@ -12,7 +12,7 @@ public class CombatSystem : MonoBehaviour {
     public Transform BackPosition02;
 
 
-    public float Attack01Swing = 0.1f;
+    public float Attack01Swing = 0.5f;
     public float AttackBuildup = 0.5f;
 
     private float propulsionForce = 10.0f;
