@@ -36,9 +36,13 @@ public class HitRegistrator : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.isTrigger)
         {
-            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+            if (collision.gameObject.tag == "Enemy")
+            {
+                collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+            }
         }
+
     }
 }

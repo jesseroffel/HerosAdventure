@@ -3,28 +3,28 @@ using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 using System.Collections;
 
-[RequireComponent(typeof(Text))]
-[RequireComponent(typeof(GameObject))]
 public class NPC : MonoBehaviour {
 
-    public Text DialogTextUI;
     public GameObject Model;
+    public GameObject SpeakIcon;
+    public Text DialogTextUI;
+    public bool m_Interactable = true;
+    public bool m_IconOut = false;
+    public bool m_Interacting = false;
+    public bool m_InteractCollider = false;
 
+    // NPC
     string m_Name = "";
+    int m_ID = 0;
     bool m_Sex = true;          // true = male, false = female
     bool m_Moving = false;
-    bool m_Interactable = true;
-    bool m_Interacting = false;
 
     //Dialog
     public string[] m_DialogStrings;
     private float TimeBetweenCharacter = 0.05f;
     private bool m_SayingDialog = false;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
+
 
     void SetNPCWithID(int id)
     {
@@ -34,12 +34,17 @@ public class NPC : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (CrossPlatformInputManager.GetButton("Fire1"))
+        if (m_Interacting)
         {
             if (!m_SayingDialog)
             {
-                m_SayingDialog = true;
-                StartCoroutine(DisplayDialog(m_DialogStrings[0]));
+                if (m_DialogStrings[0].Length > 1)
+                {
+                    m_SayingDialog = true;
+                    Debug.Log("Start Dialog:" + m_DialogStrings[0]);
+                    //StartCoroutine(DisplayDialog(m_DialogStrings[0]));
+                }
+
             }
             
         }
@@ -62,5 +67,27 @@ public class NPC : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(TimeBetweenCharacter);
+    }
+
+    public void SetIconVisibility(bool state)
+    {
+        if (state) {
+            m_IconOut = true;
+            if (SpeakIcon) { SpeakIcon.SetActive(true); }
+            Debug.Log("Speak Icon Appearing");
+        }
+        else {
+            m_IconOut = false;
+            if (SpeakIcon) { SpeakIcon.SetActive(false); }
+            Debug.Log("Speak Icon Disappearing");
+        }
+    }
+
+    public bool GetInteractCollider() { return m_InteractCollider; }
+
+    public void SetInteractCollider(bool state)
+    {
+        if (state) { m_InteractCollider = true; Debug.Log("m_InteractCollider true"); }
+        else{ m_InteractCollider = false; Debug.Log("m_InteractCollider false"); }
     }
 }

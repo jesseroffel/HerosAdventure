@@ -30,7 +30,7 @@ public class EnemyHP : MonoBehaviour {
         currentHP = MaxHP;
         thisMaterial = rend.material;
         OwnMaterial = thisMaterial;
-        Debug.Log(thisMaterial.name);
+        //Debug.Log(thisMaterial.name);
     }
 	
 	// Update is called once per frame

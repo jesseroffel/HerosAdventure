@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 using System.Collections;
 
 public class Player_move : MonoBehaviour
@@ -13,6 +14,8 @@ public class Player_move : MonoBehaviour
     float angle;
 
     Vector3 lastPosition;
+    private GameObject lastnpc;
+    private float CheckLastNPC = 0;
 
     void Start()
     {
@@ -29,6 +32,16 @@ public class Player_move : MonoBehaviour
             anim.SetFloat("speed", 0);
         }
         lastPosition = transform.position;
+
+        if (lastnpc && (Time.time > CheckLastNPC) )
+        {
+            Debug.Log("Check");
+            if (lastnpc.GetComponent<NPC>().GetInteractCollider())
+            {
+                lastnpc.GetComponent<NPC>().SetIconVisibility(false);
+                lastnpc.GetComponent<NPC>().SetInteractCollider(false);
+            }
+        }
     }
 
     void FixedUpdate()
@@ -67,6 +80,30 @@ public class Player_move : MonoBehaviour
 
     void Jump()
     {
+
+    }
+
+    void OnTriggerEnter(Collider collision)
+    {
+        if (collision.isTrigger)
+        {
+            if (collision.gameObject.tag == "NPC")
+            {
+                lastnpc = collision.gameObject;
+                if (lastnpc.GetComponent<NPC>().m_Interactable && lastnpc.GetComponent<NPC>().m_IconOut == false)
+                {
+                    lastnpc.GetComponent<NPC>().SetIconVisibility(true);
+                    lastnpc.GetComponent<NPC>().SetInteractCollider(true);
+                }
+                if (CrossPlatformInputManager.GetButton("Fire1"))
+                {
+                    lastnpc.GetComponent<NPC>().m_Interacting = true;
+                    Debug.Log("Enter dialogue");
+                }
+            }
+            CheckLastNPC = Time.time + 1.0f;
+            Debug.Log("Time:" + Time.time + ", CheckLastNPC: " + CheckLastNPC);
+        }
 
     }
 }
