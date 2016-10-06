@@ -8,22 +8,21 @@ public class NPC : MonoBehaviour {
     public GameObject Model;
     public GameObject SpeakIcon;
     public Text DialogTextUI;
-    public bool m_Interactable = true;
-    public bool m_IconOut = false;
-    public bool m_Interacting = false;
-    public bool m_InteractCollider = false;
+    
 
     // NPC
     string m_Name = "";
     int m_ID = 0;
     bool m_Sex = true;          // true = male, false = female
     bool m_Moving = false;
+    private bool m_Interactable = true;
+    private bool m_StartedTalk = false;
 
     //Dialog
     public string[] m_DialogStrings;
     private float TimeBetweenCharacter = 0.05f;
     private bool m_SayingDialog = false;
-
+    private bool m_IconOut = false;
 
 
     void SetNPCWithID(int id)
@@ -34,7 +33,7 @@ public class NPC : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (m_Interacting)
+        if (m_StartedTalk)
         {
             if (!m_SayingDialog)
             {
@@ -74,20 +73,19 @@ public class NPC : MonoBehaviour {
         if (state) {
             m_IconOut = true;
             if (SpeakIcon) { SpeakIcon.SetActive(true); }
-            Debug.Log("Speak Icon Appearing");
         }
         else {
             m_IconOut = false;
             if (SpeakIcon) { SpeakIcon.SetActive(false); }
-            Debug.Log("Speak Icon Disappearing");
         }
     }
 
-    public bool GetInteractCollider() { return m_InteractCollider; }
+    public bool GetIconOut() { return m_IconOut;  }
 
-    public void SetInteractCollider(bool state)
-    {
-        if (state) { m_InteractCollider = true; Debug.Log("m_InteractCollider true"); }
-        else{ m_InteractCollider = false; Debug.Log("m_InteractCollider false"); }
-    }
+    public bool GetInteractable() { return m_Interactable; }
+
+    public void SetStartedTalk(bool state) {if (state) { m_StartedTalk = true;} else { m_StartedTalk = false; } }
+
+    public bool GetStartedTalk() { return m_StartedTalk; }
+
 }

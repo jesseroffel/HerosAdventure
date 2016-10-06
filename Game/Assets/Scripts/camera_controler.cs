@@ -6,26 +6,23 @@ public class camera_controler : MonoBehaviour
     public float distance;
     public float upDistance;
     public float smooth;
-    public Transform target;
+    public Transform lookAtTarget;
 
     Vector3 targetPos;
 
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-
+        if (lookAtTarget == null) { Debug.LogError("Transform: lookAtTarget is missing its reference"); }
     }
 
     void LateUpdate()
     {
-        targetPos = target.position + target.up * upDistance - target.forward * distance;
-        transform.position = Vector3.Lerp(transform.position, targetPos,Time.deltaTime * smooth);
+        if (lookAtTarget)
+        {
+            targetPos = lookAtTarget.position + lookAtTarget.up * upDistance - lookAtTarget.forward * distance;
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * smooth);
 
-        transform.LookAt(target);
+            transform.LookAt(lookAtTarget);
+        }
     }
-
 }

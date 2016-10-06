@@ -15,7 +15,7 @@ public class Player_move : MonoBehaviour
 
     Vector3 lastPosition;
     private GameObject lastnpc;
-    private float CheckLastNPC = 0;
+    private bool CanSpeakWithNPC = false;
 
     void Start()
     {
@@ -32,16 +32,7 @@ public class Player_move : MonoBehaviour
             anim.SetFloat("speed", 0);
         }
         lastPosition = transform.position;
-
-        if (lastnpc && (Time.time > CheckLastNPC) )
-        {
-            Debug.Log("Check");
-            if (lastnpc.GetComponent<NPC>().GetInteractCollider())
-            {
-                lastnpc.GetComponent<NPC>().SetIconVisibility(false);
-                lastnpc.GetComponent<NPC>().SetInteractCollider(false);
-            }
-        }
+        CheckTalkInput();
     }
 
     void FixedUpdate()
@@ -90,20 +81,36 @@ public class Player_move : MonoBehaviour
             if (collision.gameObject.tag == "NPC")
             {
                 lastnpc = collision.gameObject;
-                if (lastnpc.GetComponent<NPC>().m_Interactable && lastnpc.GetComponent<NPC>().m_IconOut == false)
+                if (lastnpc.GetComponent<NPC>().GetInteractable() && lastnpc.GetComponent<NPC>().GetIconOut() == false)
                 {
                     lastnpc.GetComponent<NPC>().SetIconVisibility(true);
-                    lastnpc.GetComponent<NPC>().SetInteractCollider(true);
+                    CanSpeakWithNPC = true;
                 }
+            }
+        }
+
+    }
+
+    void OnTriggerExit(Collider collision)
+    {
+        CanSpeakWithNPC = false;
+        lastnpc.GetComponent<NPC>().SetIconVisibility(false);
+        lastnpc.GetComponent<NPC>().SetStartedTalk(false);
+
+    }
+
+    void CheckTalkInput()
+    {
+        if (CanSpeakWithNPC)
+        {
+            if (lastnpc.GetComponent<NPC>().GetStartedTalk() == false)
+            {
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
-                    lastnpc.GetComponent<NPC>().m_Interacting = true;
+                    lastnpc.GetComponent<NPC>().SetStartedTalk(true);
                     Debug.Log("Enter dialogue");
                 }
             }
-            CheckLastNPC = Time.time + 1.0f;
-            Debug.Log("Time:" + Time.time + ", CheckLastNPC: " + CheckLastNPC);
         }
-
     }
 }
