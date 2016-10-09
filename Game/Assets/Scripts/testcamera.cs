@@ -3,7 +3,7 @@ using System.Collections;
 
 public class testcamera : MonoBehaviour {
 
-    Transform player;
+    public Transform player;
     public Transform lookAtTarget;
     public float rotateSpeed = 5;
 
@@ -11,19 +11,25 @@ public class testcamera : MonoBehaviour {
     public float distanceY;
     public float distanceZ;
 
+    public float followDist = 5;
+    float dist;
 
-
-    // Use this for initialization
     void Start ()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+       dist = Vector3.Distance(player.transform.position, transform.position);
+        Debug.Log(followDist);
+     //   player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         transform.position = new Vector3(player.transform.position.x - distanceX, player.transform.position.y - distanceY, player.transform.position.z - distanceZ);
+             
     }
 
-    // Update is called once per frame
     void Update()
     {
-         
+        if(dist > followDist)
+        {
+            transform.Translate(new Vector3(player.transform.position.x - distanceX, player.transform.position.y - distanceY, player.transform.position.z - distanceZ));
+        }
+
          transform.LookAt(lookAtTarget);
          transform.RotateAround(player.position, Vector3.up, Input.GetAxis("Mouse X") * rotateSpeed);
     }

@@ -36,28 +36,32 @@ public class playertest : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
+            transform.Translate(camera.transform.forward * speed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(0, Vector3.up), smooth);
             isMoving = true;
         }
         if (Input.GetKey(KeyCode.S))
         {
+            transform.Translate(camera.transform.forward * speed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(180, Vector3.up), smooth);
             isMoving = true;
         }
         if (Input.GetKey(KeyCode.D))
         {
+            transform.Translate(camera.transform.forward * speed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(90, Vector3.up), smooth);
             isMoving = true;
         }
         if (Input.GetKey(KeyCode.A))
-        {          
+        {
+            transform.Translate(camera.transform.forward * speed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(270, Vector3.up), smooth);
             isMoving = true;
         }
 
         if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+            //transform.Translate(Vector3.forward * speed * Time.deltaTime);
             anim.SetFloat("speed", 5);
         }
         else
