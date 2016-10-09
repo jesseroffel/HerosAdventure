@@ -74,6 +74,8 @@ public class Player_move : MonoBehaviour
 
     }
 
+    //ander script?
+
     void OnTriggerEnter(Collider collision)
     {
         if (collision.isTrigger)
