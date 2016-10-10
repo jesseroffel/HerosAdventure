@@ -43,7 +43,12 @@ public class CombatSystem : MonoBehaviour {
 
 	    if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
         {
-            SetAttackAnimation();
+            if (playermovescript.GetInConversation()) {
+                //Debug.Log("Conversation confirm, make animation of this!");
+            } else
+            {
+                SetAttackAnimation();
+            }
         }
 
         if (CrossPlatformInputManager.GetButton("Fire3") && Time.time > NextAttack)

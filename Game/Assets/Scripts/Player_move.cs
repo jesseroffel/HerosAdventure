@@ -14,8 +14,9 @@ public class Player_move : MonoBehaviour
     float angle;
 
     Vector3 lastPosition;
-    private GameObject lastnpc;
+    private NPC lastnpc;
     private bool CanSpeakWithNPC = false;
+    private bool InConversation = false;
 
     void Start()
     {
@@ -37,7 +38,7 @@ public class Player_move : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (CanMove)
+        if (CanMove && InConversation == false)
         {
             Move();
         }
@@ -82,10 +83,10 @@ public class Player_move : MonoBehaviour
         {
             if (collision.gameObject.tag == "NPC")
             {
-                lastnpc = collision.gameObject;
-                if (lastnpc.GetComponent<NPC>().GetInteractable() && lastnpc.GetComponent<NPC>().GetIconOut() == false)
+                lastnpc = collision.gameObject.GetComponent<NPC>() ;
+                if (lastnpc.GetInteractable() && lastnpc.GetIconOut() == false)
                 {
-                    lastnpc.GetComponent<NPC>().SetIconVisibility(true);
+                    lastnpc.SetIconVisibility(true);
                     CanSpeakWithNPC = true;
                 }
             }
@@ -96,8 +97,9 @@ public class Player_move : MonoBehaviour
     void OnTriggerExit(Collider collision)
     {
         CanSpeakWithNPC = false;
-        lastnpc.GetComponent<NPC>().SetIconVisibility(false);
-        lastnpc.GetComponent<NPC>().SetStartedTalk(false);
+        lastnpc.SetIconVisibility(false);
+        lastnpc.SetStartedTalk(false);
+        //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
 
     }
 
@@ -105,21 +107,31 @@ public class Player_move : MonoBehaviour
     {
         if (CanSpeakWithNPC)
         {
-            if (lastnpc.GetComponent<NPC>().GetStartedTalk() == false)
+            if (lastnpc.GetStartedTalk() == false)
             {
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
-                    lastnpc.GetComponent<NPC>().SetStartedTalk(true);
+                    lastnpc.SetStartedTalk(true);
                     Debug.Log("Enter dialogue");
+                    CanMove = false;
+                    InConversation = true;
                 }
             }
-            if (lastnpc.GetComponent<NPC>().GetWaitForInput() == true)
+            if (lastnpc.GetWaitForInput() == true)
             {
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
-                    lastnpc.GetComponent<NPC>().SetConfirm(true);
+                    lastnpc.SetConfirm(true);
                 }
+            }
+            if (lastnpc.GetReleasePlayer())
+            {
+                CanMove = true;
+                InConversation = false;
             }
         }
     }
+
+    
+    public bool GetInConversation() { return InConversation; }
 }
