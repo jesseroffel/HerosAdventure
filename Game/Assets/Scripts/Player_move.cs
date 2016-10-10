@@ -112,7 +112,6 @@ public class Player_move : MonoBehaviour
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
                     lastnpc.SetStartedTalk(true);
-                    Debug.Log("Enter dialogue");
                     CanMove = false;
                     InConversation = true;
                 }
@@ -128,6 +127,7 @@ public class Player_move : MonoBehaviour
             {
                 CanMove = true;
                 InConversation = false;
+                lastnpc.SetReleasePlayer(false);
             }
         }
     }

@@ -74,9 +74,9 @@ public class HandleDialogue : MonoBehaviour {
         DialogueText.text = TextToDialogue;
     }
 
-    public void SetDialogueName(string newstring) { NamePlate.text = TextToDialogue; }
+    public void SetDialogueName(string newstring) { NamePlate.text = newstring; }
 
-    public void SetQuestName(string newstring) { QuestPlate.text = TextToDialogue; }
+    public void SetQuestName(string newstring) { QuestPlate.text = newstring; }
     
 
     public void SetDialogueWindow(bool state) { if (state) { DialogueWindow.SetActive(true); } else { DialogueWindow.SetActive(false); } }

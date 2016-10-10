@@ -11,12 +11,22 @@ public class NPC : MonoBehaviour {
 
 
     // NPC
-    string m_Name = "";
-    int m_ID = 0;
-    bool m_Sex = true;          // true = male, false = female
-    bool m_Moving = false;
+    public string m_npcName = "";
+    public int m_NPCID = 0;            // NPC ID
+    public int m_INFOID = 0;           // NPC Information from DB with ID
+    private bool m_Sex = true;          // true = male, false = female
+    private bool m_Moving = false;
     private bool m_Interactable = true;
     private bool m_StartedTalk = false;
+
+    //Quest
+    private string m_QuestTitle = "";
+    private int m_QuestID = 0;
+    private int m_QuestProgression = 0;
+    private bool m_QuestAssosiated = false;
+    private bool m_QuestStarter = false;
+    private bool m_QuestCompleted = false;
+
 
     //Dialog
     public string[] m_DialogStrings;
@@ -50,26 +60,6 @@ public class NPC : MonoBehaviour {
            //etc
     }
 
-    void SetMoodSpeech(int mood)
-    {
-        switch(mood)
-        {
-            case 1:
-                TimeBetweenCharacter = 0.13f;
-                break;
-            case 2:
-                TimeBetweenCharacter = 0.22f;
-                break;
-            case 3:
-                TimeBetweenCharacter = 0.3f;
-                break;
-            default:
-                TimeBetweenCharacter = 0.08f;
-                break;
-        }
-
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -79,9 +69,9 @@ public class NPC : MonoBehaviour {
             {
                 if (Time.time > WaitDelay)
                 {
-                    m_Interactable = true;
                     CheckDelay = false;
-                    Debug.Log("m_StartedTalk: " + m_StartedTalk);
+                    m_StartedTalk = false;
+                    SetIconVisibility(true);
                 }
             }
             else
@@ -101,15 +91,18 @@ public class NPC : MonoBehaviour {
                 m_DialogueLines = m_DialogStrings.Length;
                 if (m_DialogueLines > 0 && m_DialogStrings[0].Length > 1)
                 {
-                    SetIconVisibility(false);
-                    DialogueHandler.SetDialogueWindow(true);
+                    Debug.Log("Displaying dialogue from npc " + m_npcName + "..");
+                    ReleasePlayer = false;
                     m_SayingDialog = true;
+                    SetIconVisibility(false);
+                    DialogueHandler.SetDialogueName(m_npcName);
+                    DialogueHandler.SetQuestName(m_QuestTitle);
+                    DialogueHandler.SetDialogueWindow(true);
                     StartCoroutine(DisplayDialog(m_DialogStrings[m_CurrentLine]));
-
                 }
                 else
                 {
-                    Debug.LogWarning("NPC: " + m_Name + " does not have any dialogue lines");
+                    Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines");
                     m_StartedTalk = false;
                 }
             }
@@ -130,29 +123,14 @@ public class NPC : MonoBehaviour {
             }
             if (m_DialogueFinished && m_GotConfirm)
             {
-                if (OneTalkOnly) { m_Interactable = false; }
-                m_LineFinished = false;
-                m_DialogueFinished = false;
-                m_WaitForInput = false;
-                m_GotConfirm = false;
-                m_CurrentLine = 0;
-                m_CurrentCharacter = 0;
-                m_StartedTalk = false;
-                m_SayingDialog = false;
-                DialogueHandler.SetDialogueWindow(false);
-                SetIconVisibility(true);
-                DialogueHandler.SetEndIcon(false);
-
-                CheckDelay = true;
-                WaitDelay = Time.time + 2.5f;
-                ReleasePlayer = false;
+                ResetDialogue();
             }
         }
     } 
 
     private IEnumerator DisplayDialog(string StringToDisplay)
     {
-        Debug.Log("DisplayDialog: " + StringToDisplay);
+        Debug.Log("Displaying: " + StringToDisplay);
         //int dialogueLines = m_DialogStrings.
         int DialogLength = StringToDisplay.Length;
         tempDialogue = "";
@@ -169,14 +147,14 @@ public class NPC : MonoBehaviour {
                 {
                     m_DialogueFinished = true;
                     m_WaitForInput = true;
-                    Debug.Log("Conversation finished");
+                    Debug.Log("Conversation finished, waiting for confirm..");
                     DialogueHandler.SetEndIcon(true);
                 }
                 else
                 {
                     m_LineFinished = true;
                     m_WaitForInput = true;
-                    Debug.Log("Line finished");
+                    Debug.Log("Line finished, waiting for confirm..");
                     DialogueHandler.SetWaitIcon(true);
                 }
             }
@@ -203,6 +181,27 @@ public class NPC : MonoBehaviour {
         }
     }
 
+    void ResetDialogue()
+    {
+        if (OneTalkOnly) { m_Interactable = false; } else { m_Interactable = true; }
+
+        m_LineFinished = false;
+        m_DialogueFinished = false;
+        m_WaitForInput = false;
+        m_GotConfirm = false;
+        m_CurrentLine = 0;
+        m_CurrentCharacter = 0;
+        m_StartedTalk = false;
+        m_SayingDialog = false;
+        DialogueHandler.SetDialogueWindow(false);
+        DialogueHandler.SetEndIcon(false);
+
+        CheckDelay = true;
+        WaitDelay = Time.time + 2.5f;
+        ReleasePlayer = true;
+        
+    }
+
     public void SetDialogueWindow(bool state) { if (state) { DialogueHandler.SetDialogueWindow(true); } else { DialogueHandler.SetDialogueWindow(false); } }
 
     public bool GetIconOut() { return m_IconOut;  }
@@ -219,4 +218,27 @@ public class NPC : MonoBehaviour {
     
     public bool GetReleasePlayer() { return ReleasePlayer; }
 
+    public void SetReleasePlayer(bool state) { if (state) { ReleasePlayer = true; } else { ReleasePlayer = false; } }
+    
+
+
+    void SetMoodSpeech(int mood)
+    {
+        switch (mood)
+        {
+            case 1:
+                TimeBetweenCharacter = 0.13f;
+                break;
+            case 2:
+                TimeBetweenCharacter = 0.22f;
+                break;
+            case 3:
+                TimeBetweenCharacter = 0.3f;
+                break;
+            default:
+                TimeBetweenCharacter = 0.08f;
+                break;
+        }
+
+    }
 }

@@ -12,7 +12,6 @@ public class PlayerIcon : MonoBehaviour {
     void Start()
     {
         RectT = gameObject.GetComponent<RectTransform>();
-        yPos = RectT.transform.position.y;
         cam = GameObject.FindGameObjectWithTag("Camera").GetComponent<Camera>();
     }
     
