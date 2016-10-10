@@ -7,8 +7,8 @@ public class NPC : MonoBehaviour {
 
     public GameObject Model;
     public GameObject SpeakIcon;
-    public Text DialogTextUI;
-    public HandleDialogue DialogueHandler;
+    private HandleDialogue DialogueHandler;
+
 
     // NPC
     string m_Name = "";
@@ -20,6 +20,7 @@ public class NPC : MonoBehaviour {
 
     //Dialog
     public string[] m_DialogStrings;
+    private string tempDialogue;
 
     private float TimeBetweenCharacter = 0.05f;
     private int m_DialogueLines = 0;
@@ -34,11 +35,12 @@ public class NPC : MonoBehaviour {
     private bool m_WaitForInput = false;
     private bool m_GotConfirm = false;
 
+    private bool OneTalkOnly = false;
+    private bool CheckDelay = false;
+    private float WaitDelay = 0;
 
-    void Start() {
-        m_DialogueLines = m_DialogStrings.Length;
-        DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>();
-    }
+    private bool ReleasePlayer = false;
+
 
     void SetNPCWithID(int id)
     {
@@ -71,31 +73,54 @@ public class NPC : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        HandleDialog();
+        if (m_Interactable)
+        {
+            if (CheckDelay)
+            {
+                if (Time.time > WaitDelay)
+                {
+                    m_Interactable = true;
+                    CheckDelay = false;
+                    Debug.Log("m_StartedTalk: " + m_StartedTalk);
+                }
+            }
+            else
+            {
+                HandleDialog();
+            }
+        }
     }
 
     private void HandleDialog()
     {
         if (m_StartedTalk)
         {
+            if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
             if (!m_SayingDialog)
             {
+                m_DialogueLines = m_DialogStrings.Length;
                 if (m_DialogueLines > 0 && m_DialogStrings[0].Length > 1)
                 {
                     SetIconVisibility(false);
+                    DialogueHandler.SetDialogueWindow(true);
                     m_SayingDialog = true;
-                    Debug.Log("Saying Dialogue: " + m_DialogStrings[m_CurrentLine]);
                     StartCoroutine(DisplayDialog(m_DialogStrings[m_CurrentLine]));
-                    
+
                 }
-                else { Debug.LogWarning("NPC: " + m_Name + " does not have any dialogue lines"); }
+                else
+                {
+                    Debug.LogWarning("NPC: " + m_Name + " does not have any dialogue lines");
+                    m_StartedTalk = false;
+                }
             }
 
-            if (m_WaitForInput && m_GotConfirm)
+            if (m_WaitForInput && m_GotConfirm && m_DialogueFinished == false)
             {
-                Debug.Log("Dialogue new line");
+                m_LineFinished = false;
                 m_WaitForInput = false;
                 m_GotConfirm = false;
+                m_CurrentCharacter = 0;
+                DialogueHandler.SetWaitIcon(false);
                 if (m_DialogueLines > m_CurrentLine)
                 {
                     m_CurrentLine++;
@@ -103,46 +128,56 @@ public class NPC : MonoBehaviour {
                 }
                 
             }
-            if (m_DialogueFinished)
+            if (m_DialogueFinished && m_GotConfirm)
             {
-                Debug.Log("Dialogue ended");
+                if (OneTalkOnly) { m_Interactable = false; }
                 m_LineFinished = false;
                 m_DialogueFinished = false;
                 m_WaitForInput = false;
                 m_GotConfirm = false;
                 m_CurrentLine = 0;
+                m_CurrentCharacter = 0;
                 m_StartedTalk = false;
                 m_SayingDialog = false;
-                //SetDialogueVisiblity(false);
+                DialogueHandler.SetDialogueWindow(false);
                 SetIconVisibility(true);
-                
+                DialogueHandler.SetEndIcon(false);
+
+                CheckDelay = true;
+                WaitDelay = Time.time + 2.5f;
+                ReleasePlayer = false;
             }
         }
     } 
 
     private IEnumerator DisplayDialog(string StringToDisplay)
     {
+        Debug.Log("DisplayDialog: " + StringToDisplay);
         //int dialogueLines = m_DialogStrings.
         int DialogLength = StringToDisplay.Length;
-        DialogTextUI.text = "";
-
+        tempDialogue = "";
+        DialogueHandler.SetDialogueText(tempDialogue);
         while (m_CurrentCharacter < DialogLength)
         {
-            DialogTextUI.text += StringToDisplay[m_CurrentCharacter];
+            tempDialogue += StringToDisplay[m_CurrentCharacter];
+            DialogueHandler.SetDialogueText(tempDialogue);
+
             m_CurrentCharacter++;
             if (m_CurrentCharacter == DialogLength)
             {
-                if (m_DialogueLines > m_CurrentLine)
-                {
-                    m_LineFinished = true;
-                    Debug.Log("Line finished");
-                    m_WaitForInput = true;
-                }
-                else
+                if (m_DialogueLines - 1 == m_CurrentLine)
                 {
                     m_DialogueFinished = true;
                     m_WaitForInput = true;
                     Debug.Log("Conversation finished");
+                    DialogueHandler.SetEndIcon(true);
+                }
+                else
+                {
+                    m_LineFinished = true;
+                    m_WaitForInput = true;
+                    Debug.Log("Line finished");
+                    DialogueHandler.SetWaitIcon(true);
                 }
             }
 
@@ -168,6 +203,8 @@ public class NPC : MonoBehaviour {
         }
     }
 
+    public void SetDialogueWindow(bool state) { if (state) { DialogueHandler.SetDialogueWindow(true); } else { DialogueHandler.SetDialogueWindow(false); } }
+
     public bool GetIconOut() { return m_IconOut;  }
 
     public bool GetInteractable() { return m_Interactable; }
@@ -179,5 +216,7 @@ public class NPC : MonoBehaviour {
     public bool GetWaitForInput() { return m_WaitForInput; }
 
     public void SetConfirm(bool state) { if (state) { m_GotConfirm = true; } else { m_GotConfirm = false; } }
+    
+    public bool GetReleasePlayer() { return ReleasePlayer; }
 
 }

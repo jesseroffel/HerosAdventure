@@ -9,8 +9,14 @@ public class HandleDialogue : MonoBehaviour {
     public GameObject WaitNextLineIcon;
 
     public Text NamePlate;
+    public Text QuestPlate;
     public Text DialogueText;
+
     private string TextToDialogue;
+    private bool IconActive = false;
+    private bool EndIconActive = false;
+    private bool DownTime = false;
+    private float BlinkTime = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -19,12 +25,48 @@ public class HandleDialogue : MonoBehaviour {
         if (EndConversationIcon == null) { Debug.LogError("GameObject EndConversationIcon has reference!"); }
         if (WaitNextLineIcon == null) { Debug.LogError("GameObject WaitNextLineIcon has reference!"); }
         if (DialogueText == null) { Debug.LogError("Text DialogueText has reference!"); }
+        if (QuestPlate == null) { Debug.LogError("Text QuestPlate has reference!"); }
     }
 	
 	// Update is called once per frame
 	void Update () {
-	    
-	}
+        BlinkIcon();
+    }
+
+    public void BlinkIcon()
+    {
+        if (IconActive)
+        {
+            if (Time.time > BlinkTime)
+            {
+                BlinkTime = Time.time + 0.5f;
+                if (DownTime)
+                {
+                    DownTime = false;
+                    if (EndIconActive)
+                    {
+                        EndConversationIcon.SetActive(true);
+                    }
+                    else
+                    {
+                        WaitNextLineIcon.SetActive(true);
+                    }
+                }
+                else
+                {
+                    DownTime = true;
+                    if (EndIconActive)
+                    {
+                        EndConversationIcon.SetActive(false);
+                    }
+                    else
+                    {
+                        WaitNextLineIcon.SetActive(false);
+                    }
+                }
+            }
+        }
+    }
 
     public void SetDialogueText(string newstring)
     {
@@ -34,10 +76,18 @@ public class HandleDialogue : MonoBehaviour {
 
     public void SetDialogueName(string newstring) { NamePlate.text = TextToDialogue; }
 
-    void SetDialogueWindow(bool state) { if (state) { DialogueWindow.SetActive(true); } else { DialogueWindow.SetActive(false); } }
+    public void SetQuestName(string newstring) { QuestPlate.text = TextToDialogue; }
+    
 
-    void SetWaitIcon(bool state) { if (state) { WaitNextLineIcon.SetActive(true); } else { WaitNextLineIcon.SetActive(false); } }
+    public void SetDialogueWindow(bool state) { if (state) { DialogueWindow.SetActive(true); } else { DialogueWindow.SetActive(false); } }
 
-    void SetEndIcon(bool state) { if (state) { WaitNextLineIcon.SetActive(true); } else { WaitNextLineIcon.SetActive(false); } }
+    public void SetWaitIcon(bool state) {
+        if (state) { WaitNextLineIcon.SetActive(true); IconActive = true; } else { WaitNextLineIcon.SetActive(false); IconActive = false; }
+    }
+
+    public void SetEndIcon(bool state) {
+        if (state) { EndConversationIcon.SetActive(true); IconActive = true; EndIconActive = true;  }
+        else { EndConversationIcon.SetActive(false); IconActive = false; EndIconActive = false; }
+    }
 
 }
