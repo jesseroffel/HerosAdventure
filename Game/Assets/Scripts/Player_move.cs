@@ -111,6 +111,13 @@ public class Player_move : MonoBehaviour
                     Debug.Log("Enter dialogue");
                 }
             }
+            if (lastnpc.GetComponent<NPC>().GetWaitForInput() == true)
+            {
+                if (CrossPlatformInputManager.GetButton("Fire1"))
+                {
+                    lastnpc.GetComponent<NPC>().SetConfirm(true);
+                }
+            }
         }
     }
 }
