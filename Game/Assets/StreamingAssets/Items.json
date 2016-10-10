@@ -1,0 +1,28 @@
+[
+	{
+		"id": 0,
+		"title": "bronze sword",
+		"value": 6,
+		"stats":{
+			"attack": 1,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "a sword forged from cheap metals",
+		"stackable": false,
+		"slug": "bronze_sword"
+	},
+	{
+		"id": 1,
+		"title": "steel sword",
+		"value": 112,
+		"stats":{
+			"attack": 5,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "a sword forged from strong metals",
+		"stackable": true,
+		"slug": "steel_sword"
+	}
+]
