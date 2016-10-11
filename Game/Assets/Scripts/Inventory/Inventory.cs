@@ -31,10 +31,10 @@ public class Inventory : MonoBehaviour
             slots[i].transform.SetParent(slotPanel.transform);
         }
 
-        AddItem(1);
         AddItem(0);
         AddItem(1);
-        AddItem(1);
+        AddItem(0);
+        AddItem(0);
     }
 
     public void AddItem(int id)
@@ -55,5 +55,31 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+
+    void RemoveItem(int id)
+    {
+        Item itemToRemove = database.FetchItemByID(id);
+        for(int i =0; i < items.Count; i++)
+        {
+            
+        }
+
+    }
+
+    bool InventoryContains(int id)
+	{
+            bool result = false;
+            for (int i = 0; i < items.Count; i++)
+            {
+                result = items[i].ID == id;
+                if (result)
+                {
+                    break;
+                }
+            }
+
+        return result;
+     }
+    
 
 }

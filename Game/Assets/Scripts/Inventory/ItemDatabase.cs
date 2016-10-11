@@ -23,6 +23,11 @@ public class ItemDatabase : MonoBehaviour
         {
             if (id == database[i].ID)
             {
+
+
+
+
+
                 return database[i];
             }
         }
