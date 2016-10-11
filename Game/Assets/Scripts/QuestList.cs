@@ -1,11 +1,17 @@
-﻿using UnityEngine;
+﻿using LitJson;
+using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 
 public class QuestList : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
+    private List<QuestInformation> Quests = new List<QuestInformation>();
+    private JsonData QuestData;
+
+    // Use this for initialization
+    void Start () {
+	    
 	}
 	
 	// Update is called once per frame
