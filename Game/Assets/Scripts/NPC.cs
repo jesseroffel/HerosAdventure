@@ -14,7 +14,7 @@ public class NPC : MonoBehaviour {
     public string m_npcName = "";
     public int m_NPCID = 0;            // NPC ID
     public int m_INFOID = 0;           // NPC Information from DB with ID
-    private bool m_Sex = true;          // true = male, false = female
+    private bool m_Sex = true;         // true = male, false = female
     private bool m_Moving = false;
     private bool m_Interactable = true;
     private bool m_StartedTalk = false;
@@ -26,10 +26,12 @@ public class NPC : MonoBehaviour {
     private bool m_QuestAssosiated = false;
     private bool m_QuestStarter = false;
     private bool m_QuestCompleted = false;
-
+    
 
     //Dialog
-    public string[] m_DialogStrings;
+    public string[] m_Dialogue;
+    private string m_QuestDeny;
+    private string m_QuestGiven;
     private string tempDialogue;
 
     private float TimeBetweenCharacter = 0.05f;
@@ -88,8 +90,8 @@ public class NPC : MonoBehaviour {
             if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
             if (!m_SayingDialog)
             {
-                m_DialogueLines = m_DialogStrings.Length;
-                if (m_DialogueLines > 0 && m_DialogStrings[0].Length > 1)
+                m_DialogueLines = m_Dialogue.Length;
+                if (m_DialogueLines > 0 && m_Dialogue[0].Length > 1)
                 {
                     Debug.Log("Displaying dialogue from npc " + m_npcName + "..");
                     ReleasePlayer = false;
@@ -98,7 +100,7 @@ public class NPC : MonoBehaviour {
                     DialogueHandler.SetDialogueName(m_npcName);
                     DialogueHandler.SetQuestName(m_QuestTitle);
                     DialogueHandler.SetDialogueWindow(true);
-                    StartCoroutine(DisplayDialog(m_DialogStrings[m_CurrentLine]));
+                    StartCoroutine(DisplayDialog(m_Dialogue[m_CurrentLine]));
                 }
                 else
                 {
@@ -117,7 +119,7 @@ public class NPC : MonoBehaviour {
                 if (m_DialogueLines > m_CurrentLine)
                 {
                     m_CurrentLine++;
-                    StartCoroutine(DisplayDialog(m_DialogStrings[m_CurrentLine]));
+                    StartCoroutine(DisplayDialog(m_Dialogue[m_CurrentLine]));
                 }
                 
             }
