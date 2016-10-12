@@ -15,8 +15,8 @@ public class PickUp : MonoBehaviour
     {
         if(col.tag == "Player")
         {
-            inventory.AddItem(itemId);
-
+            //inventory.AddItem(itemId);
+            GameObject.Find("Inventory").GetComponent<Inventory>().AddItem(itemId);
             Destroy(this.gameObject);
         }
     }
