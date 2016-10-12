@@ -1,0 +1,16 @@
+[
+	{
+		"id": 0,
+		"title": "bronze sword",
+		"questtypes":{
+			"type": 0,
+			"type": 2,
+		},
+		"starter": false,
+		"progresser": false,
+		"completer": false,
+		"description": "a sword forged from cheap metals",
+		"stackable": false,
+		"slug": "bronze_sword"
+	},
+]
