@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
-public class Slot : MonoBehaviour, IDropHandler
+public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 {
     public int id;
     private Inventory inv;
@@ -37,6 +37,17 @@ public class Slot : MonoBehaviour, IDropHandler
 
             inv.items[droppedItem.slotID] = item.GetComponent<ItemData>().item;
             inv.items[id] = droppedItem.item;
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(eventData.button == PointerEventData.InputButton.Right)
+        {
+            if(inv.items[id].Stackable)
+            {
+                inv.UseConsumable(id);
+            }
         }
     }
 }

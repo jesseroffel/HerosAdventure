@@ -81,7 +81,12 @@ public class Inventory : MonoBehaviour
 
     }
 
-    void RemoveItem(int id)
+    public void UseConsumable(int id)
+    {
+        RemoveItem(id);
+    }
+
+    public void RemoveItem(int id)
     {
         Item itemToRemove = database.FetchItemByID(id);
         for(int i =0; i < items.Count; i++)
@@ -91,7 +96,7 @@ public class Inventory : MonoBehaviour
 
     }
 
-    bool InventoryContains(int id)
+    public bool InventoryContains(int id)
 	{
             bool result = false;
             for (int i = 0; i < items.Count; i++)
@@ -107,7 +112,7 @@ public class Inventory : MonoBehaviour
      }
     
 
-    bool ItemInInventory(Item item)
+    public bool ItemInInventory(Item item)
     {
         for(int i =0; i< items.Count; i++)
         {
