@@ -1,0 +1,76 @@
+[
+	{
+		"id": 1,
+		"title": "TEST QUEST",
+		"questtypes":{
+			"type": 0,
+			"type": 2
+		},
+		"starter": true,
+		"progresser": false,
+		"completer": true,
+		"totalprogressions": 1,
+		"progressionquestid": 0,
+		"questunlocks":{
+			"id": 2,
+			"id": 3
+		},
+		"requiresquestunlock": false,
+		"requiredquestid":{
+		},
+		"requireskill": false,
+		"requireskillamount":{
+		},
+		"requiresenemyid":{
+		},
+		"requiresitem": false,
+		"requiresitemid":{
+		},
+		"questdialogue":{
+			"text":	"OI WATDDUP BOI"
+		},
+		"questdeny": "nee",
+		"questgiven": "given",
+		"questcompletion": "Congratz lad",
+		"questafterword": "afterword"
+	},
+	{
+		"id": 2,
+		"title": "TEST 2 QUEST",
+		"questtypes":{
+			"type": 0,
+			"type": 2
+		},
+		"starter": true,
+		"progresser": false,
+		"completer": true,
+		"totalprogressions": 1,
+		"progressionquestid": 0,
+		"questunlocks":{
+			"id": 2,
+			"id": 3
+		},
+		"requiresquestunlock": true,
+		"requiredquestid":{
+			"id": 1
+		},
+		"requireskill": true,
+		"requireskillamount":{
+			"amount": 10
+		},
+		"requiresenemyid":{
+			"id": 2
+		},
+		"requiresitem": false,
+		"requiresitemid":{
+			"id": 3
+		},
+		"questdialogue":{
+			"text":	"OI WATDDUP BOI"
+		},
+		"questdeny": "nee",
+		"questgiven": "given",
+		"questcompletion": "Congratz lad",
+		"questafterword": "afterword"
+	}
+]
