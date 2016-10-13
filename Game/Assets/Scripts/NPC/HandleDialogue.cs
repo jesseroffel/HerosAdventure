@@ -18,6 +18,9 @@ public class HandleDialogue : MonoBehaviour {
     private bool DownTime = false;
     private float BlinkTime = 0.0f;
 
+    private bool QuestIcon = false;
+    private bool QuestOver = false;
+
 	// Use this for initialization
 	void Start () {
         if (DialogueWindow == null) { Debug.LogError("GameObject DialogueWindow has reference!"); }
@@ -90,4 +93,9 @@ public class HandleDialogue : MonoBehaviour {
         else { EndConversationIcon.SetActive(false); IconActive = false; EndIconActive = false; }
     }
 
+    public void SetQuestIcon(bool state)
+    {
+        if (state) { QuestIcon = true; }
+        else { QuestIcon = false; }
+    }
 }

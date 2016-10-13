@@ -70,8 +70,10 @@ public class QuestInformation : MonoBehaviour {
     {
         m_QuestID = id;
         m_QuestTitle = questtitle;
-        Debug.Log("ID: " + m_QuestID + " m_QuestTitle: " + m_QuestTitle);
-        int QTC = questtype.Length; for (int i = 0; i < QTC; i++) { m_QuestType[QTC] = questtype[QTC]; Debug.Log("Questtype nr." + QTC + " : " +m_QuestType[QTC]); }
+
+        int QTC = questtype.Length;
+        m_QuestType = new int[QTC];
+        for (int i = 0; i < QTC; i++) { m_QuestType[i] = questtype[i]; }
         
         m_QuestStarter = queststarter;
         m_QuestProgresser = questprogresser;
@@ -79,17 +81,36 @@ public class QuestInformation : MonoBehaviour {
         m_QuestProgressionState = 0;
         m_QuestTotalProgressions = questtotalprogressions;
         m_ProgressionQuestID = progresionquestid;
-        int QUC = questunlocks.Length; for (int i = 0; i < QUC; i++) { m_QuestUnlocks[QUC] = questunlocks[QUC]; }
+
+        int QUC = questunlocks.Length;
+        m_QuestUnlocks = new int[QUC];
+        for (int i = 0; i < QUC; i++) { m_QuestUnlocks[i] = questunlocks[i]; }
 
         m_RequiresQuestUnlock = requiresquestunlock;
-        int RQUC = requiredquestid.Length; for (int i = 0; i < RQUC; i++) { m_RequiredQuestID[RQUC] = requiredquestid[RQUC]; }
-        m_RequiresKill = requireskill;
-        int RKAC = requireskillamount.Length; for (int i = 0; i < RKAC; i++) { m_RequiresKillAmount[RKAC] = requireskillamount[RKAC]; }
-        int REIC = requiredenemyid.Length; for (int i = 0; i < REIC; i++) { m_RequiredEnemyID[REIC] = requiredenemyid[REIC]; }
-        m_RequiresItem = requiresitem;
-        int RIIC = requireditemid.Length; for (int i = 0; i < RIIC; i++) { m_RequiredItemID[RIIC] = requireditemid[RIIC]; }
 
-        int QDC = questdialogue.Length; for (int i = 0; i < QDC; i++) { m_QuestDialogue[QDC] = questdialogue[QDC]; }
+        int RQUC = requiredquestid.Length;
+        m_RequiredQuestID = new int[RQUC];
+        for (int i = 0; i < RQUC; i++) { m_RequiredQuestID[i] = requiredquestid[i]; }
+
+        m_RequiresKill = requireskill;
+        int RKAC = requireskillamount.Length;
+        m_RequiresKillAmount = new int[RKAC];
+        for (int i = 0; i < RKAC; i++) { m_RequiresKillAmount[i] = requireskillamount[i]; }
+
+        int REIC = requiredenemyid.Length;
+        m_RequiredEnemyID = new int[REIC];
+        for (int i = 0; i < REIC; i++) { m_RequiredEnemyID[i] = requiredenemyid[i]; }
+
+        m_RequiresItem = requiresitem;
+
+        int RIIC = requireditemid.Length;
+        m_RequiredItemID = new int[RIIC];
+        for (int i = 0; i < RIIC; i++) { m_RequiredItemID[i] = requireditemid[i]; }
+
+        int QDC = questdialogue.Length;
+        m_QuestDialogue = new string[QDC];
+        for (int i = 0; i < QDC; i++) { m_QuestDialogue[i] = questdialogue[i]; }
+
         m_QuestDenyDialogue = questdeny;
         m_QuestGivenDialogue = questgiven;
         m_QuestCompletionDialoge = questcomplete;

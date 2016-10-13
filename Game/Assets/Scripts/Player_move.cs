@@ -14,8 +14,9 @@ public class Player_move : MonoBehaviour
     float angle;
 
     Vector3 lastPosition;
-    private NPC lastnpc;
+    private NPCController lastnpc;
     private bool CanSpeakWithNPC = false;
+    private bool InteractingWithNPC = false;
     private bool InConversation = false;
 
     void Start()
@@ -83,12 +84,14 @@ public class Player_move : MonoBehaviour
         {
             if (collision.gameObject.tag == "NPC")
             {
-                lastnpc = collision.gameObject.GetComponent<NPC>() ;
+                lastnpc = collision.gameObject.GetComponent<NPCController>() ;
                 if (lastnpc.GetInteractable() && lastnpc.GetIconOut() == false)
                 {
                     lastnpc.SetIconVisibility(true);
                     CanSpeakWithNPC = true;
+                    
                 }
+                InteractingWithNPC = true;
             }
         }
 
@@ -130,6 +133,7 @@ public class Player_move : MonoBehaviour
                 lastnpc.SetReleasePlayer(false);
             }
         }
+        //if (InteractingWithNPC && ) MAKE INTERACTION DIALOGUE WITH IGNORING NPC
     }
 
     

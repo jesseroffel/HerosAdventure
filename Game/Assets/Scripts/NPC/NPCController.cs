@@ -3,25 +3,28 @@ using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 using System.Collections;
 
-public class NPC : MonoBehaviour {
+public class NPCController : MonoBehaviour {
 
     public GameObject Model;
     public GameObject SpeakIcon;
     private HandleDialogue DialogueHandler;
-
+    private NPCList npclist;
+    private QuestInformation currentquest;
 
     // NPC
+    public int m_npcID = 0;            // NPC ID
     public string m_npcName = "";
-    public int m_NPCID = 0;            // NPC ID
-    public int m_INFOID = 0;           // NPC Information from DB with ID
+    private int m_INFOID = 0;           // NPC Information from DB with ID
     private bool m_Sex = true;         // true = male, false = female
     private bool m_Moving = false;
     private bool m_Interactable = true;
     private bool m_StartedTalk = false;
 
+    private bool fetchnpcinformation = true;
+
     //Quest
     private string m_QuestTitle = "";
-    private int m_QuestID = 0;
+    public int m_QuestID = 0;
     private int m_QuestProgression = 0;
     private bool m_QuestAssosiated = false;
     private bool m_QuestStarter = false;
@@ -53,13 +56,33 @@ public class NPC : MonoBehaviour {
 
     private bool ReleasePlayer = false;
 
-
-    void SetNPCWithID(int id)
+    void Start()
     {
-        // array Npclistclass.getinformationfromid(id);
-        // m_name = array[0]
-        // sex array1
-           //etc
+        if (fetchnpcinformation) { SetNPCInformation(); }
+    }
+
+    void SetNPCInformation()
+    {
+        if (m_npcID != 0) {
+            if (npclist == null) { npclist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<NPCList>(); }
+            NPCObject obj = npclist.GetInformation(m_npcID);
+            if (obj == null)
+            {
+                Debug.Log("Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
+            } else
+            {
+                m_npcID = obj.m_NPCID;
+                m_Sex = obj.m_Sex;
+                m_Interactable = obj.m_Interactable;
+                m_Dialogue = obj.m_Dialogue;
+                m_QuestID = obj.m_QuestID;
+                m_npcName = obj.m_Name;
+                Debug.Log("Loaded NPC " + m_npcName + " with ID: " + m_npcID);
+            }
+        } else
+        {
+            Debug.Log("No NPC ID found for GameObject: " + gameObject.name);
+        }
     }
 
     // Update is called once per frame
@@ -104,7 +127,7 @@ public class NPC : MonoBehaviour {
                 }
                 else
                 {
-                    Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines");
+                    Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines!!");
                     m_StartedTalk = false;
                 }
             }
@@ -126,6 +149,10 @@ public class NPC : MonoBehaviour {
             if (m_DialogueFinished && m_GotConfirm)
             {
                 ResetDialogue();
+                if (m_QuestID != 0)
+                {
+                    // activate quest
+                }
             }
         }
     } 

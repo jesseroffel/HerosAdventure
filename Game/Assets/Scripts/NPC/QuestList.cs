@@ -5,40 +5,55 @@ using System.Collections;
 using System.IO;
 
 public class QuestList : MonoBehaviour {
-    private int QuestID = 0;
-
+    public int QuestCount = 0;
     private List<QuestInformation> DatabaseQuests = new List<QuestInformation>();
-    private JsonData QuestData;
-
-    
-
-
-    // Use this for initialization
     void Start () {
 
-        QuestData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Quests.json"));
-        Debug.Log("'a'");
-        ConstructQuestDatabase();
-        
+        //QuestData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Quests.json"));
+        //ConstructQuestDatabase();
+        DatabaseQuests.Add(new QuestInformation(
+            DatabaseQuests.Count+1,
+            "Test quest",
+            new int[] { 0, 2 },
+            true,
+            false,
+            true,
+            1,
+            0,
+            new int[] { 0, 2 },
+            false,
+            new int[] { },
+            false,
+            new int[] { },
+            new int[] { },
+            false,
+            new int[] { },
+            new string[] { "AAAA", "BBBB", "CCCC!" },
+            "Deny",
+            "given",
+            "complete",
+            "Afterword"
+        ));
+        QuestCount = DatabaseQuests.Count;
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
-    void ConstructQuestDatabase()
+    void Update()
+    {
+        //Debug.Log(DatabaseQuests);
+    }
+
+    /*void ConstructQuestDatabase()
     {
         for (int i = 0; i < QuestData.Count; i++)
         {
+            QuestData[i]["questtypes"]
             List<int> questtypeslist = new List<int>();
-            questtypeslist.Add((int)QuestData[i]["questtype"]["type"]);
-            Debug.Log("B");
-
-            /*DatabaseQuests.Add(new QuestInformation(
+            //questtypeslist.AddRange((int)QuestData[i]["questtypes"]);
+            
+            DatabaseQuests.Add(new QuestInformation(
                 (int)QuestData[i]["id"],
                 (string)QuestData[i]["title"],
-                (int)QuestData[i]["questtype"]["type"],
+                (int)QuestData[i]["questtype"],
                 (bool)QuestData[i]["queststarter"],
                 (bool)QuestData[i]["questprogresser"],
                 (bool)QuestData[i]["questcompleter"],
@@ -59,7 +74,6 @@ public class QuestList : MonoBehaviour {
                 (string)QuestData[i]["afterword"]
 
                 ));
-            */
-        }
-    }
+            
+    }*/
 }
