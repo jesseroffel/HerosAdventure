@@ -66,17 +66,21 @@ public class QuestInformation : MonoBehaviour {
         m_QuestID = 0;
     }
 
-    public QuestInformation(int id, string questtitle, int[] questtype, bool queststarter, bool questprogresser, bool questcompleter, int questprogressionstate, int questtotalprogressions, int progresionquestid, bool requiresquestunlock, int[] requiredquestid, bool requireskill, int[] requireskillamount, int[] requiredenemyid, bool requiresitem, int[] requireditemid, string[] questdialogue, string questdeny, string questgiven, string questcomplete, string afterword)
+    public QuestInformation(int id, string questtitle, int[] questtype, bool queststarter, bool questprogresser, bool questcompleter, int questtotalprogressions, int progresionquestid, int[] questunlocks, bool requiresquestunlock, int[] requiredquestid, bool requireskill, int[] requireskillamount, int[] requiredenemyid, bool requiresitem, int[] requireditemid, string[] questdialogue, string questdeny, string questgiven, string questcomplete, string afterword)
     {
         m_QuestID = id;
         m_QuestTitle = questtitle;
-        int QTC = questtype.Length; for (int i = 0; i < QTC; i++) { m_QuestType[QTC] = questtype[QTC]; }
+        Debug.Log("ID: " + m_QuestID + " m_QuestTitle: " + m_QuestTitle);
+        int QTC = questtype.Length; for (int i = 0; i < QTC; i++) { m_QuestType[QTC] = questtype[QTC]; Debug.Log("Questtype nr." + QTC + " : " +m_QuestType[QTC]); }
+        
         m_QuestStarter = queststarter;
         m_QuestProgresser = questprogresser;
         m_QuestCompleter = questcompleter;
-        m_QuestProgressionState = questprogressionstate;
+        m_QuestProgressionState = 0;
         m_QuestTotalProgressions = questtotalprogressions;
         m_ProgressionQuestID = progresionquestid;
+        int QUC = questunlocks.Length; for (int i = 0; i < QUC; i++) { m_QuestUnlocks[QUC] = questunlocks[QUC]; }
+
         m_RequiresQuestUnlock = requiresquestunlock;
         int RQUC = requiredquestid.Length; for (int i = 0; i < RQUC; i++) { m_RequiredQuestID[RQUC] = requiredquestid[RQUC]; }
         m_RequiresKill = requireskill;
@@ -91,7 +95,8 @@ public class QuestInformation : MonoBehaviour {
         m_QuestCompletionDialoge = questcomplete;
         m_QuestAfterwordDialogue = afterword;
 
-        // queststarted
+        m_QuestStarted = false;
+        m_QuestCompleted = false;
         // questcompleted
 
     }

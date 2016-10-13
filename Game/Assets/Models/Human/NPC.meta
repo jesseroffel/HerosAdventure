@@ -1,7 +1,11 @@
 fileFormatVersion: 2
 guid: 109089584549c114aa3f3bf6c02ea44e
 folderAsset: yes
+<<<<<<< HEAD:Game/Assets/Models/Human/NPC.meta
 timeCreated: 1476350379
+=======
+timeCreated: 1476347609
+>>>>>>> e63b954ab3e343b71a6cca5057e9c76ead81de6d:Game/Assets/Models/Human/NPC.meta
 licenseType: Free
 DefaultImporter:
   userData: 
