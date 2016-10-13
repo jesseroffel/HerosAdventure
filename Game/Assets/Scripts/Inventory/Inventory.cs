@@ -36,6 +36,16 @@ public class Inventory : MonoBehaviour
         AddItem(1);
         AddItem(2);
 
+        
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            inventoryPanel.SetActive(!inventoryPanel.active);
+        }
+        AddItem(1);
     }
 
     public void AddItem(int id)
@@ -67,6 +77,7 @@ public class Inventory : MonoBehaviour
                     itemObj.GetComponent<ItemData>().slotID = i;
                     itemObj.transform.SetParent(slots[i].transform);
                     itemObj.transform.position = slots[i].transform.position;
+                    
                     itemObj.GetComponent<Image>().sprite = itemToAdd.Sprite;
                     
                     itemObj.name = itemToAdd.Title;
