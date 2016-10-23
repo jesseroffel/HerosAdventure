@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class QuestInformation : MonoBehaviour {
+public class QuestObject  {
 
-    private int m_QuestID { get; set; }
-    private string m_QuestTitle { get; set; }
+    public int m_QuestID { get; set; }
+    public string m_QuestTitle { get; set; }
 
     private int[] m_QuestType { get; set; }                     // Quest type (multiple allowed) 
     private bool m_QuestStarter { get; set; }                   // if true this quest will start the questline or just itself
@@ -28,7 +28,7 @@ public class QuestInformation : MonoBehaviour {
     private bool m_RequiresItem { get; set; }
     private int[] m_RequiredItemID { get; set; }
 
-    private string[] m_QuestDialogue { get; set; }              // dialogue given when taking about the quest       (multiple allowed) 
+    public string[] m_QuestDialogue { get; set; }              // dialogue given when taking about the quest       (multiple allowed) 
     private string m_QuestDenyDialogue { get; set; }            // dialogue given when quest requirements are not met
     private string m_QuestGivenDialogue { get; set; }           // dialogue given when quest is already accepted
     private string m_QuestCompletionDialoge { get; set; }       // dialogue given when quest is being completed
@@ -60,13 +60,13 @@ public class QuestInformation : MonoBehaviour {
         ProgresserComplete,
     }
 
-    public QuestInformation()
+    public QuestObject()
     {
         m_QuestTitle = "NO TITLE";
         m_QuestID = 0;
     }
 
-    public QuestInformation(int id, string questtitle, int[] questtype, bool queststarter, bool questprogresser, bool questcompleter, int questtotalprogressions, int progresionquestid, int[] questunlocks, bool requiresquestunlock, int[] requiredquestid, bool requireskill, int[] requireskillamount, int[] requiredenemyid, bool requiresitem, int[] requireditemid, string[] questdialogue, string questdeny, string questgiven, string questcomplete, string afterword)
+    public QuestObject(int id, string questtitle, int[] questtype, bool queststarter, bool questprogresser, bool questcompleter, int questtotalprogressions, int progresionquestid, int[] questunlocks, bool requiresquestunlock, int[] requiredquestid, bool requireskill, int[] requireskillamount, int[] requiredenemyid, bool requiresitem, int[] requireditemid, string[] questdialogue, string questdeny, string questgiven, string questcomplete, string afterword)
     {
         m_QuestID = id;
         m_QuestTitle = questtitle;

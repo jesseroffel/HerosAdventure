@@ -9,7 +9,8 @@ public class NPCController : MonoBehaviour {
     public GameObject SpeakIcon;
     private HandleDialogue DialogueHandler;
     private NPCList npclist;
-    private QuestInformation currentquest;
+    private QuestList questlist;
+    private QuestObject currentquest;
 
     // NPC
     public int m_npcID = 0;            // NPC ID
@@ -63,26 +64,8 @@ public class NPCController : MonoBehaviour {
 
     void SetNPCInformation()
     {
-        if (m_npcID != 0) {
-            if (npclist == null) { npclist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<NPCList>(); }
-            NPCObject obj = npclist.GetInformation(m_npcID);
-            if (obj == null)
-            {
-                Debug.Log("Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
-            } else
-            {
-                m_npcID = obj.m_NPCID;
-                m_Sex = obj.m_Sex;
-                m_Interactable = obj.m_Interactable;
-                m_Dialogue = obj.m_Dialogue;
-                m_QuestID = obj.m_QuestID;
-                m_npcName = obj.m_Name;
-                Debug.Log("Loaded NPC " + m_npcName + " with ID: " + m_npcID);
-            }
-        } else
-        {
-            Debug.Log("No NPC ID found for GameObject: " + gameObject.name);
-        }
+        GetNPCInfo();
+        GetQuestInformation();
     }
 
     // Update is called once per frame
@@ -113,23 +96,32 @@ public class NPCController : MonoBehaviour {
             if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
             if (!m_SayingDialog)
             {
-                m_DialogueLines = m_Dialogue.Length;
-                if (m_DialogueLines > 0 && m_Dialogue[0].Length > 1)
+                if (m_Dialogue != null)
                 {
-                    Debug.Log("Displaying dialogue from npc " + m_npcName + "..");
-                    ReleasePlayer = false;
-                    m_SayingDialog = true;
-                    SetIconVisibility(false);
-                    DialogueHandler.SetDialogueName(m_npcName);
-                    DialogueHandler.SetQuestName(m_QuestTitle);
-                    DialogueHandler.SetDialogueWindow(true);
-                    StartCoroutine(DisplayDialog(m_Dialogue[m_CurrentLine]));
+                    m_DialogueLines = m_Dialogue.Length;
+                    if (m_DialogueLines > 0 && m_Dialogue[0].Length > 1)
+                    {
+                        Debug.Log("Displaying dialogue from npc " + m_npcName + "..");
+                        ReleasePlayer = false;
+                        m_SayingDialog = true;
+                        SetIconVisibility(false);
+                        DialogueHandler.SetDialogueName(m_npcName);
+                        DialogueHandler.SetQuestName(m_QuestTitle);
+                        DialogueHandler.SetDialogueWindow(true);
+                        StartCoroutine(DisplayDialog(m_Dialogue[m_CurrentLine]));
+                    }
+                    else
+                    {
+                        Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines!!");
+                        m_StartedTalk = false;
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines!!");
+                    Debug.LogError("NPC: " + m_npcName + "'s m_Dialogue is null!!");
                     m_StartedTalk = false;
                 }
+                
             }
 
             if (m_WaitForInput && m_GotConfirm && m_DialogueFinished == false)
@@ -195,6 +187,55 @@ public class NPCController : MonoBehaviour {
             {
                 break;
             }
+        }
+    }
+
+    private void GetNPCInfo()
+    {
+        if (m_npcID != 0)
+        {
+            if (npclist == null) { npclist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<NPCList>(); }
+            NPCObject obj = npclist.GetInformation(m_npcID);
+            if (obj == null)
+            {
+                Debug.Log("Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
+            }
+            else
+            {
+                m_npcID = obj.m_NPCID;
+                m_Sex = obj.m_Sex;
+                m_Interactable = obj.m_Interactable;
+                m_Dialogue = obj.m_Dialogue;
+                m_QuestID = obj.m_QuestID;
+                m_npcName = obj.m_Name;
+                Debug.Log("Loaded NPC " + m_npcName + " with ID: " + m_npcID);
+            }
+        }
+        else
+        {
+            Debug.Log("No valid NPC ID for Game Object: " + gameObject.name);
+        }
+    }
+
+    private void GetQuestInformation()
+    {
+        if (m_QuestID != 0)
+        {
+            if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
+            currentquest = questlist.GetInformation(m_QuestID);
+            if (currentquest != null)
+            {
+
+                m_QuestID = currentquest.m_QuestID;
+                m_QuestTitle = currentquest.m_QuestTitle;
+                m_Dialogue = currentquest.m_QuestDialogue;
+                Debug.Log("Loaded NPC " + m_npcName + " with Quest ID: " + m_npcID);
+            }
+            else
+            {
+                Debug.Log("Couldn't load Quest for NPC " + gameObject.name + " with ID: " + m_QuestID);
+            }
+
         }
     }
 
