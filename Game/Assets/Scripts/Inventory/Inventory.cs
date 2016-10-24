@@ -89,7 +89,6 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
-
     }
 
     public void UseConsumable(int id)

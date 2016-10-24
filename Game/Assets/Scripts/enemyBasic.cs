@@ -9,12 +9,6 @@ public class enemyBasic : MonoBehaviour
     public float attackDist;
     public float speed;
     public float damping;
-
-	// Use this for initialization
-	void Start ()
-    {
-	
-	}
 	
 	// Update is called once per frame
 	void Update ()
