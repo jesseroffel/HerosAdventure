@@ -11,15 +11,15 @@ public class QuestObject  {
     private bool m_QuestProgresser { get; set; }                // if true this quest will progress into another quest
     private bool m_QuestCompleter { get; set; }                 // if true this quest will complete the questline or just itself
 
-    private bool m_QuestStarted { get; set; }                   // Quest started or not
-    private bool m_QuestCompleted { get; set; }                 // Quest complete or not
+    public bool m_QuestStarted { get; set; }                   // Quest started or not
+    public bool m_QuestCompleted { get; set; }                 // Quest complete or not
     private int m_QuestProgressionState { get; set; }           // current state
     private int m_QuestTotalProgressions { get; set; }          // total stats of quest                    // Current state of quest
     private int m_ProgressionQuestID { get; set; }              // the quest will transform to this ID as followup
     private int[] m_QuestUnlocks { get; set; }                  // Completing this quest will unlock quest(s)   (multiple allowed) 
 
-    private bool m_RequiresQuestUnlock { get; set; }            // This quest wont start without quest(s) completed if true
-    private int[] m_RequiredQuestID { get; set; }               // this quest(s) need to be completed to start this one (multiple allowed) 
+    public bool m_RequiresQuestUnlock { get; set; }            // This quest wont start without quest(s) completed if true
+    public int[] m_RequiredQuestID { get; set; }               // this quest(s) need to be completed to start this one (multiple allowed) 
 
     private bool m_RequiresKill { get; set; }
     private int[] m_RequiresKillAmount { get; set; }
@@ -28,11 +28,13 @@ public class QuestObject  {
     private bool m_RequiresItem { get; set; }
     private int[] m_RequiredItemID { get; set; }
 
+    public bool m_QuestRequirementsMet { get; set; }
+
     public string[] m_QuestDialogue { get; set; }              // dialogue given when taking about the quest       (multiple allowed) 
-    private string m_QuestDenyDialogue { get; set; }            // dialogue given when quest requirements are not met
-    private string m_QuestGivenDialogue { get; set; }           // dialogue given when quest is already accepted
-    private string m_QuestCompletionDialoge { get; set; }       // dialogue given when quest is being completed
-    private string m_QuestAfterwordDialogue { get; set; }       // doalogue given after quest is completed (after word)
+    public string m_QuestDenyDialogue { get; set; }            // dialogue given when quest requirements are not met
+    public string m_QuestGivenDialogue { get; set; }           // dialogue given when quest is already accepted
+    public string m_QuestCompletionDialoge { get; set; }       // dialogue given when quest is being completed
+    public string m_QuestAfterwordDialogue { get; set; }       // doalogue given after quest is completed (after word)
 
     public enum QuestState
     {
@@ -118,6 +120,7 @@ public class QuestObject  {
 
         m_QuestStarted = false;
         m_QuestCompleted = false;
+        m_QuestRequirementsMet = false;
         // questcompleted
 
     }

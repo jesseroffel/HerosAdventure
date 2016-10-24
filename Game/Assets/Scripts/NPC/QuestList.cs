@@ -6,8 +6,10 @@ using System.IO;
 
 public class QuestList : MonoBehaviour {
     public int QuestCount = 0;
+    public int ActiveQuestCount = 0;
     public int LastAccessedQuest = 0;
     private List<QuestObject> DatabaseQuests = new List<QuestObject>();
+    private List<QuestObject> ActiveQuests = new List<QuestObject>();
 
     void Start () {
 
@@ -39,6 +41,18 @@ public class QuestList : MonoBehaviour {
         QuestCount = DatabaseQuests.Count;
     }
 
+    public bool CheckCompletedQuest(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                if (activequest.m_QuestCompleted) { return true; } else { return false; }
+            }
+        }
+        return false;
+    }
+
     public QuestObject GetInformation(int questid)
     {
     
@@ -52,6 +66,62 @@ public class QuestList : MonoBehaviour {
         }
         QuestObject obj = null;
         return obj;
+    }
+
+    public bool AddActiveQuest(int questid)
+    {
+        bool alreadyadded = false;
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                Debug.LogWarning("[QUEST] Quest Already added!?");
+                LastAccessedQuest = questid;
+                return true;
+            }
+        }
+        if (!alreadyadded)
+        {
+            foreach (QuestObject quest in DatabaseQuests)
+            {
+                if (quest.m_QuestID == questid)
+                {
+                    ActiveQuests.Add(quest);
+                    LastAccessedQuest = questid;
+                    ActiveQuestCount = ActiveQuests.Count;
+                    Debug.Log("[QUEST] Set Active Quest: " + quest.m_QuestID);
+                    return true;
+                }
+            }
+            
+        }
+        return false;
+    }
+
+    public bool FinishQuest(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                activequest.m_QuestCompleted = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool StartQuest(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                activequest.m_QuestStarted = true;
+                return true;
+            }
+        }
+        return false;
     }
 
     /*void ConstructQuestDatabase()

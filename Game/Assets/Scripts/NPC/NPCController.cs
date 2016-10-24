@@ -13,8 +13,8 @@ public class NPCController : MonoBehaviour {
     private QuestObject currentquest;
 
     // NPC
-    public int m_npcID = 0;            // NPC ID
     public string m_npcName = "";
+    public int m_npcID = 0;            // NPC ID
     private int m_INFOID = 0;           // NPC Information from DB with ID
     private bool m_Sex = true;         // true = male, false = female
     private bool m_Moving = false;
@@ -30,13 +30,17 @@ public class NPCController : MonoBehaviour {
     private bool m_QuestAssosiated = false;
     private bool m_QuestStarter = false;
     private bool m_QuestCompleted = false;
+    private bool m_QuestActivated = false;
     
 
     //Dialog
     public string[] m_Dialogue;
     private string m_QuestDeny;
     private string m_QuestGiven;
+    private string m_QuestCompletion;
+    private string m_QuestAfterword;
     private string tempDialogue;
+    private bool QuestText = false;
 
     private float TimeBetweenCharacter = 0.05f;
     private int m_DialogueLines = 0;
@@ -89,39 +93,80 @@ public class NPCController : MonoBehaviour {
         }
     }
 
+    private void ActivateQuest(int questid)
+    {
+        if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
+        bool added = questlist.AddActiveQuest(questid);
+        m_QuestActivated = true;
+    }
+
     private void HandleDialog()
     {
         if (m_StartedTalk)
         {
+            if (!m_QuestActivated) { ActivateQuest(m_QuestID); }
             if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
+
             if (!m_SayingDialog)
             {
-                if (m_Dialogue != null)
+                bool QuestCheck = false;
+                bool QuestNotReady = false;
+                bool QuestCompleting = false;
+                bool QuestCompleted = false;
+                bool QuestStarted = false;
+
+                if (m_QuestID > 0 && currentquest != null)
                 {
-                    m_DialogueLines = m_Dialogue.Length;
-                    if (m_DialogueLines > 0 && m_Dialogue[0].Length > 1)
+                    // Quest Requirements met?
+                    if (currentquest.m_RequiresQuestUnlock)
                     {
-                        Debug.Log("Displaying dialogue from npc " + m_npcName + "..");
-                        ReleasePlayer = false;
-                        m_SayingDialog = true;
-                        SetIconVisibility(false);
-                        DialogueHandler.SetDialogueName(m_npcName);
-                        DialogueHandler.SetQuestName(m_QuestTitle);
-                        DialogueHandler.SetDialogueWindow(true);
-                        StartCoroutine(DisplayDialog(m_Dialogue[m_CurrentLine]));
+                        int[] requiredquests = currentquest.m_RequiredQuestID;
+                        bool allcompleted = true;
+                        foreach (int questid in requiredquests)
+                        {
+                            bool check = questlist.CheckCompletedQuest(questid);
+                            if (!check) { allcompleted = false; break; }
+                        }
+                        if (!allcompleted) { QuestNotReady = true; QuestCheck = true; }
+                    }
+                    // Quest already started?
+                    if (currentquest.m_QuestStarted) { QuestStarted = true; QuestCheck = true; }
+                    // Quest completing text?
+                    if (currentquest.m_QuestRequirementsMet) { QuestCompleting = true; QuestCheck = true; }
+                    // Quest Completed?
+                    if (currentquest.m_QuestCompleted) { QuestCompleted = true; QuestCheck = true; }
+                }
+
+                if (QuestNotReady) { PrepareDialogue(m_QuestDeny); QuestText = true; }
+                if (QuestStarted) { PrepareDialogue(m_QuestGiven); QuestText = true; }
+                if (QuestCompleting) { PrepareDialogue(m_QuestCompletion); QuestText = true; }
+                if (QuestCompleted) { PrepareDialogue(m_QuestAfterword); QuestText = true; }
+
+                if (!QuestCheck)
+                {
+                    if (m_Dialogue != null)
+                    {
+                        m_DialogueLines = m_Dialogue.Length;
+                        if (m_DialogueLines > 0 && m_Dialogue[0].Length > 1)
+                        {
+                            PrepareDialogue(m_Dialogue[m_CurrentLine]);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("[NPC] " + m_npcName + " does not have any dialogue lines!!");
+                            m_StartedTalk = false;
+                            ReleasePlayer = true;
+                            m_Interactable = false;
+                        }
                     }
                     else
                     {
-                        Debug.LogWarning("NPC: " + m_npcName + " does not have any dialogue lines!!");
+                        Debug.LogError("[NPC] " + m_npcName + "'s m_Dialogue is null!!");
                         m_StartedTalk = false;
+                        m_Interactable = false;
+                        ReleasePlayer = true;
                     }
-                }
-                else
-                {
-                    Debug.LogError("NPC: " + m_npcName + "'s m_Dialogue is null!!");
-                    m_StartedTalk = false;
-                }
-                
+                } 
             }
 
             if (m_WaitForInput && m_GotConfirm && m_DialogueFinished == false)
@@ -149,9 +194,21 @@ public class NPCController : MonoBehaviour {
         }
     } 
 
+    private void PrepareDialogue(string text)
+    {
+        Debug.Log("[DIALOGUE] Started conversation wih NPC: " + m_npcName + "..");
+        ReleasePlayer = false;
+        m_SayingDialog = true;
+        SetIconVisibility(false);
+        DialogueHandler.SetDialogueName(m_npcName);
+        DialogueHandler.SetQuestName(m_QuestTitle);
+        DialogueHandler.SetDialogueWindow(true);
+        StartCoroutine(DisplayDialog(text));
+    }
+
     private IEnumerator DisplayDialog(string StringToDisplay)
     {
-        Debug.Log("Displaying: " + StringToDisplay);
+        Debug.Log("[DIALOGUE]: " + StringToDisplay);
         //int dialogueLines = m_DialogStrings.
         int DialogLength = StringToDisplay.Length;
         tempDialogue = "";
@@ -164,19 +221,34 @@ public class NPCController : MonoBehaviour {
             m_CurrentCharacter++;
             if (m_CurrentCharacter == DialogLength)
             {
-                if (m_DialogueLines - 1 == m_CurrentLine)
+                if (QuestText)
                 {
                     m_DialogueFinished = true;
                     m_WaitForInput = true;
-                    Debug.Log("Conversation finished, waiting for confirm..");
+                    QuestText = false;
                     DialogueHandler.SetEndIcon(true);
-                }
-                else
+                    Debug.Log("[DIALOGUE] Quest dialogue, waiting for confirm..");
+                } else
                 {
-                    m_LineFinished = true;
-                    m_WaitForInput = true;
-                    Debug.Log("Line finished, waiting for confirm..");
-                    DialogueHandler.SetWaitIcon(true);
+                    if (m_DialogueLines - 1 == m_CurrentLine)
+                    {
+                        m_DialogueFinished = true;
+                        m_WaitForInput = true;
+                        if (m_QuestID > 0)
+                        {
+                            currentquest.m_QuestStarted = true;
+                            questlist.StartQuest(m_QuestID);
+                        }
+                        Debug.Log("[DIALOGUE] Conversation finished, waiting for confirm..");
+                        DialogueHandler.SetEndIcon(true);
+                    }
+                    else
+                    {
+                        m_LineFinished = true;
+                        m_WaitForInput = true;
+                        Debug.Log("[DIALOGUE] Line finished, waiting for confirm..");
+                        DialogueHandler.SetWaitIcon(true);
+                    }
                 }
             }
 
@@ -198,22 +270,22 @@ public class NPCController : MonoBehaviour {
             NPCObject obj = npclist.GetInformation(m_npcID);
             if (obj == null)
             {
-                Debug.Log("Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
+                Debug.Log("[NPC] Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
             }
             else
             {
                 m_npcID = obj.m_NPCID;
                 m_Sex = obj.m_Sex;
-                m_Interactable = obj.m_Interactable;
-                m_Dialogue = obj.m_Dialogue;
-                m_QuestID = obj.m_QuestID;
                 m_npcName = obj.m_Name;
-                Debug.Log("Loaded NPC " + m_npcName + " with ID: " + m_npcID);
+                m_Interactable = obj.m_Interactable;
+                m_QuestID = obj.m_QuestID;
+                m_Dialogue = obj.m_Dialogue;
+                Debug.Log("[NPC] Loaded NPC " + m_npcName + " with ID: " + m_npcID);
             }
         }
         else
         {
-            Debug.Log("No valid NPC ID for Game Object: " + gameObject.name);
+            Debug.Log("[NPC] No valid NPC ID for Game Object: " + gameObject.name);
         }
     }
 
@@ -229,11 +301,15 @@ public class NPCController : MonoBehaviour {
                 m_QuestID = currentquest.m_QuestID;
                 m_QuestTitle = currentquest.m_QuestTitle;
                 m_Dialogue = currentquest.m_QuestDialogue;
-                Debug.Log("Loaded NPC " + m_npcName + " with Quest ID: " + m_npcID);
+                m_QuestDeny = currentquest.m_QuestDenyDialogue;
+                m_QuestGiven = currentquest.m_QuestGivenDialogue;
+                m_QuestCompletion = currentquest.m_QuestCompletionDialoge;
+                m_QuestAfterword = currentquest.m_QuestAfterwordDialogue;
+                Debug.Log("[QUEST] Loaded NPC " + m_npcName + " with Quest ID: " + m_npcID);
             }
             else
             {
-                Debug.Log("Couldn't load Quest for NPC " + gameObject.name + " with ID: " + m_QuestID);
+                Debug.Log("[QUEST] Couldn't load Quest for NPC " + gameObject.name + " with ID: " + m_QuestID);
             }
 
         }
