@@ -9,6 +9,7 @@ public class EnemyHP : MonoBehaviour {
     public Material thisMaterial;
     private Material OwnMaterial;
     public Color thisColor;
+    public QuestList questlist;
     public float currentHP;
     private float MaxHP;
     private bool defeated = false;
@@ -16,6 +17,7 @@ public class EnemyHP : MonoBehaviour {
     private float HitTime = 0;
     private int Type = 1;
     private float HitCoolDown = 0;
+    private bool Sendkill = false;
 
     // Use this for initialization
     void Start () {
@@ -58,6 +60,15 @@ public class EnemyHP : MonoBehaviour {
             if (currentHP < 0) { currentHP = 0; }
             Debug.Log(gameObject.name + " defeated, HP:  " + currentHP + "  D:     " + damage + "  MHP:  " + MaxHP);
             defeated = true;
+            // Notify Questlist of kill for quests
+            if (questlist == null)
+            {
+                GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>().RegisterKillID(Type);
+            }
+            else
+            {
+                questlist.RegisterKillID(Type);
+            }
             if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
         }
         isHit = true;

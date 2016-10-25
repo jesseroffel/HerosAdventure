@@ -27,6 +27,8 @@ public class CombatSystem : MonoBehaviour {
 
     private float AttackPower = 15.0f;
 
+    private Quaternion SwordRot = new Quaternion(50, 0, 0, 0);
+
     enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
 
     // Use this for initialization
@@ -116,9 +118,11 @@ public class CombatSystem : MonoBehaviour {
                 if (HandEmpty)
                 {
                     HandEmpty = false;
-                    Transform Sword = (Transform)Instantiate(SwordPrefab, HandPosition.position, HandPosition.rotation);
+                    Transform Sword = Instantiate(SwordPrefab);
+                    Sword.transform.position = HandPosition.position;
                     Sword.transform.parent = HandPosition;
-                    Debug.Log("Got Sword");
+                    //Sword.transform.localRotation = Quaternion.identity;
+                    Debug.Log("[PLAYER] Combat: Melee Mode");
                 }
                 break;
         }

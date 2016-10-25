@@ -15,12 +15,13 @@ public class FirstPersonControler : MonoBehaviour
     private bool InConversation = false;
 
     void Update() { 
-        if (CanMove && InConversation == false) {
+        if (CanMove) {
             float forward = Input.GetAxis("Vertical") * speed * Time.deltaTime;
             float sideward = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
 
             transform.Translate(sideward, 0, forward);
         }
+        CheckTalkInput();
     }
 
     void OnTriggerEnter(Collider collision)
@@ -62,9 +63,9 @@ public class FirstPersonControler : MonoBehaviour
             {
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
-                    lastnpc.SetStartedTalk(true);
                     CanMove = false;
                     InConversation = true;
+                    lastnpc.SetStartedTalk(true);
                 }
             }
             if (lastnpc.GetWaitForInput() == true)

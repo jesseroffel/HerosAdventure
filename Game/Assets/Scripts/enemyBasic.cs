@@ -10,20 +10,27 @@ public class enemyBasic : MonoBehaviour
     public float speed;
     public float damping;
 	
-	// Update is called once per frame
+	void Start()
+    {
+        if (target == null) { Debug.LogError("Enemy: " + gameObject.name + " has no Transform target!"); }
+    }
 	void Update ()
     {
-        distance = Vector3.Distance(target.position, transform.position);
-        
-        //Debug.Log(distance);
-        if(distance < lookDistance)
+        if (target)
         {
-            LookAt();
+            distance = Vector3.Distance(target.position, transform.position);
+
+            //Debug.Log(distance);
+            if (distance < lookDistance)
+            {
+                LookAt();
+            }
+            if (distance < attackDist)
+            {
+                Attack();
+            }
         }
-        if(distance < attackDist)
-        {
-            Attack();
-        }
+
 	}
 
     void LookAt()
