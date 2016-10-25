@@ -1,15 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
+    Text healthText;
+    float health = 100;
+
+	void Start ()
+    {
+        healthText = GameObject.Find("healthText").GetComponent<Text>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void OnTriggerEnter (Collider col)
+    {
+	    if(col.tag == "Enemy")
+        {
+            health -= 10;
+            healthText.text = "health: " + health.ToString(); 
+        }
 	}
 }

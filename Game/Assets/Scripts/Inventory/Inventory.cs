@@ -32,20 +32,19 @@ public class Inventory : MonoBehaviour
             slots[i].GetComponent<Slot>().id = i;
         }
 
-        AddItem(0);
         AddItem(1);
         AddItem(2);
 
-        
+        inventoryPanel.active = false;  
     }
 
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            inventoryPanel.SetActive(!inventoryPanel.active);
+            inventoryPanel.SetActive(!inventoryPanel.active);            
         }
-        AddItem(1);
+       // AddItem(1);
     }
 
     public void AddItem(int id)

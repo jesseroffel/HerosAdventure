@@ -5,10 +5,12 @@ public class FirstPersonControler : MonoBehaviour
 {
     public float speed;
 
+    Camera cam;
 
 	void Start ()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+    //    Cursor.lockState = CursorLockMode.Locked;
+     //   cam = GetComponentInChildren<Camera>();//GameObject.Find("Main camera").GetComponent<Camera>();
 	}
 	
 
@@ -18,5 +20,7 @@ public class FirstPersonControler : MonoBehaviour
         float sideward = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
 
         transform.Translate(sideward, 0, forward);
+
+
     }
 }
