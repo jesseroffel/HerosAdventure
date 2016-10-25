@@ -7,19 +7,12 @@ public class FirstPersonControler : MonoBehaviour
     public float speed;
     public bool CanMove;
 
-    Camera cam;
+    //Camera cam;
 
     private NPCController lastnpc;
     private bool CanSpeakWithNPC = false;
     private bool InteractingWithNPC = false;
     private bool InConversation = false;
-
-    void Start ()
-    {
-    //    Cursor.lockState = CursorLockMode.Locked;
-     //   cam = GetComponentInChildren<Camera>();//GameObject.Find("Main camera").GetComponent<Camera>();
-	}
-
 
     void Update() { 
         if (CanMove && InConversation == false) {
@@ -47,15 +40,18 @@ public class FirstPersonControler : MonoBehaviour
             }
         }
 
+
     }
 
     void OnTriggerExit(Collider collision)
     {
-        CanSpeakWithNPC = false;
-        lastnpc.SetIconVisibility(false);
-        lastnpc.SetStartedTalk(false);
-        //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
-
+        if(collision.tag == "NPC")
+        {
+            CanSpeakWithNPC = false;
+            lastnpc.SetIconVisibility(false);
+            lastnpc.SetStartedTalk(false);
+            //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
+        }
     }
 
     void CheckTalkInput()

@@ -1,0 +1,54 @@
+[
+	{
+		"id": 0,
+		"title": "bronze sword",
+		"value": 6,
+		"stats":{
+			"attack": 1,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "a sword forged from cheap metals",
+		"stackable": false,
+		"slug": "bronze_sword"
+	},
+	{
+		"id": 1,
+		"title": "steel sword",
+		"value": 112,
+		"stats":{
+			"attack": 5,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "a sword forged from strong metals",
+		"stackable": false,
+		"slug": "steel_sword"
+	},
+	{
+		"id": 2,
+		"title": "health potion",
+		"value": 50,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 20
+		},
+		"description": "a magic potion that can cure small cuts and bruises.",
+		"stackable": true,
+		"slug": "health_potion"
+	},
+	{
+		"id": 3,
+		"title": "mana potion",
+		"value": 50,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 20
+		},
+		"description": "a magic potion that can restore your magical energy.",
+		"stackable": true,
+		"slug": "mana_potion"
+	}
+]
