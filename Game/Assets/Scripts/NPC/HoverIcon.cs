@@ -5,8 +5,6 @@ public class PlayerIcon : MonoBehaviour {
     private bool IconMoveUp = true;
     private RectTransform RectT;
     private Camera cam;
-    private float yPos;
-	// Update is called once per frame
 
     
     void Start()

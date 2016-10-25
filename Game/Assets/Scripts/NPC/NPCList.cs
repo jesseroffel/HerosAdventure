@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class NPCList : MonoBehaviour {
-    public int NPCcount = 0;
+    public int NPCCount = 0;
     public int LastLoadedID = 0;
     private List<NPCObject> DatabaseNPCs = new List<NPCObject>();
 
@@ -11,7 +11,7 @@ public class NPCList : MonoBehaviour {
 	void Start () {
         DatabaseNPCs.Add(new NPCObject(
             DatabaseNPCs.Count + 1,         // ID
-            "Sir Test alot",                // NPC Name
+            "Sir Testalot",                // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
             0,
@@ -19,13 +19,21 @@ public class NPCList : MonoBehaviour {
         ));
         DatabaseNPCs.Add(new NPCObject(
             DatabaseNPCs.Count + 1,         // ID
-            "Sir Quest",                    // NPC Name
+            "Old Man",                    // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
             1,                               // QUEST ID
             new string[] { }
         ));
-        NPCcount = DatabaseNPCs.Count;
+        DatabaseNPCs.Add(new NPCObject(
+            DatabaseNPCs.Count + 1,         // ID
+            "Slime Hater",                    // NPC Name
+            true,                           // SEX
+            true,                           // INTERACTABLE
+            2,                               // QUEST ID
+            new string[] { }
+        ));
+        NPCCount = DatabaseNPCs.Count;
     }
     
     public NPCObject GetInformation(int npcid)

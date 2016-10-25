@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class QuestObject  {
+public class QuestObject {
 
     public int m_QuestID { get; set; }
     public string m_QuestTitle { get; set; }
@@ -21,12 +21,14 @@ public class QuestObject  {
     public bool m_RequiresQuestUnlock { get; set; }            // This quest wont start without quest(s) completed if true
     public int[] m_RequiredQuestID { get; set; }               // this quest(s) need to be completed to start this one (multiple allowed) 
 
-    private bool m_RequiresKill { get; set; }
-    private int[] m_RequiresKillAmount { get; set; }
-    private int[] m_RequiredEnemyID { get; set; }
+    public bool m_RequiresKill { get; set; }
+    public int[] m_RequiresKillAmount { get; set; }
+    public int[] m_CurrentKillAmount { get; set; }
+    public int[] m_RequiredEnemyID { get; set; }
 
-    private bool m_RequiresItem { get; set; }
-    private int[] m_RequiredItemID { get; set; }
+    public bool m_RequiresItem { get; set; }
+    public int[] m_RequiredItemID { get; set; }
+    public int[] m_CurrentItemID { get; set; }
 
     public bool m_QuestRequirementsMet { get; set; }
 
@@ -97,7 +99,8 @@ public class QuestObject  {
         m_RequiresKill = requireskill;
         int RKAC = requireskillamount.Length;
         m_RequiresKillAmount = new int[RKAC];
-        for (int i = 0; i < RKAC; i++) { m_RequiresKillAmount[i] = requireskillamount[i]; }
+        m_CurrentKillAmount = new int[RKAC];
+        for (int i = 0; i < RKAC; i++) { m_RequiresKillAmount[i] = requireskillamount[i]; m_CurrentKillAmount[i] = 0; }
 
         int REIC = requiredenemyid.Length;
         m_RequiredEnemyID = new int[REIC];
@@ -107,7 +110,8 @@ public class QuestObject  {
 
         int RIIC = requireditemid.Length;
         m_RequiredItemID = new int[RIIC];
-        for (int i = 0; i < RIIC; i++) { m_RequiredItemID[i] = requireditemid[i]; }
+        m_CurrentItemID = new int[RIIC];
+        for (int i = 0; i < RIIC; i++) { m_RequiredItemID[i] = requireditemid[i]; m_CurrentItemID[i] = 0; }
 
         int QDC = questdialogue.Length;
         m_QuestDialogue = new string[QDC];
@@ -122,6 +126,5 @@ public class QuestObject  {
         m_QuestCompleted = false;
         m_QuestRequirementsMet = false;
         // questcompleted
-
     }
 }

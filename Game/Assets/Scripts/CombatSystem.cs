@@ -3,7 +3,7 @@ using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
 public class CombatSystem : MonoBehaviour {
-    public Player_move playermovescript;
+    public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
     public Transform HitRegBlock;
     public Transform SwordPrefab;
@@ -34,7 +34,7 @@ public class CombatSystem : MonoBehaviour {
         //myTransform = gameObject.position;
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
-        if (playermovescript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
+        if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
         SwitchCombatStyle();
     }
 	
@@ -43,7 +43,7 @@ public class CombatSystem : MonoBehaviour {
 
 	    if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
         {
-            if (playermovescript.GetInConversation()) {
+            if (FirstPersonControlerScript.GetInConversation()) {
                 //Debug.Log("Conversation confirm, make animation of this!");
             } else
             {
@@ -98,7 +98,7 @@ public class CombatSystem : MonoBehaviour {
             {
                 Attacking = false;
                 AttackOrder = 0;
-                if (playermovescript) { playermovescript.CanMove = true; }
+                if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = true; }
             }
         }
     }
@@ -128,7 +128,7 @@ public class CombatSystem : MonoBehaviour {
     {
         NextAttack = Time.time + AttackBuildup;
         PrepareAttack = true;
-        if (playermovescript) { playermovescript.CanMove = false; }
+        if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
         //Set animation
         if (CombatState == 1)
         {

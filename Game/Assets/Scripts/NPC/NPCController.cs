@@ -7,6 +7,7 @@ public class NPCController : MonoBehaviour {
 
     public GameObject Model;
     public GameObject SpeakIcon;
+    public GameObject QuestIcon;
     private HandleDialogue DialogueHandler;
     private NPCList npclist;
     private QuestList questlist;
@@ -117,7 +118,7 @@ public class NPCController : MonoBehaviour {
 
                 if (m_QuestID > 0 && currentquest != null)
                 {
-                    // Quest Requirements met?
+                    // Quest Unlocks met?
                     if (currentquest.m_RequiresQuestUnlock)
                     {
                         int[] requiredquests = currentquest.m_RequiredQuestID;
@@ -129,18 +130,27 @@ public class NPCController : MonoBehaviour {
                         }
                         if (!allcompleted) { QuestNotReady = true; QuestCheck = true; }
                     }
-                    // Quest already started?
-                    if (currentquest.m_QuestStarted) { QuestStarted = true; QuestCheck = true; }
                     // Quest completing text?
                     if (currentquest.m_QuestRequirementsMet) { QuestCompleting = true; QuestCheck = true; }
                     // Quest Completed?
-                    if (currentquest.m_QuestCompleted) { QuestCompleted = true; QuestCheck = true; }
+                    if (currentquest.m_QuestCompleted && QuestCompleting == false) { QuestCompleted = true; QuestCheck = true; }
+
+                    // Quest already started?
+                    if (currentquest.m_QuestStarted && QuestCompleting == false) { QuestStarted = true; QuestCheck = true; }
                 }
 
                 if (QuestNotReady) { PrepareDialogue(m_QuestDeny); QuestText = true; }
                 if (QuestStarted) { PrepareDialogue(m_QuestGiven); QuestText = true; }
-                if (QuestCompleting) { PrepareDialogue(m_QuestCompletion); QuestText = true; }
                 if (QuestCompleted) { PrepareDialogue(m_QuestAfterword); QuestText = true; }
+                if (QuestCompleting) {
+                    QuestText = true;
+                    currentquest.m_QuestStarted = false;
+                    currentquest.m_QuestRequirementsMet = false;
+                    currentquest.m_QuestCompleted = true;
+                    questlist.FinishQuest(m_QuestID);
+                    PrepareDialogue(m_QuestCompletion);
+                    Debug.Log("[QUEST] Finished Quest: " + currentquest.m_QuestTitle);
+                }
 
                 if (!QuestCheck)
                 {
@@ -208,7 +218,7 @@ public class NPCController : MonoBehaviour {
 
     private IEnumerator DisplayDialog(string StringToDisplay)
     {
-        Debug.Log("[DIALOGUE]: " + StringToDisplay);
+        Debug.Log("[DIALOGUE] " + StringToDisplay);
         //int dialogueLines = m_DialogStrings.
         int DialogLength = StringToDisplay.Length;
         tempDialogue = "";
@@ -319,11 +329,23 @@ public class NPCController : MonoBehaviour {
     {
         if (state) {
             m_IconOut = true;
-            if (SpeakIcon) { SpeakIcon.SetActive(true); }
+            if (SpeakIcon) {
+                if (m_QuestID > 0) {
+                    QuestIcon.SetActive(true);
+                } else {
+                    SpeakIcon.SetActive(true);
+                }
+            }
         }
         else {
             m_IconOut = false;
-            if (SpeakIcon) { SpeakIcon.SetActive(false); }
+            if (SpeakIcon) {
+                if (m_QuestID > 0) {
+                    QuestIcon.SetActive(false);
+                } else {
+                    SpeakIcon.SetActive(false);
+                }  
+            }
         }
     }
 
