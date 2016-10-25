@@ -5,6 +5,7 @@ using System.Collections;
 using System.IO;
 
 public class QuestList : MonoBehaviour {
+    public HandleQuestlog QuestLogScript;
     public int QuestCount = 0;
     public int ActiveQuestCount = 0;
     public int LastAccessedQuest = 0;
@@ -32,7 +33,7 @@ public class QuestList : MonoBehaviour {
             new int[] { },                      // Required EnemyID(s) for kill tracking, leave empty if none
             true,                              // Requires item to complete?
             new int[] { 1 },                      // Required item id(s) to complete, leave empty if none
-            new string[] { "Hey you, I have not seen you before..?", "oh well doesn't matter I suppose..", "I need a guy like you for a small task!", "I lost my lovely sword yesterday and I can't go search for it myself.." , "Can you do it for me instead? You would help an old man right?" },      // Dialogue strings about quest
+            new string[] { "Hey you, I have not seen you before..?", "Oh well, doesn't matter, I suppose..", "I need a guy like you for a small task!", "I lost my lovely sword yesterday and I can't go search for it myself.." , "Could you do it for me instead? You would help an old man right?" },      // Dialogue strings about quest
             "I can't give you this quest",                             // Dialogue when start conditions are not met
             "I trust you.. Please search for my sword",                            // Dialogue when quest is already started
             "Oh goodness, Thanks alot good man, I can't express my happyness right now!",                         // Dialogue when completing quest
@@ -55,11 +56,11 @@ public class QuestList : MonoBehaviour {
             new int[] { 1 },                    // Required EnemyID(s) for kill tracking, leave empty if none
             false,                              // Requires item to complete?
             new int[] { },                      // Required item id(s) to complete, leave empty if none
-            new string[] { "Those slimes... I hate them", "Could you do me a favour?", "Can you kill 5 slimes just to show them who's boss?!" },      // Dialogue strings about quest
+            new string[] { "Those slimes...", "Could you do me a favour?", "Can you kill 5 slimes just to show them who's boss?!" },      // Dialogue strings about quest
             "I don´t trust  you enough (Complete other quests)",                // Dialogue when start conditions are not met
-            "Good luck, I hope you can kill em all",                            // Dialogue when quest is already started
+            "Good luck, please come back when you'v killed at least 5 slimes!",                            // Dialogue when quest is already started
             "Thank you for helping me out, here have a small reward",           // Dialogue when completing quest
-            "Once again, thank you, see you around later."                      // Dialogue after completion quest
+            "Ah great, you've killed 5 slimes... ( GAME OVER, THANKS FOR PLAYING )"                      // Dialogue after completion quest
         ));
         QuestCount = DatabaseQuests.Count;
     }
@@ -91,6 +92,11 @@ public class QuestList : MonoBehaviour {
         return obj;
     }
 
+    public void SetQuestLogActive(int questid, string questtitle)
+    {
+        QuestLogScript.AddQuestToList(questid, questtitle);
+    }
+
     public bool AddActiveQuest(int questid)
     {
         bool alreadyadded = false;
@@ -112,7 +118,7 @@ public class QuestList : MonoBehaviour {
                     ActiveQuests.Add(quest);
                     LastAccessedQuest = questid;
                     ActiveQuestCount = ActiveQuests.Count;
-                    Debug.Log("[QUEST] Set Active Quest: " + quest.m_QuestID);
+                    Debug.Log("[QUEST] Quest ID Active: " + quest.m_QuestID);
                     return true;
                 }
             }
@@ -130,6 +136,8 @@ public class QuestList : MonoBehaviour {
                 activequest.m_QuestCompleted = true;
                 activequest.m_QuestStarted = false;
                 activequest.m_QuestRequirementsMet = false;
+                QuestLogScript.RemoveQuestFromList(questid);
+                Debug.Log("[QUEST] Quest ID Completed: " + questid);
                 return true;
             }
         }

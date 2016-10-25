@@ -50,6 +50,8 @@ public class NPCController : MonoBehaviour {
 
     private bool m_SayingDialog = false;
     private bool m_IconOut = false;
+    private bool PlayerInRange = false;
+    private bool SetLog = false;
 
     private bool m_LineFinished = false;
     private bool m_DialogueFinished = false;
@@ -84,7 +86,7 @@ public class NPCController : MonoBehaviour {
                 {
                     CheckDelay = false;
                     m_StartedTalk = false;
-                    SetIconVisibility(true);
+                    if (PlayerInRange) { SetIconVisibility(true); }
                 }
             }
             else
@@ -97,15 +99,16 @@ public class NPCController : MonoBehaviour {
     private void ActivateQuest(int questid)
     {
         if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
-        bool added = questlist.AddActiveQuest(questid);
         m_QuestActivated = true;
+        bool added = questlist.AddActiveQuest(questid);
+
     }
 
     private void HandleDialog()
     {
         if (m_StartedTalk)
         {
-            if (!m_QuestActivated) { ActivateQuest(m_QuestID); }
+            if (!m_QuestActivated) { ActivateQuest(m_QuestID); SetLog = true; }
             if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
 
             if (!m_SayingDialog)
@@ -196,10 +199,7 @@ public class NPCController : MonoBehaviour {
             if (m_DialogueFinished && m_GotConfirm)
             {
                 ResetDialogue();
-                if (m_QuestID != 0)
-                {
-                    // activate quest
-                }
+                if (m_QuestID > 0 && SetLog) { SetLog = false; questlist.SetQuestLogActive(m_QuestID, m_QuestTitle); }
             }
         }
     } 
@@ -369,6 +369,9 @@ public class NPCController : MonoBehaviour {
         ReleasePlayer = true;
         
     }
+
+    public void SetPlayerInRange(bool state) { if (state) { PlayerInRange = true; } else { PlayerInRange = false; } 
+}
 
     public void SetDialogueWindow(bool state) { if (state) { DialogueHandler.SetDialogueWindow(true); } else { DialogueHandler.SetDialogueWindow(false); } }
 

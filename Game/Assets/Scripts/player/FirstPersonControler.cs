@@ -30,10 +30,12 @@ public class FirstPersonControler : MonoBehaviour
         {
             if (collision.gameObject.tag == "NPC")
             {
+                InConversation = true;
                 lastnpc = collision.gameObject.GetComponent<NPCController>();
                 if (lastnpc.GetInteractable() && lastnpc.GetIconOut() == false)
                 {
                     lastnpc.SetIconVisibility(true);
+                    lastnpc.SetPlayerInRange(true);
                     CanSpeakWithNPC = true;
 
                 }
@@ -50,7 +52,9 @@ public class FirstPersonControler : MonoBehaviour
         {
             CanSpeakWithNPC = false;
             lastnpc.SetIconVisibility(false);
+            lastnpc.SetPlayerInRange(false);
             lastnpc.SetStartedTalk(false);
+            InConversation = false;
             //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
         }
     }
@@ -64,7 +68,6 @@ public class FirstPersonControler : MonoBehaviour
                 if (CrossPlatformInputManager.GetButton("Fire1"))
                 {
                     CanMove = false;
-                    InConversation = true;
                     lastnpc.SetStartedTalk(true);
                 }
             }
@@ -78,7 +81,6 @@ public class FirstPersonControler : MonoBehaviour
             if (lastnpc.GetReleasePlayer())
             {
                 CanMove = true;
-                InConversation = false;
                 lastnpc.SetReleasePlayer(false);
             }
         }

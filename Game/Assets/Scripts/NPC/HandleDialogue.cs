@@ -23,12 +23,12 @@ public class HandleDialogue : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        if (DialogueWindow == null) { Debug.LogError("GameObject DialogueWindow has reference!"); }
-        if (NamePlate == null) { Debug.LogError("GameObject NamePlate has reference!"); }
-        if (EndConversationIcon == null) { Debug.LogError("GameObject EndConversationIcon has reference!"); }
-        if (WaitNextLineIcon == null) { Debug.LogError("GameObject WaitNextLineIcon has reference!"); }
-        if (DialogueText == null) { Debug.LogError("Text DialogueText has reference!"); }
-        if (QuestPlate == null) { Debug.LogError("Text QuestPlate has reference!"); }
+        if (DialogueWindow == null) { Debug.LogError("GameObject DialogueWindow no has reference!"); }
+        if (NamePlate == null) { Debug.LogError("GameObject NamePlate no has reference!"); }
+        if (EndConversationIcon == null) { Debug.LogError("GameObject EndConversationIcon no has reference!"); }
+        if (WaitNextLineIcon == null) { Debug.LogError("GameObject WaitNextLineIcon no has reference!"); }
+        if (DialogueText == null) { Debug.LogError("Text DialogueText no has reference!"); }
+        if (QuestPlate == null) { Debug.LogError("Text QuestPlate no has reference!"); }
     }
 	
 	// Update is called once per frame

@@ -53,12 +53,12 @@ public class EnemyHP : MonoBehaviour {
         currentHP = currentHP - damage;
         if (currentHP > 0)
         {
-            Debug.Log(gameObject.name + " damaged, HP:  " + currentHP + "  D:    " + damage + "  MHP:  " + MaxHP);
+            Debug.Log("[ENEMY] " + gameObject.name + " damaged, HP:  " + currentHP + "  D:    " + damage + "  MHP:  " + MaxHP);
         }
         else
         {
             if (currentHP < 0) { currentHP = 0; }
-            Debug.Log(gameObject.name + " defeated, HP:  " + currentHP + "  D:     " + damage + "  MHP:  " + MaxHP);
+            Debug.Log("[ENEMY] " + gameObject.name + " defeated, HP:  " + currentHP + "  D:     " + damage + "  MHP:  " + MaxHP);
             defeated = true;
             // Notify Questlist of kill for quests
             if (questlist == null)
