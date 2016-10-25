@@ -42,7 +42,7 @@ public class Character_controler : MonoBehaviour
             transform.Translate(Vector3.right * speed * Time.deltaTime);
         }
 
-        transform.Rotate(0, (Input.GetAxis("Mouse X") * mouseRotation * Time.deltaTime), 0);
+        transform.Rotate(0, (Input.GetAxis("Mouse Y") * mouseRotation * Time.deltaTime), 0);
         camera.transform.Rotate((Input.GetAxis("Mouse Y") * -mouseRotation * Time.deltaTime), 0, 0);
 
         if (Input.GetKey(KeyCode.Space) && grounded == true)
