@@ -5,23 +5,44 @@ using System.Collections;
 public class FirstPersonControler : MonoBehaviour
 {
     public float speed;
+    public float jumpVelocity;
     public bool CanMove;
 
-    //Camera cam;
+    Rigidbody rb;
 
     private NPCController lastnpc;
     private bool CanSpeakWithNPC = false;
     private bool InteractingWithNPC = false;
     private bool InConversation = false;
 
-    void Update() { 
-        if (CanMove) {
+    void Start()
+    {
+        rb = GameObject.Find("Player").GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    { 
+        if (CanMove)
+        {
             float forward = Input.GetAxis("Vertical") * speed * Time.deltaTime;
             float sideward = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
 
             transform.Translate(sideward, 0, forward);
         }
         CheckTalkInput();
+    }
+
+    void FixedUpdate()
+    {
+        Jump();
+    }
+
+    void Jump()
+    {
+        if (Input.GetButton("Jump"))
+        {
+            rb.AddForce(Vector3.up * jumpVelocity);
+        }       
     }
 
     void OnTriggerEnter(Collider collision)
