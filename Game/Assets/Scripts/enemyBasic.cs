@@ -6,9 +6,15 @@ public class enemyBasic : MonoBehaviour
     float distance;
     public Transform target;
     public float lookDistance;
-    public float attackDist;
+    public float chaseDist;
+    public float attackRange;
     public float speed;
+    public int damage;
     public float damping;
+    float timeStamp;
+    public float coolDown;
+
+    public Player_Health playerhealth;
 	
 	void Start()
     {
@@ -25,9 +31,17 @@ public class enemyBasic : MonoBehaviour
             {
                 LookAt();
             }
-            if (distance < attackDist)
+            if (distance < chaseDist)
             {
-                Attack();
+                Chase();
+            }
+            if(distance < attackRange)
+            {
+                if(timeStamp <= Time.time)
+                {
+                    Attack();
+                    timeStamp = Time.time + coolDown;
+                }
             }
         }
 
@@ -39,8 +53,13 @@ public class enemyBasic : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * damping);
     }
 
-    void Attack()
+    void Chase()
     {
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
+    }
+
+    void Attack()
+    {
+        playerhealth.TakeDamage(damage);
     }
 }

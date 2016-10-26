@@ -37,7 +37,7 @@ public class CombatSystem : MonoBehaviour {
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
-        SwitchCombatStyle();
+       // SwitchCombatStyle();
     }
 	
 	// Update is called once per frame
@@ -55,7 +55,7 @@ public class CombatSystem : MonoBehaviour {
 
         if (CrossPlatformInputManager.GetButton("Fire3") && Time.time > NextAttack)
         {
-            SwitchCombatStyle();
+            //SwitchCombatStyle();
         }
         if (PrepareAttack)
         {

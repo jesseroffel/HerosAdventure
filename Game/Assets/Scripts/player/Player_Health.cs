@@ -7,6 +7,7 @@ public class Player_Health : MonoBehaviour {
     Text healthText;
     float health = 100;
     ChangeScene scene;
+    public Transform resetPosition;
 
 	void Start ()
     {
@@ -20,9 +21,23 @@ public class Player_Health : MonoBehaviour {
         {
             scene.ChangeToScene(2);
         }
+        respawn();
     }
 
-	void OnTriggerEnter (Collider col)
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        healthText.text = "health: " + health.ToString();
+    }
+
+    public void respawn()
+    {
+        if(transform.position.y <= 70)
+        {
+            transform.position = resetPosition.position;
+        }
+    }
+	/*void OnTriggerEnter (Collider col)
     {
         Debug.Log(col.tag);
 	    if(col.tag == "Enemy")
@@ -30,5 +45,5 @@ public class Player_Health : MonoBehaviour {
             health -= 10;
             healthText.text = "health: " + health.ToString(); 
         }
-	}
+	}*/
 }
