@@ -34,7 +34,7 @@ public class Player_Health : MonoBehaviour {
     {
         if(transform.position.y <= 70)
         {
-            transform.position = resetPosition.position;
+           // transform.position = resetPosition.position;
         }
     }
 	/*void OnTriggerEnter (Collider col)
