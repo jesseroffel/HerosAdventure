@@ -134,4 +134,17 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    public bool ItemInInventoryInt(int id)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].ID == id)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

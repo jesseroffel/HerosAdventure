@@ -50,5 +50,57 @@
 		"description": "a magic potion that can restore your magical energy.",
 		"stackable": true,
 		"slug": "mana_potion"
+	},
+		{
+		"id": 4,
+		"title": "Red gem",
+		"value": 0,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "this red gem contains great power. if only i could get it out",
+		"stackable": false,
+		"slug": "red_gem"
+	},
+	{
+		"id": 5,
+		"title": "Blue gem",
+		"value": 0,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "this blue gem contains great power. if only i could get it out",
+		"stackable": false,
+		"slug": "blue_gem"
+	},
+	{
+		"id": 6,
+		"title": "Green gem",
+		"value": 0,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "this Green gem contains great power. if only i could get it out",
+		"stackable": false,
+		"slug": "green_gem"
+	},
+	{
+		"id": 7,
+		"title": "key",
+		"value": 0,
+		"stats":{
+			"attack": 0,
+			"defence": 0,
+			"power" : 0
+		},
+		"description": "a key that open door",
+		"stackable": true,
+		"slug": "key"
 	}
 ]
