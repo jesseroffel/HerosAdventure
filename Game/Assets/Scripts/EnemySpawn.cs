@@ -2,15 +2,19 @@
 using System.Collections;
 
 public class EnemySpawn : MonoBehaviour {
-    public GameObject SpawnObject;
-    public Transform Target;
+    public GameObject EnemyGameObject;
+    public Transform PlayerTarget;
+    public Player_Health hp;
+    public float RespawnTime = 5.0f;
+    public bool active = true;
     private float WaitTime = 0;
     private bool CanSpawn = false;
     private bool check = true;
 
+
 	void Start () {
-        if (SpawnObject == null) { Debug.LogError("GameObject EnemyObject no has reference!"); }
-        if (SpawnObject == null) { Debug.LogError("Transform Target no has reference!"); }
+        if (EnemyGameObject == null) { Debug.LogError("GameObject EnemyGameObject no has reference!"); }
+        if (PlayerTarget == null) { Debug.LogError("Transform PlayerTarget no has reference!"); }
     }
 	
 	// Update is called once per frame
@@ -21,27 +25,38 @@ public class EnemySpawn : MonoBehaviour {
 
     void CheckForSpawn()
     {
-        if (gameObject.transform.childCount < 1 && check)
+        if (active)
         {
-            check = false;
-            WaitTime = Time.time + 10.0f;
-        }
-        if (check == false)
-        {
-            if (Time.time > WaitTime)
+            if (gameObject.transform.childCount < 1 && check)
             {
-                CanSpawn = true;
+                check = false;
+                WaitTime = Time.time + RespawnTime;
+            }
+            if (check == false)
+            {
+                if (Time.time > WaitTime)
+                {
+                    CanSpawn = true;
+                }
+            }
+
+            if (CanSpawn)
+            {
+                CanSpawn = false;
+                check = true;
+                if (EnemyGameObject)
+                {
+                    GameObject Enemy = Instantiate(EnemyGameObject);
+                    Enemy.transform.position = gameObject.transform.position;
+                    Enemy.transform.parent = gameObject.transform;
+                    Enemy.GetComponent<enemyBasic>().target = PlayerTarget;
+                    Enemy.GetComponent<enemyBasic>().playerhealth = hp;
+                }
+            } else
+            {
+                //active = false;
             }
         }
-
-        if (CanSpawn)
-        {
-            CanSpawn = false;
-            check = true;
-            GameObject Enemy = Instantiate(SpawnObject);
-            Enemy.transform.position = gameObject.transform.position;
-            Enemy.transform.parent = gameObject.transform;
-            Enemy.GetComponent<enemyBasic>().target = Target;
-        }
+        
     }
 }

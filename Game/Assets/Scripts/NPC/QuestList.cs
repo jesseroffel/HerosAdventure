@@ -18,8 +18,8 @@ public class QuestList : MonoBehaviour {
         //ConstructQuestDatabase();
         DatabaseQuests.Add(new QuestObject(
             DatabaseQuests.Count + 1,           // QuestID
-            "Old man's lost item",                      // Quest Title
-            new int[] { 1 },                 // Quest Type(s)
+            "Old man's lost item",              // Quest Title
+            new int[] { 1 },                    // Quest Type(s)
             true,                               // Quest Starter?
             false,                              // Quest Progresser?
             true,                               // Quest Completer?
@@ -40,7 +40,7 @@ public class QuestList : MonoBehaviour {
             "I am sorry, I don't have anything to give you as a reward but I can say one thing... THANK YOU!!"                         // Dialogue after completion quest
         ));
         DatabaseQuests.Add(new QuestObject(
-            DatabaseQuests.Count+1,             // QuestID
+            DatabaseQuests.Count + 1,           // QuestID
             "Slimy start",                      // Quest Title
             new int[] { 2 },                    // Quest Type(s)
             true,                               // Quest Starter?
@@ -214,12 +214,10 @@ public class QuestList : MonoBehaviour {
                 // Check Enemy to quest, check reqenemy position in [], update currentkill at potion []
                 int[] reqEnemyIDS = activequest.m_RequiredEnemyID;
                 int countreqeids = reqEnemyIDS.Length;
-                int EnemyPosInList = 0;
                 for (int i = 0; i < countreqeids; i++)
                 {
                     if (reqEnemyIDS[i] == enemyid)
                     {
-                        EnemyPosInList = i;
                         int killcount = activequest.m_CurrentKillAmount[i];
                         activequest.m_CurrentKillAmount[i] = killcount+1;
                         RegisteredKill = true;

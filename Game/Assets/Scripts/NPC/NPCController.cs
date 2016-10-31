@@ -13,10 +13,13 @@ public class NPCController : MonoBehaviour {
     private QuestList questlist;
     private QuestObject currentquest;
 
+    private GameObject oldmodel;
+    private GameObject newModel;
+
     // NPC
     public string m_npcName = "";
     public int m_npcID = 0;            // NPC ID
-    private int m_INFOID = 0;           // NPC Information from DB with ID
+    //private int m_INFOID = 0;           // NPC Information from DB with ID
     private bool m_Sex = true;         // true = male, false = female
     private bool m_Moving = false;
     private bool m_Interactable = true;
@@ -100,7 +103,7 @@ public class NPCController : MonoBehaviour {
     {
         if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
         m_QuestActivated = true;
-        bool added = questlist.AddActiveQuest(questid);
+        questlist.AddActiveQuest(questid);
 
     }
 

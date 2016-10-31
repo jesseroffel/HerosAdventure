@@ -25,6 +25,14 @@ public class CombatSystem : MonoBehaviour {
     private int AttackOrder = 0;
     private bool HandEmpty = true;
 
+    //Switching
+    public float SwitchSpeed = 1.0f;
+    private float SwitchDisable = 0;
+    private bool FinishSwitch = false;
+    private bool SwitchChosen = false;
+    private int SwitchChosenOption = 0;
+    private int[] StyleOrder = { 2, 1, 3 };
+
     private float AttackPower = 15.0f;
 
     private Quaternion SwordRot = new Quaternion(50, 0, 0, 0);
@@ -53,10 +61,11 @@ public class CombatSystem : MonoBehaviour {
             }
         }
 
-        if (CrossPlatformInputManager.GetButton("Fire3") && Time.time > NextAttack)
+        if (CrossPlatformInputManager.GetButton("Fire3") && Time.time > SwitchDisable)
         {
-            //SwitchCombatStyle();
+            SwitchCombatStyle();
         }
+
         if (PrepareAttack)
         {
             // Melee
@@ -112,6 +121,35 @@ public class CombatSystem : MonoBehaviour {
 
     void SwitchCombatStyle()
     {
+        if (CrossPlatformInputManager.GetButton("SwitchLeft"))
+        {
+            CombatState = StyleOrder[0];
+            int mid = StyleOrder[1];
+            int left = StyleOrder[0];
+            StyleOrder[0] = mid;
+            StyleOrder[1] = left;
+
+            Debug.Log("SwitchLeft: " + StyleOrder[0]);
+        }
+        if (CrossPlatformInputManager.GetButton("SwitchMiddle"))
+        {
+            CombatState = StyleOrder[1];
+            Debug.Log("SwitchMiddle: " + StyleOrder[1]);
+        }
+        if (CrossPlatformInputManager.GetButton("SwitchRight"))
+        {
+            CombatState = StyleOrder[2];
+            int mid = StyleOrder[1];
+            int right = StyleOrder[2];
+            StyleOrder[2] = mid;
+            StyleOrder[1] = right;
+            Debug.Log("SwitchRight: " + StyleOrder[2]);
+        }
+        SwitchDisable = Time.time + SwitchSpeed;
+        Debug.Log("Left: " + StyleOrder[0] + " Mid: " + StyleOrder[1] + " Right: " + StyleOrder[2]);
+        //CombatState++;
+        //if (CombatState == 4) { CombatState = 1; }
+        /*
         switch (CombatState)
         {
             case (int)CombatStyle.Melee:
@@ -122,10 +160,34 @@ public class CombatSystem : MonoBehaviour {
                     Sword.transform.position = HandPosition.position;
                     Sword.transform.parent = HandPosition;
                     //Sword.transform.localRotation = Quaternion.identity;
-                    Debug.Log("[PLAYER] Combat: Melee Mode");
                 }
+                Debug.Log("[PLAYER] Combat: Melee Mode");
+                break;
+            case (int)CombatStyle.Range:
+                if (HandEmpty)
+                {
+                    HandEmpty = false;
+                    Transform Sword = Instantiate(SwordPrefab);
+                    Sword.transform.position = HandPosition.position;
+                    Sword.transform.parent = HandPosition;
+                    //Sword.transform.localRotation = Quaternion.identity;
+                }
+                Debug.Log("[PLAYER] Combat: Range Mode");
+                break;
+            case (int)CombatStyle.Magic:
+                if (HandEmpty)
+                {
+                    HandEmpty = false;
+                    Transform Sword = Instantiate(SwordPrefab);
+                    Sword.transform.position = HandPosition.position;
+                    Sword.transform.parent = HandPosition;
+                    //Sword.transform.localRotation = Quaternion.identity;
+                }
+                Debug.Log("[PLAYER] Combat: Magic Mode");
                 break;
         }
+        */
+        
     }
 
     void SetAttackAnimation()
