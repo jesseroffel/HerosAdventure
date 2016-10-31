@@ -13,8 +13,8 @@ public class EnemySpawn : MonoBehaviour {
 
 
 	void Start () {
-        if (EnemyGameObject == null) { Debug.LogError("GameObject EnemyGameObject no has reference!"); }
-        if (PlayerTarget == null) { Debug.LogError("Transform PlayerTarget no has reference!"); }
+        if (EnemyGameObject == null) { Debug.LogError("[ENEMYSPAWNER] GameObject EnemyGameObject no has reference!"); }
+        if (PlayerTarget == null) { Debug.LogError("[ENEMYSPAWNER] Transform PlayerTarget no has reference!"); }
     }
 	
 	// Update is called once per frame

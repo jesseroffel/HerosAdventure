@@ -87,7 +87,7 @@ public class Player_move : MonoBehaviour
                 lastnpc = collision.gameObject.GetComponent<NPCController>() ;
                 if (lastnpc.GetInteractable() && lastnpc.GetIconOut() == false)
                 {
-                    lastnpc.SetIconVisibility(true);
+                    //lastnpc.SetIconVisibility(true);
                     CanSpeakWithNPC = true;
                     
                 }
@@ -100,7 +100,7 @@ public class Player_move : MonoBehaviour
     void OnTriggerExit(Collider collision)
     {
         CanSpeakWithNPC = false;
-        lastnpc.SetIconVisibility(false);
+        //lastnpc.SetIconVisibility(false);
         lastnpc.SetStartedTalk(false);
         //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
 

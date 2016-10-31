@@ -6,8 +6,8 @@ using System.Collections;
 public class NPCController : MonoBehaviour {
 
     public GameObject Model;
-    public GameObject SpeakIcon;
-    public GameObject QuestIcon;
+    //public GameObject SpeakIcon;
+    //public GameObject QuestIcon;
     private HandleDialogue DialogueHandler;
     private NPCList npclist;
     private QuestList questlist;
@@ -89,7 +89,7 @@ public class NPCController : MonoBehaviour {
                 {
                     CheckDelay = false;
                     m_StartedTalk = false;
-                    if (PlayerInRange) { SetIconVisibility(true); }
+                    //if (PlayerInRange) { SetIconVisibility(true); }
                 }
             }
             else
@@ -212,7 +212,7 @@ public class NPCController : MonoBehaviour {
         Debug.Log("[DIALOGUE] Started conversation wih NPC: " + m_npcName + "..");
         ReleasePlayer = false;
         m_SayingDialog = true;
-        SetIconVisibility(false);
+        //SetIconVisibility(false);
         DialogueHandler.SetDialogueName(m_npcName);
         DialogueHandler.SetQuestName(m_QuestTitle);
         DialogueHandler.SetDialogueWindow(true);
@@ -328,6 +328,7 @@ public class NPCController : MonoBehaviour {
         }
     }
 
+    /*
     public void SetIconVisibility(bool state)
     {
         if (state) {
@@ -351,6 +352,7 @@ public class NPCController : MonoBehaviour {
             }
         }
     }
+    */
 
     void ResetDialogue()
     {

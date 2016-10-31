@@ -11,6 +11,7 @@ public class FirstPersonControler : MonoBehaviour
     Rigidbody rb;
 
     private NPCController lastnpc;
+    public HandleDialogue DialogueManager;
     private bool CanSpeakWithNPC = false;
     private bool InteractingWithNPC = false;
     private bool InConversation = false;
@@ -18,6 +19,7 @@ public class FirstPersonControler : MonoBehaviour
     void Start()
     {
         rb = GameObject.Find("Player").GetComponent<Rigidbody>();
+        if (DialogueManager == null) { DialogueManager = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
     }
 
     void Update()
@@ -55,10 +57,10 @@ public class FirstPersonControler : MonoBehaviour
                 lastnpc = collision.gameObject.GetComponent<NPCController>();
                 if (lastnpc.GetInteractable() && lastnpc.GetIconOut() == false)
                 {
-                    lastnpc.SetIconVisibility(true);
+                    //lastnpc.SetIconVisibility(true);
                     lastnpc.SetPlayerInRange(true);
                     CanSpeakWithNPC = true;
-
+                    DialogueManager.SetTextUI(true);
                 }
                 InteractingWithNPC = true;
             }
@@ -72,10 +74,12 @@ public class FirstPersonControler : MonoBehaviour
         if(collision.tag == "NPC")
         {
             CanSpeakWithNPC = false;
-            lastnpc.SetIconVisibility(false);
+            InConversation = false;
+            //lastnpc.SetIconVisibility(false);
             lastnpc.SetPlayerInRange(false);
             lastnpc.SetStartedTalk(false);
-            InConversation = false;
+            DialogueManager.SetTextUI(false);
+
             //lastnpc.GetComponent<NPC>().SetDialogueWindow(false);
         }
     }
@@ -90,6 +94,7 @@ public class FirstPersonControler : MonoBehaviour
                 {
                     CanMove = false;
                     lastnpc.SetStartedTalk(true);
+                    DialogueManager.SetTextUI(false);
                 }
             }
             if (lastnpc.GetWaitForInput() == true)
