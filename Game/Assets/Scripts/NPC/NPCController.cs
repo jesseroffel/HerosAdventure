@@ -202,14 +202,17 @@ public class NPCController : MonoBehaviour {
             if (m_DialogueFinished && m_GotConfirm)
             {
                 ResetDialogue();
-                if (m_QuestID > 0 && SetLog) { SetLog = false; questlist.SetQuestLogActive(m_QuestID, m_QuestTitle); }
+                if (m_QuestID > 0 && SetLog) {
+                    SetLog = false;
+                    //questlist.SetQuestLogActive(currentquest.m_QuestID, currentquest.m_QuestTitle, currentquest.m_QuestGivenDialogue, currentquest.m_RequiresItem);
+                }
             }
         }
     } 
 
     private void PrepareDialogue(string text)
     {
-        Debug.Log("[DIALOGUE] Started conversation wih NPC: " + m_npcName + "..");
+        Debug.Log("[DIALOGUE] Started conversation wih NPC [" + m_npcName + "]");
         ReleasePlayer = false;
         m_SayingDialog = true;
         //SetIconVisibility(false);
@@ -283,7 +286,7 @@ public class NPCController : MonoBehaviour {
             NPCObject obj = npclist.GetInformation(m_npcID);
             if (obj == null)
             {
-                Debug.Log("[NPC] Couldn't load NPC " + gameObject.name + " with ID: " + m_npcID);
+                Debug.Log("[NPC] Couldn't load NPC [" + gameObject.name + "] with ID: " + m_npcID);
             }
             else
             {
@@ -291,9 +294,11 @@ public class NPCController : MonoBehaviour {
                 m_Sex = obj.m_Sex;
                 m_npcName = obj.m_Name;
                 m_Interactable = obj.m_Interactable;
+                TimeBetweenCharacter = obj.m_TalkSpeed;
                 m_QuestID = obj.m_QuestID;
                 m_Dialogue = obj.m_Dialogue;
-                Debug.Log("[NPC] Loaded NPC " + m_npcName + " with ID: " + m_npcID);
+
+                Debug.Log("[NPC] Loaded NPC [" + m_npcName + "] with ID: " + m_npcID);
             }
         }
         else
@@ -318,7 +323,7 @@ public class NPCController : MonoBehaviour {
                 m_QuestGiven = currentquest.m_QuestGivenDialogue;
                 m_QuestCompletion = currentquest.m_QuestCompletionDialoge;
                 m_QuestAfterword = currentquest.m_QuestAfterwordDialogue;
-                Debug.Log("[QUEST] Loaded NPC " + m_npcName + " with Quest ID: " + m_npcID);
+                Debug.Log("[QUEST] Loaded NPC [" + m_npcName + "] with Quest ID: " + m_npcID);
             }
             else
             {
@@ -396,25 +401,4 @@ public class NPCController : MonoBehaviour {
 
     public void SetReleasePlayer(bool state) { if (state) { ReleasePlayer = true; } else { ReleasePlayer = false; } }
     
-
-
-    void SetMoodSpeech(int mood)
-    {
-        switch (mood)
-        {
-            case 1:
-                TimeBetweenCharacter = 0.13f;
-                break;
-            case 2:
-                TimeBetweenCharacter = 0.22f;
-                break;
-            case 3:
-                TimeBetweenCharacter = 0.3f;
-                break;
-            default:
-                TimeBetweenCharacter = 0.08f;
-                break;
-        }
-
-    }
 }

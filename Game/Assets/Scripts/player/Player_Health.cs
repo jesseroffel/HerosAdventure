@@ -27,7 +27,7 @@ public class Player_Health : MonoBehaviour {
     public void TakeDamage(int damage)
     {
         health -= damage;
-        healthText.text = "health: " + health.ToString();
+        if (healthText) { healthText.text = "health: " + health.ToString(); }
     }
 
     public void respawn()
