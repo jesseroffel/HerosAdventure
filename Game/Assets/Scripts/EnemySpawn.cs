@@ -6,6 +6,8 @@ public class EnemySpawn : MonoBehaviour {
     public Transform PlayerTarget;
     public Player_Health hp;
     public float RespawnTime = 5.0f;
+    public bool UnlimitedSpawns = false;
+    public int SpawnLimit = 0;
     public bool active = true;
     private float WaitTime = 0;
     private bool CanSpawn = false;
@@ -51,6 +53,15 @@ public class EnemySpawn : MonoBehaviour {
                     Enemy.transform.parent = gameObject.transform;
                     Enemy.GetComponent<enemyBasic>().target = PlayerTarget;
                     Enemy.GetComponent<enemyBasic>().playerhealth = hp;
+
+                    if (!UnlimitedSpawns) {
+                        SpawnLimit--;
+                        if (SpawnLimit == 0)
+                        {
+                            active = false;
+                        }
+                    }
+                    
                 }
             } else
             {

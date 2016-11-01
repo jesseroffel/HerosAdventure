@@ -137,6 +137,8 @@ public class QuestList : MonoBehaviour {
                 activequest.m_QuestStarted = false;
                 activequest.m_QuestRequirementsMet = false;
                 QuestLogScript.RemoveQuestFromList(questid);
+                CheckUnlock(questid);
+
                 Debug.Log("[QUEST] Quest ID Completed: " + questid);
                 return true;
             }
@@ -155,6 +157,31 @@ public class QuestList : MonoBehaviour {
             }
         }
         return false;
+    }
+
+    public bool CheckUnlock(int questid)
+    {
+        bool unlocked = false;
+        string title = "";
+        int[] requnlockcheckid;
+        foreach (QuestObject unlockquest in DatabaseQuests)
+        {
+            if (unlockquest.m_RequiresQuestUnlock)
+            {
+                int QUC = unlockquest.m_RequiredQuestID.Length;
+                requnlockcheckid = new int[QUC];
+                for (int i = 0; i < QUC; i++)
+                {
+                    if (unlockquest.m_RequiredQuestID[i] == questid)
+                    {
+                        title = unlockquest.m_QuestTitle;
+                        QuestLogScript.DisplayQuestUnlock(title);
+                        unlocked = true;
+                    }
+                }
+            }
+        }
+        if (unlocked) { return true; } else { return false; }
     }
 
     public bool RegisterItemID(int itemid)

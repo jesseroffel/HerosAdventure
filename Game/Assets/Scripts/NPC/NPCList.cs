@@ -14,6 +14,7 @@ public class NPCList : MonoBehaviour {
             "Sir Testalot",                // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
+            0.05f,                              // Talkspeed between characters
             0,
             new string[] { "This is a test line", "This is the second one", "goodbye" } // NO QUEST? ADD DIALOGUE
         ));
@@ -22,6 +23,7 @@ public class NPCList : MonoBehaviour {
             "Old Man",                    // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
+            0.125f,                               // Talkspeed between characters
             1,                               // QUEST ID
             new string[] { }
         ));
@@ -30,6 +32,7 @@ public class NPCList : MonoBehaviour {
             "Slime Hater",                    // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
+            0.085f,                            // Talkspeed between characters
             2,                               // QUEST ID
             new string[] { }
         ));
