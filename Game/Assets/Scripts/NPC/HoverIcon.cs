@@ -14,8 +14,11 @@ public class HoverIcon : MonoBehaviour {
     }
     
 	void Update () {
-        LookAtCamera();
-        Hover();
+        if (cam)
+        {
+            LookAtCamera();
+            Hover();
+        }
     }
 
     void LookAtCamera()

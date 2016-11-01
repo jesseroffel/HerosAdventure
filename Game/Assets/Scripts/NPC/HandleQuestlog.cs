@@ -18,7 +18,7 @@ public class HandleQuestlog : MonoBehaviour {
     public void AddQuestToList(int questid, string title)
     {
         GameObject Quest = Instantiate(QuestPrefab);
-        Quest.transform.parent = QuestList.transform;
+        Quest.transform.SetParent(QuestList.transform);
         Quest.name = questid + "";
         Vector3 a = new Vector3(1, 1, 1);
         Quest.transform.localScale = a;

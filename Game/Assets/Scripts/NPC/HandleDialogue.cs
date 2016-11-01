@@ -12,6 +12,8 @@ public class HandleDialogue : MonoBehaviour {
     public Text QuestPlate;
     public Text DialogueText;
 
+    public GameObject TalkUI;
+
     private string TextToDialogue;
     private bool IconActive = false;
     private bool EndIconActive = false;
@@ -29,6 +31,7 @@ public class HandleDialogue : MonoBehaviour {
         if (WaitNextLineIcon == null) { Debug.LogError("GameObject WaitNextLineIcon no has reference!"); }
         if (DialogueText == null) { Debug.LogError("Text DialogueText no has reference!"); }
         if (QuestPlate == null) { Debug.LogError("Text QuestPlate no has reference!"); }
+        if (TalkUI == null) { Debug.LogError("GameObject TalkUI no has reference!"); }
     }
 	
 	// Update is called once per frame
@@ -97,5 +100,10 @@ public class HandleDialogue : MonoBehaviour {
     {
         if (state) { QuestIcon = true; }
         else { QuestIcon = false; }
+    }
+
+    public void SetTextUI(bool state)
+    {
+        if (state) { TalkUI.SetActive(true); } else { TalkUI.SetActive(false); }
     }
 }
