@@ -35,9 +35,9 @@ public class HandleDialogue : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
-        BlinkIcon();
-    }
+	//void Update () {
+    //    BlinkIcon();
+    //}
 
     public void BlinkIcon()
     {

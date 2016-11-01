@@ -34,6 +34,7 @@ public class NPCController : MonoBehaviour {
     private bool m_QuestAssosiated = false;
     private bool m_QuestStarter = false;
     private bool m_QuestCompleted = false;
+    private bool m_TurningIn = false;
     private bool m_QuestActivated = false;
     
 
@@ -153,9 +154,8 @@ public class NPCController : MonoBehaviour {
                     currentquest.m_QuestStarted = false;
                     currentquest.m_QuestRequirementsMet = false;
                     currentquest.m_QuestCompleted = true;
-                    questlist.FinishQuest(m_QuestID);
+                    m_TurningIn = true;
                     PrepareDialogue(m_QuestCompletion);
-                    Debug.Log("[QUEST] Finished Quest: " + currentquest.m_QuestTitle);
                 }
 
                 if (!QuestCheck)
@@ -204,8 +204,23 @@ public class NPCController : MonoBehaviour {
                 ResetDialogue();
                 if (m_QuestID > 0 && SetLog) {
                     SetLog = false;
-                    //questlist.SetQuestLogActive(currentquest.m_QuestID, currentquest.m_QuestTitle, currentquest.m_QuestGivenDialogue, currentquest.m_RequiresItem);
+                    questlist.SetQuestLogActive(
+                        currentquest.m_QuestID, 
+                        currentquest.m_QuestTitle, 
+                        currentquest.m_QuestGivenDialogue, 
+                        currentquest.m_RequiredItemID,
+                        currentquest.m_RequiredEnemyID,
+                        currentquest.m_RequiresKillAmount);
                 }
+                if (currentquest != null)
+                {
+                    if (m_TurningIn)
+                    {
+                        m_TurningIn = false;
+                        questlist.FinishQuest(m_QuestID);
+                        Debug.Log("[QUEST] Finished Quest: " + currentquest.m_QuestTitle);
+                    }
+                 }
             }
         }
     } 

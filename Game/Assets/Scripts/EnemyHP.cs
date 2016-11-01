@@ -10,20 +10,22 @@ public class EnemyHP : MonoBehaviour {
     private Material OwnMaterial;
     public Color thisColor;
     public QuestList questlist;
+
+    private int EnemyID = 1;
     public float currentHP;
     private float MaxHP;
-    private bool defeated = false;
     private bool isHit = false;
+    private bool defeated = false;
     private float HitTime = 0;
-    private int Type = 1;
     private float HitCoolDown = 0;
     private bool Sendkill = false;
 
     // Use this for initialization
     void Start () {
+        //SetEnemyID();
         rend = GetComponent<Renderer>();
         if (MaxHP <= 0) {
-            if (Type == 1)
+            if (EnemyID == 1)
             {
                 MaxHP = 100;
                 HitCoolDown = 1.0f;
@@ -35,7 +37,6 @@ public class EnemyHP : MonoBehaviour {
         //Debug.Log(thisMaterial.name);
     }
 	
-	// Update is called once per frame
 	void Update () {
 	    if (defeated)
         {
@@ -47,6 +48,18 @@ public class EnemyHP : MonoBehaviour {
             //if (thisMaterial) { rend.material.CopyPropertiesFromMaterial(thisMaterial); }
         }
 	}
+
+    void SetEnemyID()
+    {
+        if (EnemyID == 0)
+        {
+            // GET INFO FROM LIST
+            // EnemyID =
+            // MaxHP =
+            // currenthp = MaxHP;
+            // HitCoolDown =
+        }
+    }
 
     public void HitTarget(float damage, Vector3 force)
     {
@@ -63,11 +76,11 @@ public class EnemyHP : MonoBehaviour {
             // Notify Questlist of kill for quests
             if (questlist == null)
             {
-                GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>().RegisterKillID(Type);
+                GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>().RegisterKillID(EnemyID);
             }
             else
             {
-                questlist.RegisterKillID(Type);
+                questlist.RegisterKillID(EnemyID);
             }
             if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
         }

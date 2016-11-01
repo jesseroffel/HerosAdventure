@@ -23,7 +23,7 @@ public class NPCList : MonoBehaviour {
             "Old Man",                    // NPC Name
             true,                           // SEX
             true,                           // INTERACTABLE
-            0.125f,                               // Talkspeed between characters
+            0.00125f,                         // Talkspeed between characters
             1,                               // QUEST ID
             new string[] { }
         ));

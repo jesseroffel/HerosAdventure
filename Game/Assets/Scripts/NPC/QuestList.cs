@@ -92,9 +92,9 @@ public class QuestList : MonoBehaviour {
         return obj;
     }
 
-    public void SetQuestLogActive(int questid, string questtitle)
+    public void SetQuestLogActive(int questid, string questtitle, string QuestDialogue, int[] requireditemid, int[] requiredenemyid, int[] requiredkillamount)
     {
-        QuestLogScript.AddQuestToList(questid, questtitle);
+        QuestLogScript.AddQuestToList(questid, questtitle, QuestDialogue, requireditemid, requiredenemyid, requiredkillamount);
     }
 
     public bool AddActiveQuest(int questid)
