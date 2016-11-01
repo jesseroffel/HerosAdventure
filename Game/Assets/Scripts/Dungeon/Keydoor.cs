@@ -4,11 +4,16 @@ using System.Collections;
 public class Keydoor : MonoBehaviour
 {
     public Inventory inventory;
+    public int keyID;
 
-    void Action()
+    void OnTriggerEnter(Collider col)
     {
-        Debug.Log("Action Triggered");
-        GameObject.Destroy(this.gameObject);
+        if(col.tag == "Player")
+        {
+            if (inventory.InventoryContains(keyID))
+            {
+                GameObject.Destroy(this.gameObject);
+            }
+        }
     }
-
 }

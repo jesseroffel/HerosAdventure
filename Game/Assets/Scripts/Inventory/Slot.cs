@@ -10,7 +10,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 
     void Start()
     {
-        inv = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<Inventory>();
+        inv = GameObject.Find("Inventory").GetComponent<Inventory>();
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -45,12 +45,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ItemData itemToConsume = eventData.pointerPress.GetComponent<ItemData>();
+        ItemData itemToConsume = eventData.pointerPress.GetComponent<ItemData>();//Is EMPTY????
 
         if (eventData.button == PointerEventData.InputButton.Right)
         {
+            Debug.Log(itemToConsume.slotID);
             if(itemToConsume.slotID != -1)
-            {
+            {                
                 Debug.Log("consumed item");
             }
         }

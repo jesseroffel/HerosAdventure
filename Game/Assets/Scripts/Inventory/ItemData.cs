@@ -16,7 +16,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     void Start()
     {
-        inv = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<Inventory>();
+        inv = GameObject.Find("Inventory").GetComponent<Inventory>();
         tooltip = inv.GetComponent<Tooltip>();
     }
 
@@ -49,8 +49,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        tooltip.Activate(item);
-        
+        tooltip.Activate(item);        
     }
 
     public void OnPointerExit(PointerEventData eventData)

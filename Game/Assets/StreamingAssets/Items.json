@@ -92,7 +92,7 @@
 	},
 	{
 		"id": 7,
-		"title": "key",
+		"title": "brass key",
 		"value": 0,
 		"stats":{
 			"attack": 0,
@@ -101,6 +101,6 @@
 		},
 		"description": "a key that open door",
 		"stackable": true,
-		"slug": "key"
+		"slug": "brass_key"
 	}
 ]
