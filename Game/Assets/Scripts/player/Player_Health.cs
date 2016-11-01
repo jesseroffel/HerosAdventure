@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class Player_Health : MonoBehaviour {
 
     Text healthText;
-    float health = 100;
+    public float health = 100;
+    public float maxHealth = 100;
     ChangeScene scene;
     public Transform resetPosition;
 
@@ -22,6 +23,11 @@ public class Player_Health : MonoBehaviour {
             scene.ChangeToScene(2);
         }
         respawn();
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        healthText.text = "health: " + health.ToString();
     }
 
     public void TakeDamage(int damage)

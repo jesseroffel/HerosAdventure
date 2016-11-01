@@ -23,11 +23,6 @@ public class ItemDatabase : MonoBehaviour
         {
             if (id == database[i].ID)
             {
-
-
-
-
-
                 return database[i];
             }
         }
@@ -47,6 +42,7 @@ public class ItemDatabase : MonoBehaviour
                 (int)itemData[i]["stats"]["power"],
                 (string)itemData[i]["description"],
                 (bool)itemData[i]["stackable"],
+                (bool)itemData[i]["consumable"],
                 (string)itemData[i]["slug"]
                 ));
         }
@@ -64,10 +60,11 @@ public class Item
     public int Power { get; set; }
     public string Description { get; set; }
     public bool Stackable { get; set; }
+    public bool Consumable { get; set; }
     public string Slug { get; set; }
     public Sprite Sprite { get; set; }
 
-    public Item(int id, string title, int value, int attack, int defence, int power, string description, bool stackable, string slug)
+    public Item(int id, string title, int value, int attack, int defence, int power, string description, bool stackable, bool consumable, string slug)
     {
         this.ID = id;
         this.Title = title;
@@ -77,6 +74,7 @@ public class Item
         this.Power = power;
         this.Description = description;
         this.Stackable = stackable;
+        this.Consumable = consumable;
         this.Slug = slug;
         this.Sprite = Resources.Load<Sprite>("Sprites/Items/" + slug);
     }

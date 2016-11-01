@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     GameObject inventoryPanel;
     GameObject slotPanel;
     ItemDatabase database;
+    Player_Health health;
     public GameObject inventorySlot;
     public GameObject inventoryItem;
 
@@ -23,6 +24,7 @@ public class Inventory : MonoBehaviour
         inventoryPanel = GameObject.Find("Inventory Panel");
         slotPanel = inventoryPanel.transform.FindChild("Slot Panel").gameObject;
         database = GetComponent<ItemDatabase>();
+        health = GameObject.FindGameObjectWithTag("Player").GetComponent<Player_Health>();
 
         for(int i=0; i < slotAmount; i++)
         {
@@ -34,6 +36,9 @@ public class Inventory : MonoBehaviour
 
         AddItem(1);
         AddItem(2);
+        AddItem(2);
+        AddItem(3);
+        AddItem(3);
 
         inventoryPanel.active = false;  
     }
@@ -44,7 +49,6 @@ public class Inventory : MonoBehaviour
         {
             inventoryPanel.SetActive(!inventoryPanel.active);            
         }
-       // AddItem(1);
     }
 
     public void AddItem(int id)
@@ -90,9 +94,20 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void UseConsumable(int id)
+    public void UseConsumable(Item itemToConsume)
     {
-        RemoveItem(id);
+        if(itemToConsume.ID == 2)
+        {
+            Debug.Log("+ 10 health");
+            health.health += itemToConsume.Power;
+            RemoveItem(itemToConsume.ID);
+        }
+        if(itemToConsume.ID == 3)
+        {
+            Debug.Log("+ ten mana");
+            RemoveItem(itemToConsume.ID);
+        }
+        RemoveItem(itemToConsume.ID);
     }
 
     public void RemoveItem(int id)
@@ -100,9 +115,21 @@ public class Inventory : MonoBehaviour
         Item itemToRemove = database.FetchItemByID(id);
         for(int i =0; i < items.Count; i++)
         {
-            
+            if(items[i].ID == itemToRemove.ID)
+            {
+                ItemData data = slots[i].transform.GetChild(0).GetComponent<ItemData>();
+                if(data.amount > 1)
+                {
+                    data.amount--;
+                    Debug.Log("item amount -1");
+                }
+                else
+                {
+                    items[i] = new Item();
+                    Debug.Log("item Removed");
+                }                
+            }
         }
-
     }
 
     public bool InventoryContains(int id)
@@ -116,7 +143,6 @@ public class Inventory : MonoBehaviour
                     break;
                 }
             }
-
         return result;
      }
     
@@ -130,7 +156,6 @@ public class Inventory : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
@@ -143,8 +168,6 @@ public class Inventory : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
-
 }

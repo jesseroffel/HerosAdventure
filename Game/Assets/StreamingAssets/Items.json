@@ -10,6 +10,7 @@
 		},
 		"description": "a sword forged from cheap metals",
 		"stackable": false,
+		"consumable": false,
 		"slug": "bronze_sword"
 	},
 	{
@@ -23,6 +24,7 @@
 		},
 		"description": "a sword forged from strong metals",
 		"stackable": false,
+		"consumable": false,
 		"slug": "steel_sword"
 	},
 	{
@@ -36,6 +38,7 @@
 		},
 		"description": "a magic potion that can cure small cuts and bruises.",
 		"stackable": true,
+		"consumable": true,
 		"slug": "health_potion"
 	},
 	{
@@ -49,6 +52,7 @@
 		},
 		"description": "a magic potion that can restore your magical energy.",
 		"stackable": true,
+		"consumable": true,
 		"slug": "mana_potion"
 	},
 		{
@@ -62,6 +66,7 @@
 		},
 		"description": "this red gem contains great power. if only i could get it out",
 		"stackable": false,
+		"consumable": false,
 		"slug": "red_gem"
 	},
 	{
@@ -75,6 +80,7 @@
 		},
 		"description": "this blue gem contains great power. if only i could get it out",
 		"stackable": false,
+		"consumable": false,
 		"slug": "blue_gem"
 	},
 	{
@@ -88,6 +94,7 @@
 		},
 		"description": "this Green gem contains great power. if only i could get it out",
 		"stackable": false,
+		"consumable": false,
 		"slug": "green_gem"
 	},
 	{
@@ -100,7 +107,8 @@
 			"power" : 0
 		},
 		"description": "a key that open door",
-		"stackable": true,
+		"stackable": false,
+		"consumable": false,
 		"slug": "brass_key"
 	}
 ]

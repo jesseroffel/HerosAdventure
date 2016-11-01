@@ -45,13 +45,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ItemData itemToConsume = eventData.pointerPress.GetComponent<ItemData>();//Is EMPTY????
+        ItemData itemToConsume = eventData.pointerPress.transform.GetChild(0).GetComponent<ItemData>();
 
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             Debug.Log(itemToConsume.slotID);
             if(itemToConsume.slotID != -1)
-            {                
+            {
+                inv.UseConsumable(itemToConsume.item);
                 Debug.Log("consumed item");
             }
         }
