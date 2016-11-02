@@ -7,6 +7,7 @@ public class FirstPersonControler : MonoBehaviour
     public float speed;
     public float jumpVelocity;
     public bool CanMove;
+    public float rayLength =1;
 
     Rigidbody rb;
 
@@ -36,14 +37,27 @@ public class FirstPersonControler : MonoBehaviour
 
     void FixedUpdate()
     {
-        Jump();
+        if (Input.GetButton("Jump"))
+        {
+            Jump();
+        }
+        Debug.Log(rb.velocity.y);
     }
 
     void Jump()
     {
-        if (Input.GetButton("Jump"))
+        RaycastHit hit;
+        Transform pos = transform;
+        pos.position += new Vector3(0, 0.1f, 0);
+        Ray jumpRay = new Ray(pos.position, Vector3.down);
+
+        if (Physics.Raycast(jumpRay, out hit, rayLength))
         {
-            rb.AddForce(Vector3.up * jumpVelocity);
+            if (hit.collider.tag == "world")
+            {
+                rb.AddForce(transform.up * jumpVelocity);//(Vector3.up * jumpVelocity);
+                Debug.Log("add force");
+            }
         }       
     }
 
