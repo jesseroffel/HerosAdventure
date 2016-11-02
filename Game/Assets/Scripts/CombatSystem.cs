@@ -6,6 +6,8 @@ public class CombatSystem : MonoBehaviour {
     public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
     public Transform HitRegBlock;
+    public GameObject WeapHandPos;
+    public GameObject ArrowPrefab; 
     public GameObject SwordModel;
     public GameObject StaffModel;
     public GameObject BowModel;
@@ -97,7 +99,12 @@ public class CombatSystem : MonoBehaviour {
                         }
                         break;
                     case (int)CombatStyle.Range:
+                        GameObject Projectile = Instantiate(ArrowPrefab);
+                        Projectile.transform.position = WeapHandPos.transform.position;
+                        Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+                        rb.velocity = WeapHandPos.transform.forward * 40;
 
+                        Projectile.GetComponent<HitRegistrator>().SetSettings(5, 10, transform.forward * propulsionForce);
                         break;
                     case (int)CombatStyle.Magic:
                         break;

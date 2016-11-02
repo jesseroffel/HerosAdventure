@@ -3,6 +3,7 @@ using System.Collections;
 
 public class HitRegistrator : MonoBehaviour
 {
+    public int type = 0;
     float AliveTime = 0.0f;
     float currentTime = 0.0f;
     float DamageValue = 0.0f;
@@ -11,6 +12,7 @@ public class HitRegistrator : MonoBehaviour
 
     public void SetSettings(float alive, float damage, Vector3 playerf)
     {
+        //type =
         AliveTime = alive;
         DamageValue = damage;
         PlayerForce = playerf;
