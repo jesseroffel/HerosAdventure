@@ -19,6 +19,8 @@ public class EnemyHP : MonoBehaviour {
     private float HitTime = 0;
     private float HitCoolDown = 0;
     private bool Sendkill = false;
+    private bool HitKnockback = false;
+    private Vector3 KnockbackForce;
 
     // Use this for initialization
     void Start () {
@@ -48,6 +50,15 @@ public class EnemyHP : MonoBehaviour {
             //if (thisMaterial) { rend.material.CopyPropertiesFromMaterial(thisMaterial); }
         }
 	}
+
+    void FixedUpdate()
+    {
+        if (HitKnockback)
+        {
+            HitKnockback = false;
+            transform.GetComponent<Rigidbody>().AddForce(KnockbackForce, ForceMode.Impulse);
+        }
+    }
 
     void SetEnemyID()
     {
@@ -87,7 +98,9 @@ public class EnemyHP : MonoBehaviour {
         isHit = true;
         HitTime = Time.time + HitCoolDown;
         //if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
-        transform.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+        KnockbackForce = force;
+        HitKnockback = true;
+        
     }
 
     void shrinkobject()

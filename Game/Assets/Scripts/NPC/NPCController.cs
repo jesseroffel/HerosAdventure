@@ -36,7 +36,8 @@ public class NPCController : MonoBehaviour {
     private bool m_QuestCompleted = false;
     private bool m_TurningIn = false;
     private bool m_QuestActivated = false;
-    
+    private bool QuestNotReady = false;
+
 
     //Dialog
     public string[] m_Dialogue;
@@ -55,7 +56,6 @@ public class NPCController : MonoBehaviour {
     private bool m_SayingDialog = false;
     private bool m_IconOut = false;
     private bool PlayerInRange = false;
-    private bool SetLog = false;
 
     private bool m_LineFinished = false;
     private bool m_DialogueFinished = false;
@@ -112,13 +112,12 @@ public class NPCController : MonoBehaviour {
     {
         if (m_StartedTalk)
         {
-            if (!m_QuestActivated) { ActivateQuest(m_QuestID); SetLog = true; }
             if (DialogueHandler == null) { DialogueHandler = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
 
             if (!m_SayingDialog)
             {
                 bool QuestCheck = false;
-                bool QuestNotReady = false;
+                QuestNotReady = false;
                 bool QuestCompleting = false;
                 bool QuestCompleted = false;
                 bool QuestStarted = false;
@@ -202,16 +201,20 @@ public class NPCController : MonoBehaviour {
             if (m_DialogueFinished && m_GotConfirm)
             {
                 ResetDialogue();
-                if (m_QuestID > 0 && SetLog) {
-                    SetLog = false;
-                    questlist.SetQuestLogActive(
-                        currentquest.m_QuestID, 
-                        currentquest.m_QuestTitle, 
-                        currentquest.m_QuestGivenDialogue, 
-                        currentquest.m_RequiredItemID,
-                        currentquest.m_RequiredEnemyID,
-                        currentquest.m_RequiresKillAmount);
+                if (!QuestNotReady)
+                {
+                    if (!m_QuestActivated) {
+                        ActivateQuest(m_QuestID);
+                        questlist.SetQuestLogActive(
+                            currentquest.m_QuestID,
+                            currentquest.m_QuestTitle,
+                            currentquest.m_QuestGivenDialogue,
+                            currentquest.m_RequiredItemID,
+                            currentquest.m_RequiredEnemyID,
+                            currentquest.m_RequiresKillAmount);
+                    }
                 }
+
                 if (currentquest != null)
                 {
                     if (m_TurningIn)

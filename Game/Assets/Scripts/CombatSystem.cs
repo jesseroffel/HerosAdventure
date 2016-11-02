@@ -77,14 +77,18 @@ public class CombatSystem : MonoBehaviour {
                 PrepareAttack = false;
                 NextAttack = Time.time + Attack01Swing;
                 //Vector3 Addpos = transform.position + (transform.forward);
-                Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                
                 switch (CombatState)
                 {
                     case (int)CombatStyle.Melee:
+                        Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                        HitDec.transform.parent = transform;
                         switch (AttackOrder)
                         {
                             case 1:
+                                
                                 HitDec.transform.position += new Vector3(0, 0.4f, 0);
+                                HitDec.GetComponent<HitRegistrator>().SetSettings(Attack01Swing, AttackPower, transform.forward * propulsionForce);
                                 break;
                             case 2:
                                 break;
@@ -93,17 +97,12 @@ public class CombatSystem : MonoBehaviour {
                         }
                         break;
                     case (int)CombatStyle.Range:
+
                         break;
                     case (int)CombatStyle.Magic:
                         break;
                 }
-                HitDec.transform.parent = transform;
-                //HitDec.transform.rotation = transform.rotation;
-                HitDec.GetComponent<HitRegistrator>().SetSettings(Attack01Swing, AttackPower, transform.forward * propulsionForce);
-                //
             }
-            // Range
-            // Magic
         }
         if (Attacking)
         {
