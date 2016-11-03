@@ -3,14 +3,14 @@ using System.Collections;
 
 public class PresurePlate : MonoBehaviour
 {
-    public GameObject door;
+    public GameObject target;
 
     void OnTriggerEnter(Collider col)
     {
         Debug.Log(col.tag);
         if(col.tag == "Player")
         {
-            door.SendMessage("Action");
+            target.SendMessage("Action");
         }
     }
 }

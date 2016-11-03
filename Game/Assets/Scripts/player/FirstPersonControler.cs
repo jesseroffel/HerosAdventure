@@ -37,11 +37,10 @@ public class FirstPersonControler : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Input.GetButton("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             Jump();
         }
-        Debug.Log(rb.velocity.y);
     }
 
     void Jump()

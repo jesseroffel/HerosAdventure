@@ -1,32 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Slime : MonoBehaviour {
-
-    public float roamingSpeed;
-    public float chaseSpeed;
-    public float chaseWaitTime;
-    public float roamingWaitTime;
-    public Transform[] roamingPoints;
-
+public class Slime : MonoBehaviour
+{
     private NavMeshAgent nav;
     private Transform player;
 
-    private float roamTimer;
-    private float chaseTimer;
-    private int pointIndex;
+    public Transform[] locations;
+    int destination;
 
-    void Awake()
+    public float speed;
+    public bool isRanged;
+    float distance;
+
+    public float chaseRange;
+
+    bool chasing;
+    bool attacking;
+    bool roaming;
+
+    void Start()
     {
         nav = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-
-
+        nav.speed = speed;
+        
     }
 
     void Update()
     {
-        
+        distance = Vector3.Distance(transform.position, player.transform.position);
+
+        if(distance <= chaseRange)
+        {
+            Chasing();
+            Debug.Log("chasing");
+        }
+        else
+        {
+            freeRoaming();
+            Debug.Log("stop chasing");
+        }
     }
 
     void MeleeAttack()
@@ -41,17 +55,18 @@ public class Slime : MonoBehaviour {
 
     void Chasing()
     {
-
+        nav.destination = player.position;
     }
 
     void freeRoaming()
     {
-        nav.speed = roamingSpeed;
+        nav.destination = locations[destination].position;
 
-       // if()
-      //  {
-       //     nav.destination = roamingPoints[pointIndex].position;
-       // }
+        if (nav.remainingDistance <= 0)
+        {
+            destination = (int)Random.Range(0.0f, 5.0f);
+            Debug.Log(destination);
+        }
     }
 
  
