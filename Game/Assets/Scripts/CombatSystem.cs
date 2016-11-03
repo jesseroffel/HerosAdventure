@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
@@ -6,7 +7,7 @@ public class CombatSystem : MonoBehaviour {
     public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
     public Transform HitRegBlock;
-    public GameObject WeapHandPos;
+    public GameObject ArrowSpawn;
     public GameObject ArrowPrefab; 
     public GameObject SwordModel;
     public GameObject StaffModel;
@@ -27,7 +28,12 @@ public class CombatSystem : MonoBehaviour {
     private bool Attacking = false;
     private int CombatState = 1;
     private int AttackOrder = 0;
-    private bool HandEmpty = true;
+    
+    // UI
+    public Text StrenghText;
+    public GameObject StrenghPanel;
+    private float BowStrengh = 0;
+    private bool HoldingDown = false;
 
     //Switching
     public float SwitchSpeed = 1.0f;
@@ -49,7 +55,9 @@ public class CombatSystem : MonoBehaviour {
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
-       SwitchCombatStyle();
+        if (StrenghText == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
+        if (StrenghPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
+        SwitchCombatStyle();
     }
 	
 	// Update is called once per frame
@@ -64,6 +72,10 @@ public class CombatSystem : MonoBehaviour {
                 SetAttackAnimation();
             }
         }
+        if (CrossPlatformInputManager.GetButtonUp("Fire1"))
+        {
+            HoldingDown = false;
+        }
 
         if (CrossPlatformInputManager.GetButton("SwitchCombat") && Time.time > SwitchDisable)
         {
@@ -76,7 +88,7 @@ public class CombatSystem : MonoBehaviour {
             if (Time.time > AttackTime)
             {
                 Attacking = true;
-                PrepareAttack = false;
+                if (CombatState != (int)CombatStyle.Range) { PrepareAttack = false; }
                 NextAttack = Time.time + Attack01Swing;
                 //Vector3 Addpos = transform.position + (transform.forward);
                 
@@ -90,7 +102,7 @@ public class CombatSystem : MonoBehaviour {
                             case 1:
                                 
                                 HitDec.transform.position += new Vector3(0, 0.4f, 0);
-                                HitDec.GetComponent<HitRegistrator>().SetSettings(Attack01Swing, AttackPower, transform.forward * propulsionForce);
+                                HitDec.GetComponent<HitRegistrator>().SetSettings(1,Attack01Swing, AttackPower, transform.forward * propulsionForce);
                                 break;
                             case 2:
                                 break;
@@ -99,12 +111,34 @@ public class CombatSystem : MonoBehaviour {
                         }
                         break;
                     case (int)CombatStyle.Range:
-                        GameObject Projectile = Instantiate(ArrowPrefab);
-                        Projectile.transform.position = WeapHandPos.transform.position;
-                        Rigidbody rb = Projectile.GetComponent<Rigidbody>();
-                        rb.velocity = WeapHandPos.transform.forward * 40;
+                        if (HoldingDown)
+                        {
+                            if (StrenghPanel) {
+                                if (StrenghPanel.activeSelf == false) { StrenghPanel.SetActive(true); }
+                            }
+                            string Text = "";
+                            if (BowStrengh < 1) {
+                                BowStrengh += 0.01f;
+                                if (BowStrengh > 1) { BowStrengh = 1; }
+                                
+                            }
+                            Text = BowStrengh.ToString("F2");
+                            if (StrenghText) { StrenghText.text = Text; }
+                        } else
+                        {
+                            BowStrengh = 0;
+                            PrepareAttack = false;
+                            GameObject Projectile = Instantiate(ArrowPrefab);
+                            Projectile.transform.position = ArrowSpawn.transform.position;
+                            Projectile.transform.rotation = Quaternion.identity;
+                            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+                            rb.velocity = (ArrowSpawn.transform.forward * 20) * BowStrengh;
 
-                        Projectile.GetComponent<HitRegistrator>().SetSettings(5, 10, transform.forward * propulsionForce);
+                            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 5, 10, transform.forward * propulsionForce);
+                            if (StrenghPanel) { StrenghPanel.SetActive(false); }
+                            
+                        }
+                        
                         break;
                     case (int)CombatStyle.Magic:
                         break;
@@ -129,79 +163,82 @@ public class CombatSystem : MonoBehaviour {
 
     void SwitchCombatStyle()
     {
+        bool SwitchCheck = false;
         int oldstyle = CombatState;
         if (CrossPlatformInputManager.GetButton("SwitchLeft"))
         {
+            SwitchCheck = true;
+            SwitchDisable = Time.time + SwitchSpeed;
             CombatState = StyleOrder[0];
             int mid = StyleOrder[1];
             int left = StyleOrder[0];
             StyleOrder[0] = mid;
             StyleOrder[1] = left;
-
-            //Debug.Log("SwitchLeft: " + StyleOrder[0]);
         }
         if (CrossPlatformInputManager.GetButton("SwitchMiddle"))
         {
             CombatState = StyleOrder[1];
-            //Debug.Log("SwitchMiddle: " + StyleOrder[1]);
         }
         if (CrossPlatformInputManager.GetButton("SwitchRight"))
         {
+            SwitchCheck = true;
+            SwitchDisable = Time.time + SwitchSpeed;
             CombatState = StyleOrder[2];
             int mid = StyleOrder[1];
             int right = StyleOrder[2];
             StyleOrder[2] = mid;
             StyleOrder[1] = right;
-            //Debug.Log("SwitchRight: " + StyleOrder[2]);
         }
-        SwitchDisable = Time.time + SwitchSpeed;
+
         //Debug.Log("Left: " + StyleOrder[0] + " Mid: " + StyleOrder[1] + " Right: " + StyleOrder[2]);
 
         //CombatState++;
         //if (CombatState == 4) { CombatState = 1; }
 
         //Set old weapon inactive
-        switch (oldstyle)
+        if (SwitchCheck)
         {
-            case (int)CombatStyle.Melee:
-                SwordModel.SetActive(false);
-                break;
-            case (int)CombatStyle.Range:
-                BowModel.SetActive(false);
-                break;
-            case (int)CombatStyle.Magic:
-                StaffModel.SetActive(false);
-                break;
-            default:
-                Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(false) failed");
-                break;
-        }
-        //Set new weapon active
-        switch (CombatState)
-        {
-            case (int)CombatStyle.Melee:
-                SwordModel.SetActive(true);
-                Debug.Log("[PLAYER] Combat: Melee Mode");
-                break;
-            case (int)CombatStyle.Range:
-                BowModel.SetActive(true);
-                Debug.Log("[PLAYER] Combat: Range Mode");
-                break;
-            case (int)CombatStyle.Magic:
-                StaffModel.SetActive(true);
-                Debug.Log("[PLAYER] Combat: Magic Mode");
-                break;
-            default:
-                Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(true) failed");
-                break;
-        }
-        
-        
+            switch (oldstyle)
+            {
+                case (int)CombatStyle.Melee:
+                    SwordModel.SetActive(false);
+                    break;
+                case (int)CombatStyle.Range:
+                    BowModel.SetActive(false);
+                    break;
+                case (int)CombatStyle.Magic:
+                    StaffModel.SetActive(false);
+                    break;
+                default:
+                    Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(false) failed");
+                    break;
+            }
+            //Set new weapon active
+            switch (CombatState)
+            {
+                case (int)CombatStyle.Melee:
+                    SwordModel.SetActive(true);
+                    Debug.Log("[PLAYER] Combat: Melee Mode");
+                    break;
+                case (int)CombatStyle.Range:
+                    BowModel.SetActive(true);
+                    Debug.Log("[PLAYER] Combat: Range Mode");
+                    break;
+                case (int)CombatStyle.Magic:
+                    StaffModel.SetActive(true);
+                    Debug.Log("[PLAYER] Combat: Magic Mode");
+                    break;
+                default:
+                    Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(true) failed");
+                    break;
+            }
+        }  
     }
 
     void SetAttackAnimation()
     {
         NextAttack = Time.time + AttackBuildup;
+        HoldingDown = true;
         PrepareAttack = true;
         if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
         //Set animation
