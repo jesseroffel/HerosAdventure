@@ -2,21 +2,31 @@
 using System.Collections;
 
 public class EnemySpawn : MonoBehaviour {
-    public GameObject EnemyGameObject;
+    public GameObject EnemyPrefab;
     public Transform PlayerTarget;
     public Player_Health hp;
     public float RespawnTime = 5.0f;
+    public int SpawnLimit = 0;              // SPAWNS AFTER KILL
+    public int EnemyActiveLimit = 1;        // AMOUNT ACTIVE ENEMIES
+    public float SpawnRadius = 1.0f;
     public bool UnlimitedSpawns = false;
-    public int SpawnLimit = 0;
+    public bool RapidSpawn = false;
     public bool active = true;
     private float WaitTime = 0;
     private bool CanSpawn = false;
     private bool check = true;
 
+    private int RadiusDistance = 0;
+    private int CurrenRadius = 0;
+    private int CurrentIndex = 1;
+    private Vector3 Center;
 
 	void Start () {
-        if (EnemyGameObject == null) { Debug.LogError("[ENEMYSPAWNER] GameObject EnemyGameObject no has reference!"); }
+        if (EnemyPrefab == null) { Debug.LogError("[ENEMYSPAWNER] GameObject EnemyPrefab no has reference!"); }
         if (PlayerTarget == null) { Debug.LogError("[ENEMYSPAWNER] Transform PlayerTarget no has reference!"); }
+        Center = transform.position;
+        RadiusDistance = CalcDistance();
+        if (SpawnLimit < EnemyActiveLimit) { SpawnLimit = EnemyActiveLimit; }
     }
 	
 	// Update is called once per frame
@@ -29,11 +39,12 @@ public class EnemySpawn : MonoBehaviour {
     {
         if (active)
         {
-            if (gameObject.transform.childCount < 1 && check)
+            if (gameObject.transform.childCount < EnemyActiveLimit && check)
             {
                 check = false;
-                WaitTime = Time.time + RespawnTime;
+                if (!RapidSpawn) { WaitTime = Time.time + RespawnTime; }
             }
+
             if (check == false)
             {
                 if (Time.time > WaitTime)
@@ -46,13 +57,20 @@ public class EnemySpawn : MonoBehaviour {
             {
                 CanSpawn = false;
                 check = true;
-                if (EnemyGameObject)
+                if (EnemyPrefab)
                 {
-                    GameObject Enemy = Instantiate(EnemyGameObject);
-                    Enemy.transform.position = gameObject.transform.position;
-                    Enemy.transform.parent = gameObject.transform;
-                    Enemy.GetComponent<enemyBasic>().target = PlayerTarget;
-                    Enemy.GetComponent<enemyBasic>().playerhealth = hp;
+                    if (EnemyActiveLimit != 1)
+                    {
+                        if (RadiusDistance < 1) { RadiusDistance = CalcDistance(); }
+
+                        Vector3 Calcpos = CalcCircle(Center, SpawnRadius, CurrenRadius);
+                        Spawn(Calcpos, Quaternion.identity);
+                    } else
+                    {
+                        Spawn(transform.position, Quaternion.identity);
+                    }
+                   
+                   
 
                     if (!UnlimitedSpawns) {
                         SpawnLimit--;
@@ -69,5 +87,42 @@ public class EnemySpawn : MonoBehaviour {
             }
         }
         
+    }
+
+    
+
+    void Spawn(Vector3 position, Quaternion quant)
+    {
+
+        GameObject Enemy = (GameObject)Instantiate(EnemyPrefab, position, quant);
+        Enemy.transform.parent = gameObject.transform;
+        Enemy.GetComponent<enemyBasic>().target = PlayerTarget;
+        Enemy.GetComponent<enemyBasic>().playerhealth = hp;
+    }
+
+    Vector3 CalcCircle(Vector3 center, float radius, int angle)
+    {
+        float ang = angle;
+        Vector3 pos;
+        pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
+        pos.y = center.y;
+        pos.z = center.z + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
+        if (CurrenRadius != 360) {
+            CurrenRadius = CurrentIndex * RadiusDistance;
+            CurrentIndex++;
+        }
+        return pos;
+    }
+
+    int CalcDistance()
+    {
+        int am = EnemyActiveLimit;
+        int calc = 360 / am;
+        return calc;
+    }
+
+    void Action()
+    {
+        active = true;
     }
 }
