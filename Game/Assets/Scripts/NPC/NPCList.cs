@@ -3,12 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class NPCList : MonoBehaviour {
+    public static NPCList NPCListObject;
     public int NPCCount = 0;
     public int LastLoadedID = 0;
     private List<NPCObject> DatabaseNPCs = new List<NPCObject>();
 
 	// Use this for initialization
 	void Start () {
+        if (NPCListObject == null)
+        {
+            NPCListObject = this;
+            Debug.Log("Set NPC LIST");
+        }
+        else if (NPCListObject != this)
+        {
+            Destroy(gameObject);
+        }
+
         DatabaseNPCs.Add(new NPCObject(
             DatabaseNPCs.Count + 1,         // ID
             "Sir Testalot",                // NPC Name

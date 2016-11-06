@@ -4,42 +4,40 @@ using UnityStandardAssets.CrossPlatformInput;
 using System.Collections;
 
 public class NPCController : MonoBehaviour {
-
+    [Header("NPC Current Model")]
     public GameObject Model;
     //public GameObject SpeakIcon;
     //public GameObject QuestIcon;
     private HandleDialogue DialogueHandler;
-    private NPCList npclist;
-    private QuestList questlist;
     private QuestObject currentquest;
 
-    private GameObject oldmodel;
-    private GameObject newModel;
+    //private GameObject oldmodel;
+    //private GameObject newModel;
 
+    [Header("NPC Information")]
     // NPC
     public string m_npcName = "";
     public int m_npcID = 0;            // NPC ID
     //private int m_INFOID = 0;           // NPC Information from DB with ID
     private bool m_Sex = true;         // true = male, false = female
-    private bool m_Moving = false;
+    //private bool m_Moving = false;
     private bool m_Interactable = true;
     private bool m_StartedTalk = false;
 
     private bool fetchnpcinformation = true;
 
+    [Header("Quest Information")]
     //Quest
-    private string m_QuestTitle = "";
+    
     public int m_QuestID = 0;
-    private int m_QuestProgression = 0;
-    private bool m_QuestAssosiated = false;
-    private bool m_QuestStarter = false;
-    private bool m_QuestCompleted = false;
+    private string m_QuestTitle = "";
     private bool m_TurningIn = false;
     private bool m_QuestActivated = false;
     private bool QuestNotReady = false;
 
 
     //Dialog
+    [Header("Dialogue Information")]
     public string[] m_Dialogue;
     private string m_QuestDeny;
     private string m_QuestGiven;
@@ -55,7 +53,7 @@ public class NPCController : MonoBehaviour {
 
     private bool m_SayingDialog = false;
     private bool m_IconOut = false;
-    private bool PlayerInRange = false;
+    //private bool PlayerInRange = false;
 
     private bool m_LineFinished = false;
     private bool m_DialogueFinished = false;
@@ -102,9 +100,8 @@ public class NPCController : MonoBehaviour {
 
     private void ActivateQuest(int questid)
     {
-        if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
         m_QuestActivated = true;
-        questlist.AddActiveQuest(questid);
+        QuestList.QuestListObject.AddActiveQuest(questid);
 
     }
 
@@ -131,7 +128,7 @@ public class NPCController : MonoBehaviour {
                         bool allcompleted = true;
                         foreach (int questid in requiredquests)
                         {
-                            bool check = questlist.CheckCompletedQuest(questid);
+                            bool check = QuestList.QuestListObject.CheckCompletedQuest(questid);
                             if (!check) { allcompleted = false; break; }
                         }
                         if (!allcompleted) { QuestNotReady = true; QuestCheck = true; }
@@ -205,7 +202,7 @@ public class NPCController : MonoBehaviour {
                 {
                     if (!m_QuestActivated) {
                         ActivateQuest(m_QuestID);
-                        questlist.SetQuestLogActive(
+                        QuestList.QuestListObject.SetQuestLogActive(
                             currentquest.m_QuestID,
                             currentquest.m_QuestTitle,
                             currentquest.m_QuestGivenDialogue,
@@ -220,7 +217,7 @@ public class NPCController : MonoBehaviour {
                     if (m_TurningIn)
                     {
                         m_TurningIn = false;
-                        questlist.FinishQuest(m_QuestID);
+                        QuestList.QuestListObject.FinishQuest(m_QuestID);
                         Debug.Log("[QUEST] Finished Quest: " + currentquest.m_QuestTitle);
                     }
                  }
@@ -271,7 +268,7 @@ public class NPCController : MonoBehaviour {
                         if (m_QuestID > 0)
                         {
                             currentquest.m_QuestStarted = true;
-                            questlist.StartQuest(m_QuestID);
+                            QuestList.QuestListObject.StartQuest(m_QuestID);
                         }
                         Debug.Log("[DIALOGUE] Conversation finished, waiting for confirm..");
                         DialogueHandler.SetEndIcon(true);
@@ -300,8 +297,7 @@ public class NPCController : MonoBehaviour {
     {
         if (m_npcID != 0)
         {
-            if (npclist == null) { npclist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<NPCList>(); }
-            NPCObject obj = npclist.GetInformation(m_npcID);
+            NPCObject obj = NPCList.NPCListObject.GetInformation(m_npcID);
             if (obj == null)
             {
                 Debug.Log("[NPC] Couldn't load NPC [" + gameObject.name + "] with ID: " + m_npcID);
@@ -329,8 +325,7 @@ public class NPCController : MonoBehaviour {
     {
         if (m_QuestID != 0)
         {
-            if (questlist == null) { questlist = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>(); }
-            currentquest = questlist.GetInformation(m_QuestID);
+            currentquest = QuestList.QuestListObject.GetInformation(m_QuestID);
             if (currentquest != null)
             {
 
@@ -398,8 +393,7 @@ public class NPCController : MonoBehaviour {
         
     }
 
-    public void SetPlayerInRange(bool state) { if (state) { PlayerInRange = true; } else { PlayerInRange = false; } 
-}
+    //public void SetPlayerInRange(bool state) { if (state) { PlayerInRange = true; } else { PlayerInRange = false; } }
 
     public void SetDialogueWindow(bool state) { if (state) { DialogueHandler.SetDialogueWindow(true); } else { DialogueHandler.SetDialogueWindow(false); } }
 

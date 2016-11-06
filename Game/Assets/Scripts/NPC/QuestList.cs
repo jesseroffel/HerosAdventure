@@ -5,6 +5,8 @@ using System.Collections;
 using System.IO;
 
 public class QuestList : MonoBehaviour {
+    public static QuestList QuestListObject;
+
     public HandleQuestlog QuestLogScript;
     public int QuestCount = 0;
     public int ActiveQuestCount = 0;
@@ -13,7 +15,15 @@ public class QuestList : MonoBehaviour {
     private List<QuestObject> ActiveQuests = new List<QuestObject>();
 
     void Start () {
-
+        if (QuestListObject == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            QuestListObject = this;
+        }
+        else if (QuestLogScript != this)
+        {
+            Destroy(gameObject);
+        }
         //QuestData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Quests.json"));
         //ConstructQuestDatabase();
         DatabaseQuests.Add(new QuestObject(

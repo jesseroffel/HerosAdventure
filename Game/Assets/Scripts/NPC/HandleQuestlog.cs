@@ -3,15 +3,16 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class HandleQuestlog : MonoBehaviour {
+    [Header("Quest UI Panel")]
     public GameObject QuestLogPanel;
-
+    [Header("Quest List Grid Prefab")]
     public GameObject QuestListGrid;
-
+    [Header("Quest Item Prefab")]
     public GameObject QuestItemPrefab;
-
+    [Header("Quest Item Requirement Prefabs")]
     public GameObject ObjectiveReqPrefab;
     public GameObject ObjectiveInfoPrefab;
-
+    [Header("Quest Unlock Window")]
     public GameObject QuestUnlockPanel;
     public GameObject QuestUnlockPrefab;
 

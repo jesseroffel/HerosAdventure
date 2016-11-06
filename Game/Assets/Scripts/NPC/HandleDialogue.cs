@@ -3,15 +3,16 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class HandleDialogue : MonoBehaviour {
-
+    [Header("Dialogue GameObjects")]
     public GameObject DialogueWindow;
     public GameObject EndConversationIcon;
     public GameObject WaitNextLineIcon;
-
+    [Header("Dialogue Text Objects")]
     public Text NamePlate;
     public Text QuestPlate;
     public Text DialogueText;
 
+    [Header("Talk Button")]
     public GameObject TalkUI;
 
     private string TextToDialogue;
@@ -20,8 +21,8 @@ public class HandleDialogue : MonoBehaviour {
     private bool DownTime = false;
     private float BlinkTime = 0.0f;
 
-    private bool QuestIcon = false;
-    private bool QuestOver = false;
+    //private bool QuestIcon = false;
+    //private bool QuestOver = false;
 
 	// Use this for initialization
 	void Start () {
@@ -39,6 +40,7 @@ public class HandleDialogue : MonoBehaviour {
     //    BlinkIcon();
     //}
 
+    /*
     public void BlinkIcon()
     {
         if (IconActive)
@@ -73,6 +75,7 @@ public class HandleDialogue : MonoBehaviour {
             }
         }
     }
+    */
 
     public void SetDialogueText(string newstring)
     {
@@ -96,11 +99,13 @@ public class HandleDialogue : MonoBehaviour {
         else { EndConversationIcon.SetActive(false); IconActive = false; EndIconActive = false; }
     }
 
+    /*
     public void SetQuestIcon(bool state)
     {
         if (state) { QuestIcon = true; }
         else { QuestIcon = false; }
     }
+    */
 
     public void SetTextUI(bool state)
     {

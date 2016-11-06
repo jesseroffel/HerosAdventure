@@ -6,10 +6,9 @@ public class EnemyHP : MonoBehaviour {
     public Material HitMateral;
     private Renderer rend;
     //private Color HitColor = Color.red;
-    public Material thisMaterial;
+    //public Material thisMaterial;
     private Material OwnMaterial;
-    public Color thisColor;
-    public QuestList questlist;
+    //public Color thisColor;
 
     private int EnemyID = 1;
     public float currentHP;
@@ -34,8 +33,8 @@ public class EnemyHP : MonoBehaviour {
             }
         }
         currentHP = MaxHP;
-        thisMaterial = rend.material;
-        OwnMaterial = thisMaterial;
+        //thisMaterial = rend.material;
+        //OwnMaterial = thisMaterial;
         //Debug.Log(thisMaterial.name);
     }
 	
@@ -85,14 +84,8 @@ public class EnemyHP : MonoBehaviour {
             Debug.Log("[ENEMY] " + gameObject.name + " defeated, HP:  " + currentHP + "  D:     " + damage + "  MHP:  " + MaxHP);
             defeated = true;
             // Notify Questlist of kill for quests
-            if (questlist == null)
-            {
-                GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<QuestList>().RegisterKillID(EnemyID);
-            }
-            else
-            {
-                questlist.RegisterKillID(EnemyID);
-            }
+            QuestList.QuestListObject.RegisterKillID(EnemyID);
+
             if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
         }
         isHit = true;

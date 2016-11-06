@@ -7,14 +7,15 @@ public class HitRegistrator : MonoBehaviour
     private float AliveTime = 0.0f;
     private float currentTime = 0.0f;
     private float DamageValue = 0.0f;
+    private int MagicType = 0;
     
     private Vector3 PlayerForce;
     private Rigidbody rigid;
     private float StickTime = 0;
     private bool Active = true;
     private bool StickCheck = false;
-    
-    
+
+    enum CombatType { NoCombat = 0, Melee = 1, Range = 2, Magic = 3 };
 
     public void SetSettings(int type, float alive, float damage, Vector3 playerf)
     {
@@ -24,6 +25,17 @@ public class HitRegistrator : MonoBehaviour
         PlayerForce = playerf;
         currentTime = Time.time + AliveTime;
         rigid = gameObject.GetComponent<Rigidbody>();
+    }
+
+    public void SetSettings(int type, float alive, float damage, Vector3 playerf, int magictype)
+    {
+        ProjectileType = type;
+        AliveTime = alive;
+        DamageValue = damage;
+        PlayerForce = playerf;
+        currentTime = Time.time + AliveTime;
+        rigid = gameObject.GetComponent<Rigidbody>();
+        MagicType = magictype;
     }
 
     // Update is called once per frame
@@ -47,6 +59,14 @@ public class HitRegistrator : MonoBehaviour
                 currentTime = Time.time + AliveTime;
             }
         }
+
+        if (ProjectileType == 3)
+        {
+            if (MagicType == 1)
+            {
+                MoveStraight();
+            }
+        }
     }
 
     //void OnCollisionEnter(Collision collision)
@@ -68,17 +88,38 @@ public class HitRegistrator : MonoBehaviour
                     switch (ProjectileType)
                     {
                         case 1:
+                            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
                             break;
                         case 2:
                             transform.parent = collision.gameObject.transform;
-                            rigid.isKinematic = true;
-                            StickTime = Time.time + 5;
-                            StickCheck = true;
+                            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                            break;
+                            // SPELLS
+                        case 3:
+                            if (MagicType == 2)
+                            {
+                                //collision.
+                                Debug.Log(collision.gameObject.name + " Has been hit with slow spell");
+                            }
                             break;
                     }
-                    collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                    
+                }
+            } else
+            {
+                if (ProjectileType == (int)CombatType.Range)
+                {
+                    rigid.isKinematic = true;
+                    StickTime = Time.time + 5;
+                    StickCheck = true;
+                    return;
                 }
             }
         }
+    }
+
+    void MoveStraight()
+    {
+        transform.position += transform.forward * 0.01f;
     }
 }

@@ -2,9 +2,12 @@
 using System.Collections;
 
 public class EnemySpawn : MonoBehaviour {
+    [Header("Enemy To Spawn")]
     public GameObject EnemyPrefab;
+    [Header("Player Objects for Enemy")]
     public Transform PlayerTarget;
     public Player_Health hp;
+    [Header("Spawner Settings")]
     public float RespawnTime = 5.0f;
     public int SpawnLimit = 0;              // SPAWNS AFTER KILL
     public int EnemyActiveLimit = 1;        // AMOUNT ACTIVE ENEMIES
@@ -96,8 +99,6 @@ public class EnemySpawn : MonoBehaviour {
 
         GameObject Enemy = (GameObject)Instantiate(EnemyPrefab, position, quant);
         Enemy.transform.parent = gameObject.transform;
-        Enemy.GetComponent<enemyBasic>().target = PlayerTarget;
-        Enemy.GetComponent<enemyBasic>().playerhealth = hp;
     }
 
     Vector3 CalcCircle(Vector3 center, float radius, int angle)

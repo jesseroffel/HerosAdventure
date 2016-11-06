@@ -4,11 +4,19 @@ using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
 public class CombatSystem : MonoBehaviour {
+    [Header("Player Objects")]
     public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
+    [Header("Combat Prefabs")]
     public Transform HitRegBlock;
-    public GameObject ArrowSpawn;
-    public GameObject ArrowPrefab; 
+    public GameObject ArrowPrefab;
+    public GameObject MagicMisslePrefab;
+    public GameObject AoEPrefab;
+
+    [Header("Player GameObjects")]
+    public Transform ArrowSpawn;
+    public Transform MagicMissleSpawn;
+    public Transform MagicAreaOfEffectSpawn;
     public GameObject SwordModel;
     public GameObject StaffModel;
     public GameObject BowModel;
@@ -16,9 +24,10 @@ public class CombatSystem : MonoBehaviour {
     //public Transform BackPosition01;
     //public Transform BackPosition02;
 
-
+    [Header("Attack Settings")]
     public float Attack01Swing = 0.5f;
     public float AttackBuildup = 0.5f;
+    public int MagicSpell = 1;
 
     private float propulsionForce = 10.0f;
     private float NextAttack = 0.0f;
@@ -28,12 +37,6 @@ public class CombatSystem : MonoBehaviour {
     private bool Attacking = false;
     private int CombatState = 1;
     private int AttackOrder = 0;
-    
-    // UI
-    public Text StrenghText;
-    public GameObject StrenghPanel;
-    private float BowStrengh = 0;
-    private bool HoldingDown = false;
 
     //Switching
     public float SwitchSpeed = 1.0f;
@@ -43,11 +46,21 @@ public class CombatSystem : MonoBehaviour {
     private int SwitchChosenOption = 0;
     private int[] StyleOrder = { 2, 1, 3 };
 
+    // UI
+    [Header("Bow UI")]
+    public Text StrenghText;
+    public GameObject StrenghPanel;
+    private float BowStrengh = 0;
+    private bool HoldingDown = false;
+
+   
+
     private float AttackPower = 15.0f;
 
     private Quaternion SwordRot = new Quaternion(50, 0, 0, 0);
 
-    enum CombatStyle { NoCombat = 0,  Melee = 1 , Range = 2, Magic = 3};
+    enum CombatStyle { NoCombat = 0, Melee = 1, Range = 2, Magic = 3 };
+    enum MagicStyle { None = 0, Missle = 1, AoE = 2}
 
     // Use this for initialization
     void Start() {
@@ -126,21 +139,36 @@ public class CombatSystem : MonoBehaviour {
                             if (StrenghText) { StrenghText.text = Text; }
                         } else
                         {
-                            BowStrengh = 0;
                             PrepareAttack = false;
                             GameObject Projectile = Instantiate(ArrowPrefab);
-                            Projectile.transform.position = ArrowSpawn.transform.position;
-                            Projectile.transform.rotation = Quaternion.identity;
-                            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
-                            rb.velocity = (ArrowSpawn.transform.forward * 20) * BowStrengh;
+                            Projectile.transform.position = ArrowSpawn.position;
+                            Projectile.transform.rotation = ArrowSpawn.rotation;
 
-                            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 5, 10, transform.forward * propulsionForce);
+                            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+                            rb.velocity = (ArrowSpawn.forward * 20) * BowStrengh;
+
+                            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
                             if (StrenghPanel) { StrenghPanel.SetActive(false); }
-                            
+                            BowStrengh = 0;
                         }
                         
                         break;
                     case (int)CombatStyle.Magic:
+                        switch(MagicSpell)
+                        {
+                            case 1:
+                                GameObject Missle = Instantiate(MagicMisslePrefab);
+                                Missle.transform.position = MagicMissleSpawn.position;
+                                Missle.transform.rotation = MagicMissleSpawn.rotation;
+                                Missle.GetComponent<HitRegistrator>().SetSettings(3, 5, 50, transform.forward * propulsionForce, 1);
+                                break;
+                            case 2:
+                                GameObject AoE = Instantiate(AoEPrefab);
+                                AoE.transform.position = MagicAreaOfEffectSpawn.position;
+                                AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
+                                AoE.GetComponent<HitRegistrator>().SetSettings(3, 1, 0, transform.forward * propulsionForce, 2);
+                                break;
+                        }
                         break;
                 }
             }

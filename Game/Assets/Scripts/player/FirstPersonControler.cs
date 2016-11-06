@@ -71,7 +71,7 @@ public class FirstPersonControler : MonoBehaviour
                 {
                     InConversation = true;
                     //lastnpc.SetIconVisibility(true);
-                    lastnpc.SetPlayerInRange(true);
+                    //lastnpc.SetPlayerInRange(true);
                     CanSpeakWithNPC = true;
                     DialogueManager.SetTextUI(true);
                 }
@@ -89,7 +89,7 @@ public class FirstPersonControler : MonoBehaviour
             CanSpeakWithNPC = false;
             InConversation = false;
             //lastnpc.SetIconVisibility(false);
-            lastnpc.SetPlayerInRange(false);
+            //lastnpc.SetPlayerInRange(false);
             lastnpc.SetStartedTalk(false);
             DialogueManager.SetTextUI(false);
 
