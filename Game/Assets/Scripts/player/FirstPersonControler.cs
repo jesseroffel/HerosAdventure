@@ -17,6 +17,9 @@ public class FirstPersonControler : MonoBehaviour
     private bool InteractingWithNPC = false;
     private bool InConversation = false;
 
+    private float TempSpeed;
+    private bool SlowWalk = false;
+
     void Start()
     {
         rb = GameObject.Find("Player").GetComponent<Rigidbody>();
@@ -128,4 +131,17 @@ public class FirstPersonControler : MonoBehaviour
 
 
     public bool GetInConversation() { return InConversation; }
+
+    public void SetSlowWalk(bool state) {
+        if (state) {
+            TempSpeed = speed;
+            speed = speed * 0.33f;
+            SlowWalk = true;
+        } else
+        {
+            speed = TempSpeed;
+            TempSpeed = 0;
+            SlowWalk = false;
+        }
+    }
 }

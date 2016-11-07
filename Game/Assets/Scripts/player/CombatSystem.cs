@@ -150,6 +150,7 @@ public class CombatSystem : MonoBehaviour {
                             Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
                             if (StrenghPanel) { StrenghPanel.SetActive(false); }
                             BowStrengh = 0;
+                            FirstPersonControlerScript.SetSlowWalk(false);
                         }
                         
                         break;
@@ -269,7 +270,7 @@ public class CombatSystem : MonoBehaviour {
         NextAttack = Time.time + AttackBuildup;
         HoldingDown = true;
         PrepareAttack = true;
-        if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
+        //if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
         //Set animation
         if (CombatState == 1)
         {
@@ -285,6 +286,10 @@ public class CombatSystem : MonoBehaviour {
                 case 3:
                     break;
             }
+        }
+        if (CombatState == 2)
+        {
+            FirstPersonControlerScript.SetSlowWalk(true);
         }
     }
 }

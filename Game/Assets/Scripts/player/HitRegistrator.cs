@@ -14,6 +14,7 @@ public class HitRegistrator : MonoBehaviour
     private float StickTime = 0;
     private bool Active = true;
     private bool StickCheck = false;
+    private float ArrowFallSpeed = 1.0f;
 
     private List<int> GameobjectIDS = new List<int>();
 
@@ -61,7 +62,15 @@ public class HitRegistrator : MonoBehaviour
                 currentTime = Time.time + AliveTime;
             }
         }
-
+        //if (ProjectileType == 2)
+        //{
+            //Debug.Log(transform.rotation.x);
+            //Debug.Log(transform.eulerAngles.x + " " + transform.eulerAngles.y + " " + transform.eulerAngles.z);
+            //if (transform.rotation.x != 90)
+            //{
+                //transform.Rotate(new Vector3(-100 * Time.deltaTime, 0, 0 ));
+            //}
+        //}
         if (ProjectileType == 3)
         {
             if (MagicType == 1)
@@ -103,12 +112,11 @@ public class HitRegistrator : MonoBehaviour
                             case 3:
                                 if (MagicType == 2)
                                 {
-                                    collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 3);
+                                    collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
                                     Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [SLOWNESS]");
                                 }
                                 break;
                         }
-                        GameobjectIDS.Add(collision.gameObject.GetInstanceID());
                     }
                 }
             } else
@@ -126,8 +134,15 @@ public class HitRegistrator : MonoBehaviour
 
     bool CheckGameobjectIds(int id)
     {
-        // PLZ ADD ID CHECK
-        return true;
+        foreach (int obj in GameobjectIDS)
+        {
+            if (obj == id)
+            {
+                return true;
+            }
+        }
+        GameobjectIDS.Add(id);
+        return false;
     }
 
     void MoveStraight()

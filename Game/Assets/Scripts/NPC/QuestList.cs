@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 public class QuestList : MonoBehaviour {
     public static QuestList QuestListObject;
-
+    [Header("Quest Log Script Object")]
     public HandleQuestlog QuestLogScript;
+    [Header("Quest List Stats")]
     public int QuestCount = 0;
     public int ActiveQuestCount = 0;
     public int LastAccessedQuest = 0;
@@ -191,6 +192,7 @@ public class QuestList : MonoBehaviour {
         if (unlocked) { return true; } else { return false; }
     }
 
+   
     public bool RegisterItemID(int itemid)
     {
         bool Registereditemid = false;

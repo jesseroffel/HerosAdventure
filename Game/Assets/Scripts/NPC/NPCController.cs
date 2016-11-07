@@ -202,6 +202,9 @@ public class NPCController : MonoBehaviour {
                 {
                     if (!m_QuestActivated) {
                         ActivateQuest(m_QuestID);
+                        //QuestObject replace = QuestList.CheckInventory()
+                        // TODO, CHECK INVENTORY ON QUEST ITEMS
+
                         QuestList.QuestListObject.SetQuestLogActive(
                             currentquest.m_QuestID,
                             currentquest.m_QuestTitle,

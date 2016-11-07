@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class NPCList : MonoBehaviour {
     public static NPCList NPCListObject;
+    [Header("NPC List Stats")]
     public int NPCCount = 0;
     public int LastLoadedID = 0;
     private List<NPCObject> DatabaseNPCs = new List<NPCObject>();

@@ -126,7 +126,7 @@ public class HandleQuestlog : MonoBehaviour {
         QuestDisplay.transform.position = new Vector3(0,0,0);
 
 
-        RectTransform RT = QuestDisplay.GetComponent<RectTransform>();
+        //RectTransform RT = QuestDisplay.GetComponent<RectTransform>();
         /*Left*/
         //RT.offsetMin.Set(1,1);
         /*Right*/

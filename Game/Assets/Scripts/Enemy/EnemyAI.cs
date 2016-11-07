@@ -36,7 +36,7 @@ public class EnemyAI : MonoBehaviour
     {
         distance = Vector3.Distance(transform.position, player.transform.position);
 
-        if(distance <= chaseRange)
+        if (distance <= chaseRange)
         {
             Chasing();
             //Debug.Log("chasing");
@@ -47,15 +47,16 @@ public class EnemyAI : MonoBehaviour
             //Debug.Log("stop chasing");
         }
 
-        if(hp.defeated && !itemDropped)
+        if (hp.defeated && !itemDropped)
         {
             GameObject.Instantiate(drop);
             drop.transform.position = transform.position;
             itemDropped = true;
+
         }
     }
 
-    void MeleeAttack()
+        void MeleeAttack()
     {
 
     }
@@ -81,5 +82,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
- 
+    public void SetSpeed(float newspeed)
+    {
+        speed = newspeed;
+        nav.speed = newspeed;
+    }
 }

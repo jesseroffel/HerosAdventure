@@ -141,10 +141,7 @@ public class EnemyHP : MonoBehaviour {
                 switch (EI)
                 {
                     case 2:
-                        if (oldspeed == 0)
-                        {
-                            DebufSpeed();
-                        }
+                        DebufSpeed();
                         break;
                     case 3:
                         break;
@@ -181,8 +178,8 @@ public class EnemyHP : MonoBehaviour {
 
     void DebufSpeed()
     {
-        oldspeed = EAI.speed;
-        EAI.speed = oldspeed / 2;
+        if (oldspeed == 0) { oldspeed = EAI.speed; }
+        EAI.SetSpeed(EAI.speed / 2);
     }
 
     bool RemoveEffect(int Idex)
@@ -213,7 +210,7 @@ public class EnemyHP : MonoBehaviour {
         switch (debufid)
         {
             case 2:
-                EAI.speed = oldspeed;
+                EAI.SetSpeed(oldspeed);
                 oldspeed = 0;
                 break;
             case 3:
