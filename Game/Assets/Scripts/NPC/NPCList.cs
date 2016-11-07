@@ -13,7 +13,6 @@ public class NPCList : MonoBehaviour {
         if (NPCListObject == null)
         {
             NPCListObject = this;
-            Debug.Log("Set NPC LIST");
         }
         else if (NPCListObject != this)
         {

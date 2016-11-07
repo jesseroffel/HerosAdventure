@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class HitRegistrator : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class HitRegistrator : MonoBehaviour
     private float StickTime = 0;
     private bool Active = true;
     private bool StickCheck = false;
+
+    private List<int> GameobjectIDS = new List<int>();
 
     enum CombatType { NoCombat = 0, Melee = 1, Range = 2, Magic = 3 };
 
@@ -85,25 +87,29 @@ public class HitRegistrator : MonoBehaviour
             {
                 if (collision.gameObject.tag == "Enemy")
                 {
-                    switch (ProjectileType)
+                    bool check = CheckGameobjectIds(collision.gameObject.GetInstanceID());
+                    if (!check)
                     {
-                        case 1:
-                            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
-                            break;
-                        case 2:
-                            transform.parent = collision.gameObject.transform;
-                            collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
-                            break;
+                        switch (ProjectileType)
+                        {
+                            case 1:
+                                collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                break;
+                            case 2:
+                                transform.parent = collision.gameObject.transform;
+                                collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                break;
                             // SPELLS
-                        case 3:
-                            if (MagicType == 2)
-                            {
-                                //collision.
-                                Debug.Log(collision.gameObject.name + " Has been hit with slow spell");
-                            }
-                            break;
+                            case 3:
+                                if (MagicType == 2)
+                                {
+                                    collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 3);
+                                    Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [SLOWNESS]");
+                                }
+                                break;
+                        }
+                        GameobjectIDS.Add(collision.gameObject.GetInstanceID());
                     }
-                    
                 }
             } else
             {
@@ -116,6 +122,12 @@ public class HitRegistrator : MonoBehaviour
                 }
             }
         }
+    }
+
+    bool CheckGameobjectIds(int id)
+    {
+        // PLZ ADD ID CHECK
+        return true;
     }
 
     void MoveStraight()

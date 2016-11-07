@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Slime : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent nav;
     private Transform player;
@@ -34,12 +34,12 @@ public class Slime : MonoBehaviour
         if(distance <= chaseRange)
         {
             Chasing();
-            Debug.Log("chasing");
+            //Debug.Log("chasing");
         }
         else
         {
-            freeRoaming();
-            Debug.Log("stop chasing");
+            //freeRoaming();
+            //Debug.Log("stop chasing");
         }
     }
 

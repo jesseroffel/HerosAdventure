@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyHP : MonoBehaviour {
     
@@ -10,8 +10,10 @@ public class EnemyHP : MonoBehaviour {
     private Material OwnMaterial;
     //public Color thisColor;
 
-    private int EnemyID = 1;
     public float currentHP;
+    private int EnemyID = 1;
+    private List<int> EffectsApplied = new List<int>();
+    private List<float> EffectTime = new List<float>();
     private float MaxHP;
     private bool isHit = false;
     private bool defeated = false;
@@ -20,6 +22,12 @@ public class EnemyHP : MonoBehaviour {
     private bool Sendkill = false;
     private bool HitKnockback = false;
     private Vector3 KnockbackForce;
+
+    //Effects
+    EnemyAI EAI;
+    float oldspeed = 0;
+
+    enum EffectNames { Test, MagicMissle, AeOSlowdown, AoEPoison}
 
     // Use this for initialization
     void Start () {
@@ -36,6 +44,11 @@ public class EnemyHP : MonoBehaviour {
         //thisMaterial = rend.material;
         //OwnMaterial = thisMaterial;
         //Debug.Log(thisMaterial.name);
+
+        if (EAI == null)
+        {
+            EAI = gameObject.GetComponent<EnemyAI>();
+        }
     }
 	
 	void Update () {
@@ -48,7 +61,9 @@ public class EnemyHP : MonoBehaviour {
             isHit = false;
             //if (thisMaterial) { rend.material.CopyPropertiesFromMaterial(thisMaterial); }
         }
-	}
+        CheckEffect();
+
+    }
 
     void FixedUpdate()
     {
@@ -107,4 +122,103 @@ public class EnemyHP : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
+    public void AddEffect(int effectID, float duration)
+    {
+        EffectsApplied.Add(effectID);
+        EffectTime.Add(Time.time + duration);
+        ApplyActiveEffects();
+    }
+
+    void ApplyActiveEffects()
+    {
+        int Amount = EffectsApplied.Count;
+        if (Amount > 0)
+        {
+            for (int i = 0; i <Amount; i++)
+            {
+                int EI = EffectsApplied[i];
+                switch (EI)
+                {
+                    case 2:
+                        if (oldspeed == 0)
+                        {
+                            DebufSpeed();
+                        }
+                        break;
+                    case 3:
+                        break;
+
+                }
+            }
+        }
+    }
+
+    void CheckEffect()
+    {
+        int Amount = EffectTime.Count;
+        if (Amount > 0)
+        {
+            for (int i = 0; i < Amount; i++)
+            {
+                if (EffectTime[i] < Time.time)
+                {
+                    int type = EffectsApplied[i];
+                    bool check = RemoveEffect(type);
+                    if (check)
+                    {
+                        Amount = 0;
+                        Debug.Log("[MAGIC] Effect " + i + " has worn out");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[MAGIC] Effect could not be removed!?");
+                    }
+                }
+            }
+        }
+    }
+
+    void DebufSpeed()
+    {
+        oldspeed = EAI.speed;
+        EAI.speed = oldspeed / 2;
+    }
+
+    bool RemoveEffect(int Idex)
+    {
+        int index = 0;
+        bool endcheck = false;
+        for (int i = 0; i < EffectsApplied.Count; i++) {
+            if (EffectsApplied[i] == Idex)
+            {
+                index = i;
+                EffectTime.RemoveAt(index);
+                EffectsApplied.RemoveAt(index);
+                endcheck = true;
+                break;
+            }
+        }
+        bool check = false;
+        for (int i = 0; i < EffectsApplied.Count; i++)
+        {
+            if (EffectsApplied[i] == Idex) { check = true; }
+        }
+        if (!check) { RemoveDebuff(Idex); }
+        if (endcheck) { return true; } else { return false; }
+    }
+
+    void RemoveDebuff(int debufid)
+    {
+        switch (debufid)
+        {
+            case 2:
+                EAI.speed = oldspeed;
+                oldspeed = 0;
+                break;
+            case 3:
+                break;
+        }
+    }
+
 }

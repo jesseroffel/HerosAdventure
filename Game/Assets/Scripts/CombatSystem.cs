@@ -166,7 +166,8 @@ public class CombatSystem : MonoBehaviour {
                                 GameObject AoE = Instantiate(AoEPrefab);
                                 AoE.transform.position = MagicAreaOfEffectSpawn.position;
                                 AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
-                                AoE.GetComponent<HitRegistrator>().SetSettings(3, 1, 0, transform.forward * propulsionForce, 2);
+                                Vector3 empty = new Vector3(0,0,0);
+                                AoE.GetComponent<HitRegistrator>().SetSettings(3, 1, 0, empty, 2);
                                 break;
                         }
                         break;

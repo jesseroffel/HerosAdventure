@@ -1,8 +1,5 @@
-﻿using LitJson;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
-using System.IO;
 
 public class QuestList : MonoBehaviour {
     public static QuestList QuestListObject;
