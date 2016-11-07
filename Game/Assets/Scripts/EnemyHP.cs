@@ -16,7 +16,7 @@ public class EnemyHP : MonoBehaviour {
     private List<float> EffectTime = new List<float>();
     private float MaxHP;
     private bool isHit = false;
-    private bool defeated = false;
+    public bool defeated = false;
     private float HitTime = 0;
     private float HitCoolDown = 0;
     private bool Sendkill = false;

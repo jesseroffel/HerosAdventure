@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class monsterDrop : MonoBehaviour {
+public class monsterDrop : MonoBehaviour
+{
+    public GameObject drop;
 
-	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 	
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+    {
+	    
 	}
 }

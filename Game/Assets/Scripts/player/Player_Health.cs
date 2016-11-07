@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour {
 
+    GameObject healthbar;
+
     Text healthText;
     public float health = 100;
     public float maxHealth = 100;
@@ -14,6 +16,7 @@ public class Player_Health : MonoBehaviour {
     {
         healthText = GameObject.Find("healthText").GetComponent<Text>();
         scene = GameObject.Find("GameHandler").GetComponent<ChangeScene>();
+        healthbar = GameObject.FindGameObjectWithTag("healthbar");
 	}
 	
     void Update()
@@ -28,6 +31,8 @@ public class Player_Health : MonoBehaviour {
             health = maxHealth;
         }
         healthText.text = "health: " + health.ToString();
+
+        healthbar.transform.localScale = new Vector3(health / 100, 1, 1);
     }
 
     public void TakeDamage(int damage)

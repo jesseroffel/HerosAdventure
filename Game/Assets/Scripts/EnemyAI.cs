@@ -6,6 +6,10 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent nav;
     private Transform player;
 
+    public GameObject drop;
+    bool itemDropped;
+    EnemyHP hp;
+
     public Transform[] locations;
     int destination;
 
@@ -23,8 +27,9 @@ public class EnemyAI : MonoBehaviour
     {
         nav = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        hp = GetComponent<EnemyHP>();
         nav.speed = speed;
-        
+        itemDropped = false;
     }
 
     void Update()
@@ -40,6 +45,13 @@ public class EnemyAI : MonoBehaviour
         {
             //freeRoaming();
             //Debug.Log("stop chasing");
+        }
+
+        if(hp.defeated && !itemDropped)
+        {
+            GameObject.Instantiate(drop);
+            drop.transform.position = transform.position;
+            itemDropped = true;
         }
     }
 

@@ -4,11 +4,11 @@ using System.Collections;
 public class PickUp : MonoBehaviour
 {
     public int itemId;
-    public Inventory inventory;
+    Inventory inventory;
 
     void Start()
     {
-     //   inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
+        inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
     }
 
     void OnTriggerEnter(Collider col)
