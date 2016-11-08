@@ -34,7 +34,6 @@ public class Inventory : MonoBehaviour
             slots[i].GetComponent<Slot>().id = i;
         }
 
-        AddItem(1);
         AddItem(2);
         AddItem(2);
         AddItem(3);
@@ -47,7 +46,16 @@ public class Inventory : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            inventoryPanel.SetActive(!inventoryPanel.active);            
+            inventoryPanel.SetActive(!inventoryPanel.active);
+            Cursor.lockState = CursorLockMode.None;            
+        }
+        if(inventoryPanel.active)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

@@ -24,6 +24,7 @@ public class FirstPersonControler : MonoBehaviour
     {
         rb = GameObject.Find("Player").GetComponent<Rigidbody>();
         if (DialogueManager == null) { DialogueManager = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
+      //  Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
