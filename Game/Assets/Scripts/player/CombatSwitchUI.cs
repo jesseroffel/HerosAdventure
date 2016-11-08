@@ -34,18 +34,18 @@ public class CombatSwitchUI : MonoBehaviour {
                 LeftTitleText.text = MiddleTitleText.text;
                 MiddleTitleText.text = tempText;
                 
-
-                tempImage = LeftImage.GetComponent<Image>();
-                tempSprite = tempImage.sprite;
-
-
-                LeftImage.GetComponent<SpriteRenderer>().sprite = MiddleImage.sprite;
-                MiddleImage.GetComponent<SpriteRenderer>().sprite = tempSprite;
+                tempSprite = LeftImage.sprite;
+                LeftImage.sprite = MiddleImage.sprite;
+                MiddleImage.sprite = tempSprite;
                 break;
             case 3:
                 tempText = RightTitleText.text;
                 RightTitleText.text = MiddleTitleText.text;
                 MiddleTitleText.text = tempText;
+
+                tempSprite = RightImage.sprite;
+                RightImage.sprite = MiddleImage.sprite;
+                MiddleImage.sprite = tempSprite;
                 break;
         }
     }

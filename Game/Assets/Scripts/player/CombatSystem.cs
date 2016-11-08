@@ -50,14 +50,14 @@ public class CombatSystem : MonoBehaviour {
     [Header("Combat Switch UI")]
     public GameObject SwitchCombatPanel;
     private CombatSwitchUI CombatSwitchUIScript;
-    [Header("Bow UI")]
-    public Text StrenghText;
-    public GameObject StrenghPanel;
+
+    [Header("Bow Strength UI")]
+    public Image StrengthBar;
+    public GameObject StrengthPanel;
+
     private float BowStrengh = 0;
     private bool HoldingDown = false;
     private bool WindowOpen = false;
-
-   
 
     private float AttackPower = 15.0f;
 
@@ -72,8 +72,8 @@ public class CombatSystem : MonoBehaviour {
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
-        if (StrenghText == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
-        if (StrenghPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
+        if (StrengthBar == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
+        if (StrengthPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
     }
 	
 	// Update is called once per frame
@@ -96,6 +96,12 @@ public class CombatSystem : MonoBehaviour {
         if (CrossPlatformInputManager.GetButton("SwitchCombat") && Time.time > SwitchDisable)
         {
             SwitchCombatStyle();
+        }
+
+        if (CrossPlatformInputManager.GetButtonUp("SwitchCombat") )
+        {
+            WindowOpen = false;
+            SwitchCombatPanel.SetActive(false);
         }
 
         if (PrepareAttack)
@@ -129,8 +135,8 @@ public class CombatSystem : MonoBehaviour {
                     case (int)CombatStyle.Range:
                         if (HoldingDown)
                         {
-                            if (StrenghPanel) {
-                                if (StrenghPanel.activeSelf == false) { StrenghPanel.SetActive(true); }
+                            if (StrengthPanel) {
+                                if (StrengthPanel.activeSelf == false) { StrengthPanel.SetActive(true); }
                             }
                             string Text = "";
                             if (BowStrengh < 1) {
@@ -138,8 +144,7 @@ public class CombatSystem : MonoBehaviour {
                                 if (BowStrengh > 1) { BowStrengh = 1; }
                                 
                             }
-                            Text = BowStrengh.ToString("F2");
-                            if (StrenghText) { StrenghText.text = Text; }
+                            if (StrengthBar) { StrengthBar.fillAmount = BowStrengh; }
                         } else
                         {
                             PrepareAttack = false;
@@ -151,7 +156,7 @@ public class CombatSystem : MonoBehaviour {
                             rb.velocity = (ArrowSpawn.forward * 20) * BowStrengh;
 
                             Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
-                            if (StrenghPanel) { StrenghPanel.SetActive(false); }
+                            if (StrengthPanel) { StrengthPanel.SetActive(false); }
                             BowStrengh = 0;
                             FirstPersonControlerScript.SetSlowWalk(false);
                         }
@@ -198,6 +203,7 @@ public class CombatSystem : MonoBehaviour {
     {
         bool SwitchCheck = false;
         int oldstyle = CombatState;
+        int chosen = 0;
         if (SwitchCombatPanel)
         {
             if (!WindowOpen) {
@@ -214,6 +220,7 @@ public class CombatSystem : MonoBehaviour {
             int left = StyleOrder[0];
             StyleOrder[0] = mid;
             StyleOrder[1] = left;
+            chosen = 1;
         }
         //if (CrossPlatformInputManager.GetButton("SwitchMiddle"))
         //{
@@ -228,6 +235,7 @@ public class CombatSystem : MonoBehaviour {
             int right = StyleOrder[2];
             StyleOrder[2] = mid;
             StyleOrder[1] = right;
+            chosen = 3;
         }
 
         //Debug.Log("Left: " + StyleOrder[0] + " Mid: " + StyleOrder[1] + " Right: " + StyleOrder[2]);
@@ -279,12 +287,13 @@ public class CombatSystem : MonoBehaviour {
                 if (CombatSwitchUIScript == null)
                 {
                     CombatSwitchUIScript = SwitchCombatPanel.GetComponent<CombatSwitchUI>();
-                    CombatSwitchUIScript.SwitchStyles(CombatState);
+                    CombatSwitchUIScript.SwitchStyles(chosen);
                 }
                 else
                 {
-                    CombatSwitchUIScript.SwitchStyles(CombatState);
+                    CombatSwitchUIScript.SwitchStyles(chosen);
                 }
+                chosen = 0;
                 WindowOpen = false;
                 SwitchCombatPanel.SetActive(false);
             }
