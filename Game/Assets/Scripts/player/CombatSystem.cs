@@ -47,11 +47,15 @@ public class CombatSystem : MonoBehaviour {
     private int[] StyleOrder = { 2, 1, 3 };
 
     // UI
+    [Header("Combat Switch UI")]
+    public GameObject SwitchCombatPanel;
+    private CombatSwitchUI CombatSwitchUIScript;
     [Header("Bow UI")]
     public Text StrenghText;
     public GameObject StrenghPanel;
     private float BowStrengh = 0;
     private bool HoldingDown = false;
+    private bool WindowOpen = false;
 
    
 
@@ -70,7 +74,6 @@ public class CombatSystem : MonoBehaviour {
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
         if (StrenghText == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
         if (StrenghPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
-        SwitchCombatStyle();
     }
 	
 	// Update is called once per frame
@@ -195,6 +198,13 @@ public class CombatSystem : MonoBehaviour {
     {
         bool SwitchCheck = false;
         int oldstyle = CombatState;
+        if (SwitchCombatPanel)
+        {
+            if (!WindowOpen) {
+                WindowOpen = true;
+                SwitchCombatPanel.SetActive(true);
+            }
+        }
         if (CrossPlatformInputManager.GetButton("SwitchLeft"))
         {
             SwitchCheck = true;
@@ -205,10 +215,10 @@ public class CombatSystem : MonoBehaviour {
             StyleOrder[0] = mid;
             StyleOrder[1] = left;
         }
-        if (CrossPlatformInputManager.GetButton("SwitchMiddle"))
-        {
-            CombatState = StyleOrder[1];
-        }
+        //if (CrossPlatformInputManager.GetButton("SwitchMiddle"))
+        //{
+        //    CombatState = StyleOrder[1];
+        //}
         if (CrossPlatformInputManager.GetButton("SwitchRight"))
         {
             SwitchCheck = true;
@@ -262,7 +272,23 @@ public class CombatSystem : MonoBehaviour {
                     Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(true) failed");
                     break;
             }
-        }  
+        }
+        if (WindowOpen && SwitchCheck) {
+            if (SwitchCombatPanel)
+            {
+                if (CombatSwitchUIScript == null)
+                {
+                    CombatSwitchUIScript = SwitchCombatPanel.GetComponent<CombatSwitchUI>();
+                    CombatSwitchUIScript.SwitchStyles(CombatState);
+                }
+                else
+                {
+                    CombatSwitchUIScript.SwitchStyles(CombatState);
+                }
+                WindowOpen = false;
+                SwitchCombatPanel.SetActive(false);
+            }
+        }
     }
 
     void SetAttackAnimation()
