@@ -18,6 +18,8 @@ public class EnemyAI : MonoBehaviour
     float distance;
 
     public float chaseRange;
+    public float AttackRange;
+    public float optimalDistance;
 
     bool chasing;
     bool attacking;
@@ -39,46 +41,63 @@ public class EnemyAI : MonoBehaviour
         if (distance <= chaseRange)
         {
             Chasing();
-            //Debug.Log("chasing");
         }
         else
         {
-            //freeRoaming();
-            //Debug.Log("stop chasing");
+            freeRoaming();
         }
 
+        if (distance <= AttackRange)
+        {
+            if (isRanged)
+            {
+                RangedAttack();
+            }
+            else
+            {
+                MeleeAttack();
+            }
+        }
         if (hp.defeated && !itemDropped)
         {
             GameObject.Instantiate(drop);
             drop.transform.position = transform.position;
             itemDropped = true;
-
         }
     }
 
-        void MeleeAttack()
+    void MeleeAttack()
     {
-
+        Debug.Log("melee attacking");
     }
 
-    void RangedAttck()
+    void RangedAttack()
     {
+        Debug.Log("ranged attacking");
+        if (distance <= optimalDistance)
+        {
 
+        }
+        if (distance >= AttackRange)
+        {
+            Chasing();
+        }
     }
 
     void Chasing()
     {
+        Debug.Log("chasing");
         nav.destination = player.position;
     }
 
     void freeRoaming()
     {
+        Debug.Log("free roaming");
         nav.destination = locations[destination].position;
 
         if (nav.remainingDistance <= 0)
         {
             destination = (int)Random.Range(0.0f, 5.0f);
-            Debug.Log(destination);
         }
     }
 
@@ -86,5 +105,17 @@ public class EnemyAI : MonoBehaviour
     {
         speed = newspeed;
         nav.speed = newspeed;
+    }
+
+    void Backoff()
+    {
+        Debug.Log("backing off");
+        RaycastHit hit;
+        Vector3 back = Vector3.back;
+
+        if(!Physics.Raycast(transform.position, back, 10))
+        {
+            nav.SetDestination(Vector3.back * 10);
+        }
     }
 }
