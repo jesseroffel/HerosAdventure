@@ -46,7 +46,7 @@ public class PickUp : MonoBehaviour
             Unlock.transform.position = new Vector3(0, 0, 0);
 
 
-            string ItemText = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<ItemDatabase>().FetchItemNameByID(id);
+            string ItemText = GameObject.FindGameObjectWithTag("inventory").GetComponent<ItemDatabase>().FetchItemNameByID(id);
             Transform Title = Unlock.transform.GetChild(1);
             Title.GetComponent<Text>().text = ItemText;
 
