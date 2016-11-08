@@ -25,7 +25,7 @@ public class EnemySpawn : MonoBehaviour {
     private Vector3 Center;
 
 	void Start () {
-        if (EnemyPrefab == null) { Debug.LogError("[ENEMYSPAWNER] GameObject EnemyPrefab no has reference!"); }
+        if (EnemyPrefab == null) { Debug.LogError("[ENEMYSPAWNER] GameObject EnemyPrefab no has reference!"); active = false; }
         if (PlayerTarget == null) { Debug.LogError("[ENEMYSPAWNER] Transform PlayerTarget no has reference!"); }
         Center = transform.position;
         RadiusDistance = CalcDistance();

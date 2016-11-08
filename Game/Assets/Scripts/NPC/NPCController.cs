@@ -202,16 +202,14 @@ public class NPCController : MonoBehaviour {
                 {
                     if (!m_QuestActivated) {
                         ActivateQuest(m_QuestID);
-                        //QuestObject replace = QuestList.CheckInventory()
+                        bool check = QuestList.QuestListObject.CheckInventory(currentquest);
                         // TODO, CHECK INVENTORY ON QUEST ITEMS
-
-                        QuestList.QuestListObject.SetQuestLogActive(
-                            currentquest.m_QuestID,
-                            currentquest.m_QuestTitle,
-                            currentquest.m_QuestGivenDialogue,
-                            currentquest.m_RequiredItemID,
-                            currentquest.m_RequiredEnemyID,
-                            currentquest.m_RequiresKillAmount);
+                        if (check)
+                        {
+                            bool complete = QuestList.QuestListObject.RegisterItemIDWithQuest(m_QuestID);
+                            if (!complete) { Debug.Log("[QUEST] ERROR: Could not finish quest!! CHECK QUEST REQS"); }
+                        }
+                        QuestList.QuestListObject.SetQuestLogActive(m_QuestID);
                     }
                 }
 

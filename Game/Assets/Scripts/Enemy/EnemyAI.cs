@@ -44,7 +44,7 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            freeRoaming();
+            //freeRoaming();
         }
 
         if (distance <= AttackRange)

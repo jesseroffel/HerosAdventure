@@ -39,7 +39,7 @@ public class HandleQuestlog : MonoBehaviour {
         }
 	}
 
-    public void AddQuestToList(int questid, string title, string dialogue, int[] regitemid, int[] regenemyid, int[] regkillamount)
+    public void AddQuestToList(int questid, string title, string dialogue, int[] regitemid, int[] regenemyid, int[] regkillamount, int[] currentitems, int[] currentkills)
     {
         GameObject Quest = Instantiate(QuestItemPrefab);
         Quest.transform.SetParent(QuestListGrid.transform);
@@ -55,11 +55,11 @@ public class HandleQuestlog : MonoBehaviour {
         for (int i = 0; i < ridl; i++) {
             int id = regitemid[i];
             GameObject QRP = Instantiate(ObjectiveReqPrefab);
-            QRP.transform.parent = Quest.transform.GetChild(1);
+            QRP.transform.SetParent(Quest.transform.GetChild(1));
             QRP.transform.localScale = DefaultScale;
             HandleQLObjective objectivedetails = QRP.GetComponent<HandleQLObjective>();
-            objectivedetails.SetAmount(0, 1);
-            ItemDatabase ID = GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<ItemDatabase>();
+            objectivedetails.SetAmount(currentitems[i], 1);
+            ItemDatabase ID = GameObject.FindGameObjectWithTag("inventory").GetComponent<ItemDatabase>();
             string ItemName = ID.FetchItemNameByID(id);
             objectivedetails.SetObjective(ItemName + " found");
         }
@@ -73,13 +73,45 @@ public class HandleQuestlog : MonoBehaviour {
             QRP.transform.parent = Quest.transform.GetChild(1);
             QRP.transform.localScale = DefaultScale;
             HandleQLObjective objectivedetails = QRP.GetComponent<HandleQLObjective>();
-            objectivedetails.SetAmount(0, rka);
+            objectivedetails.SetAmount(currentkills[0], rka);
             // GET INFO FROM A ENEMY LISY OMG
             objectivedetails.SetObjective(" Slimes killed");
         }
 
             Debug.Log("[QUESTLOG] Added Quest [" + title + "] to the Questlog");
         
+    }
+
+    public void UpdateLog(int questid, int[] currentitems, int[] currentkills)
+    {
+        int childs = QuestListGrid.transform.childCount;
+        for (int i = 0; i < childs; i++)
+        {
+            Transform currentquest = QuestListGrid.transform.GetChild(i);
+            if (currentquest.name == questid.ToString())
+            {
+                int curitemcount = currentitems.Length;
+                int curkillamount = currentkills.Length;
+                Transform Requirements = currentquest.GetChild(1);
+                int reqchildcount = Requirements.childCount;
+                for (int rcc = 0; rcc < reqchildcount; rcc++)
+                {
+                    for (int ic = 0; ic < curitemcount; ic++)
+                    {
+                        HandleQLObjective HQLD = Requirements.GetChild(rcc).GetComponent<HandleQLObjective>();
+                        HQLD.UpdateAmount(currentitems[i]);
+                    }
+                    for (int ik = 0; ik < curkillamount; ik++)
+                    {
+                        HandleQLObjective HQLD = Requirements.GetChild(rcc).GetComponent<HandleQLObjective>();
+                        HQLD.UpdateAmount(currentkills[i]);
+                    }
+                }
+                
+
+                
+            }
+        }
     }
 
     void CheckList()

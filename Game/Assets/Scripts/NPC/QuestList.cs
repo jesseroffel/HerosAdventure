@@ -5,6 +5,8 @@ public class QuestList : MonoBehaviour {
     public static QuestList QuestListObject;
     [Header("Quest Log Script Object")]
     public HandleQuestlog QuestLogScript;
+    [Header("Inventory Reference")]
+    public Inventory inventoryscript;
     [Header("Quest List Stats")]
     public int QuestCount = 0;
     public int ActiveQuestCount = 0;
@@ -100,9 +102,69 @@ public class QuestList : MonoBehaviour {
         return obj;
     }
 
-    public void SetQuestLogActive(int questid, string questtitle, string QuestDialogue, int[] requireditemid, int[] requiredenemyid, int[] requiredkillamount)
+    public bool CheckInventory(QuestObject quest)
     {
-        QuestLogScript.AddQuestToList(questid, questtitle, QuestDialogue, requireditemid, requiredenemyid, requiredkillamount);
+        if (inventoryscript)
+        {
+            if (quest.m_RequiresItem)
+            {
+                int[] id = quest.m_RequiredItemID;
+                int count = id.Length;
+                bool endcheck = true;
+                for (int i = 0; i < count; i++)
+                {
+                    bool contains = inventoryscript.InventoryContains(id[i]);
+                    if (!contains) { endcheck = false; }
+                }
+                if (endcheck) { return true; } else { return false; }
+            }
+            else
+            {
+                return false;
+            }
+        } else
+        {
+            return false;
+        }
+    }
+
+    public void SetQuestLogActive(int questid)
+    {
+        bool check = false;
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                QuestLogScript.AddQuestToList(
+                    activequest.m_QuestID,
+                    activequest.m_QuestTitle,
+                    activequest.m_QuestGivenDialogue,
+                    activequest.m_RequiredItemID,
+                    activequest.m_RequiredEnemyID,
+                    activequest.m_RequiresKillAmount,
+                    activequest.m_CurrentItemID,
+                    activequest.m_CurrentKillAmount);
+                check = true;
+            }
+        }
+        if (check)
+        {
+            
+        } else
+        {
+            Debug.Log("[QUESTLOG] ERROR: Couldn't add to Questlog, check quest");
+        }
+    }
+
+    public void UpdateQuestLog(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_QuestID == questid)
+            {
+                QuestLogScript.UpdateLog(activequest.m_QuestID, activequest.m_CurrentItemID, activequest.m_CurrentKillAmount);
+            }
+        }
     }
 
     public bool AddActiveQuest(int questid)
@@ -144,6 +206,18 @@ public class QuestList : MonoBehaviour {
                 activequest.m_QuestCompleted = true;
                 activequest.m_QuestStarted = false;
                 activequest.m_QuestRequirementsMet = false;
+
+                bool checkred = activequest.m_RequiresItem;
+                if (checkred)
+                {
+                    int[] items = activequest.m_CurrentItemID;
+                    int count = items.Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        inventoryscript.RemoveItem(activequest.m_CurrentItemID[i]);
+                    }
+                }
+                
                 QuestLogScript.RemoveQuestFromList(questid);
                 CheckUnlock(questid);
 
@@ -192,6 +266,22 @@ public class QuestList : MonoBehaviour {
         if (unlocked) { return true; } else { return false; }
     }
 
+    public bool RegisterItemIDWithQuest(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_RequiresItem)
+            {
+                if (activequest.m_QuestID == questid)
+                {
+                    RegisterItemID(activequest.m_RequiredItemID[0]);
+                    return true;
+                }
+            }
+            
+        }
+        return false;
+    }
    
     public bool RegisterItemID(int itemid)
     {
@@ -208,6 +298,7 @@ public class QuestList : MonoBehaviour {
                     {
                         activequest.m_CurrentItemID[i] = itemid;
                         Registereditemid = true;
+                        UpdateQuestLog(activequest.m_QuestID);
                         Debug.Log("[QUEST] Registered itemid: " + itemid + " at listposition: " + i + " for Quest: " + activequest.m_QuestTitle);
                     }
                 }
@@ -257,6 +348,7 @@ public class QuestList : MonoBehaviour {
                         int killcount = activequest.m_CurrentKillAmount[i];
                         activequest.m_CurrentKillAmount[i] = killcount+1;
                         RegisteredKill = true;
+                        UpdateQuestLog(activequest.m_QuestID);
                         Debug.Log("[QUEST] Registered Kill EnemyID: " + enemyid + " for Quest: " + activequest.m_QuestTitle);
                     }
                 }
