@@ -50,7 +50,7 @@ public class PickUp : MonoBehaviour
             Transform Title = Unlock.transform.GetChild(1);
             Title.GetComponent<Text>().text = ItemText;
 
-            Debug.Log("[QUESTLOG] Displaying Item FOund [" + ItemText + "]");
+            Debug.Log("[QUESTLOG] Displaying Item Found [" + ItemText + "]");
             return true;
         }
         else
