@@ -7,6 +7,7 @@ public class CombatSystem : MonoBehaviour {
     [Header("Player Objects")]
     public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
+    public Player_Health PlayerStats;
     [Header("Combat Prefabs")]
     public Transform HitRegBlock;
     public GameObject ArrowPrefab;
@@ -28,6 +29,8 @@ public class CombatSystem : MonoBehaviour {
     public float Attack01Swing = 0.5f;
     public float AttackBuildup = 0.5f;
     public int MagicSpell = 1;
+    
+    private int maxspells = 0;
 
     private float propulsionForce = 10.0f;
     private float NextAttack = 0.0f;
@@ -46,10 +49,17 @@ public class CombatSystem : MonoBehaviour {
     private int SwitchChosenOption = 0;
     private int[] StyleOrder = { 2, 1, 3 };
 
+    private Spell currentspell;
+    private float MagicSwitchDelay = 0;
+
     // UI
     [Header("Combat Switch UI")]
     public GameObject SwitchCombatPanel;
     private CombatSwitchUI CombatSwitchUIScript;
+
+    [Header("Magic Switch UI")]
+    public GameObject SwitchMagicSpellWindow;
+    private ChangeSpellUI ChangeSpellUI;
 
     [Header("Bow Strength UI")]
     public Image StrengthBar;
@@ -74,6 +84,13 @@ public class CombatSystem : MonoBehaviour {
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
         if (StrengthBar == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
         if (StrengthPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
+
+        if (ChangeSpellUI == null) { ChangeSpellUI = SwitchMagicSpellWindow.GetComponent<ChangeSpellUI>(); }
+
+        maxspells = Spellbook.SpellbookObject.AmountSpells;
+        currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
+        ChangeSpellUI.SetSpellName(currentspell.SpellName);
+        ChangeSpellUI.SetSpellImage(currentspell.Sprite);
     }
 	
 	// Update is called once per frame
@@ -91,6 +108,11 @@ public class CombatSystem : MonoBehaviour {
         if (CrossPlatformInputManager.GetButtonUp("Fire1"))
         {
             HoldingDown = false;
+        }
+
+        if (CrossPlatformInputManager.GetButtonDown("SwitchSpell") && CombatState == (int)CombatStyle.Magic && Time.time > MagicSwitchDelay)
+        {
+            SwitchSpell();
         }
 
         if (CrossPlatformInputManager.GetButton("SwitchCombat") && Time.time > SwitchDisable)
@@ -163,22 +185,38 @@ public class CombatSystem : MonoBehaviour {
                         
                         break;
                     case (int)CombatStyle.Magic:
-                        switch(MagicSpell)
+                        int type = currentspell.SpellType;
+
+                        switch (type)
                         {
                             case 1:
                                 GameObject Missle = Instantiate(MagicMisslePrefab);
                                 Missle.transform.position = MagicMissleSpawn.position;
                                 Missle.transform.rotation = MagicMissleSpawn.rotation;
-                                Missle.GetComponent<HitRegistrator>().SetSettings(3, 5, 50, transform.forward * propulsionForce, 1);
+                                Missle.GetComponent<HitRegistrator>().SetSettings(
+                                    3, 
+                                    currentspell.AliveTime,
+                                    currentspell.Change, 
+                                    transform.forward * propulsionForce, 
+                                    currentspell.ID);
                                 break;
                             case 2:
                                 GameObject AoE = Instantiate(AoEPrefab);
                                 AoE.transform.position = MagicAreaOfEffectSpawn.position;
                                 AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
                                 Vector3 empty = new Vector3(0,0,0);
-                                AoE.GetComponent<HitRegistrator>().SetSettings(3, 1, 0, empty, 2);
+                                AoE.GetComponent<HitRegistrator>().SetSettings(
+                                    3,
+                                    currentspell.AliveTime,
+                                    currentspell.Change, 
+                                    empty, 
+                                    currentspell.ID);
+                                break;
+                            case 3:
+                                PlayerStats.health += currentspell.Change;
                                 break;
                         }
+                        PlayerStats.ChangeMana(-currentspell.ManaCost);
                         break;
                 }
             }
@@ -256,6 +294,7 @@ public class CombatSystem : MonoBehaviour {
                     break;
                 case (int)CombatStyle.Magic:
                     StaffModel.SetActive(false);
+                    ChangeSpellUI.SetMagicMode(false);
                     break;
                 default:
                     Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(false) failed");
@@ -274,6 +313,7 @@ public class CombatSystem : MonoBehaviour {
                     break;
                 case (int)CombatStyle.Magic:
                     StaffModel.SetActive(true);
+                    ChangeSpellUI.SetMagicMode(true);
                     Debug.Log("[PLAYER] Combat: Magic Mode");
                     break;
                 default:
@@ -298,6 +338,19 @@ public class CombatSystem : MonoBehaviour {
                 SwitchCombatPanel.SetActive(false);
             }
         }
+    }
+
+    void SwitchSpell()
+    {
+        MagicSpell++;
+        if (MagicSpell > maxspells)
+        {
+            MagicSpell = 1;
+        }
+        MagicSwitchDelay = Time.time + 0.5f;
+        currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
+        ChangeSpellUI.SetSpellName(currentspell.SpellName);
+        ChangeSpellUI.SetSpellImage(currentspell.Sprite);
     }
 
     void SetAttackAnimation()

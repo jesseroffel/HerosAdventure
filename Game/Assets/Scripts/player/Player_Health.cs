@@ -11,8 +11,19 @@ public class Player_Health : MonoBehaviour {
     [Header("Health Settings")]
     public float health = 100;
     public float maxHealth = 100;
-    private int oldhp = 0;
-    
+    private float oldhp = 0;
+
+    [Header("Mana Bar")]
+    public Image Manabar;
+    public Text ManaText;
+
+    [Header("Mana Settings")]
+    public float Mana = 200;
+    public float MaxMana = 200;
+    private float oldmana = 0;
+    public float ManaChargePerSecond = 1;
+    private float ManaTimer = 0;
+
     public Transform resetPosition;
 
 	void Start ()
@@ -20,7 +31,8 @@ public class Player_Health : MonoBehaviour {
         if (healthText == null) { healthText = GameObject.Find("healthText").GetComponent<Text>(); }
         if (scene = null) { scene = GameObject.Find("GameHandler").GetComponent<ChangeScene>(); }
         if (healthbar == null) { healthbar = GameObject.FindGameObjectWithTag("healthbar").GetComponent<Image>(); ; }
-	}
+
+    }
 	
     void Update()
     {
@@ -40,7 +52,18 @@ public class Player_Health : MonoBehaviour {
             //healthbar.transform.localScale = new Vector3(health / 100, 1, 1);
             healthbar.fillAmount = health / maxHealth;
         }
-        
+
+        if (Mana < MaxMana && ManaTimer < Time.time)
+        {
+            ManaTimer = Time.time + 1;
+            RechargeMana();
+        }
+        if (oldmana != Mana || oldmana == 0)
+        {
+            if (ManaText) { ManaText.text = "Mana: " + Mana.ToString(); }
+            if (Manabar) { Manabar.fillAmount = Mana / MaxMana; }
+            
+        }
     }
 
     public void TakeDamage(int damage)
@@ -65,4 +88,18 @@ public class Player_Health : MonoBehaviour {
             healthText.text = "health: " + health.ToString(); 
         }
 	}*/
+
+    public void RechargeMana()
+    {
+        if (Mana < MaxMana)
+        {
+            Mana += ManaChargePerSecond;
+            if (Mana > MaxMana) { Mana = MaxMana; }
+        }
+    }
+    public void ChangeMana(float amount)
+    {
+        Mana += amount;
+    }
+
 }

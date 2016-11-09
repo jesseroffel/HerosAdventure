@@ -20,7 +20,7 @@ public class QuestList : MonoBehaviour {
             DontDestroyOnLoad(gameObject);
             QuestListObject = this;
         }
-        else if (QuestLogScript != this)
+        else if (QuestListObject != this)
         {
             Destroy(gameObject);
         }
