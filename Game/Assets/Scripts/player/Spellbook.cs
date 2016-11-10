@@ -27,7 +27,7 @@ public class Spellbook : MonoBehaviour {
             0.5f,
             0,
             1,
-            "MagicMissle.png"
+            "MagicMissle"
         ));
         SpellList.Add(new Spell(
             SpellList.Count + 1,
@@ -38,7 +38,7 @@ public class Spellbook : MonoBehaviour {
             0.25f,
             5,
             2,
-            "aoeslowness.png"
+            "aoeslowness"
         ));
         SpellList.Add(new Spell(
             SpellList.Count + 1,
@@ -49,7 +49,7 @@ public class Spellbook : MonoBehaviour {
             0.25f,
             2.5f,
             3,
-            "aoepoison.png"
+            "aoepoison"
         ));
         SpellList.Add(new Spell(
             SpellList.Count + 1,
@@ -60,7 +60,7 @@ public class Spellbook : MonoBehaviour {
             0.25f,
             2.5f,
             4,
-            "aoefire.png"
+            "aoefire"
         ));
         SpellList.Add(new Spell(
             SpellList.Count + 1,
@@ -71,7 +71,7 @@ public class Spellbook : MonoBehaviour {
             0,
             0,
             0,
-            "heal.png"
+            "heal"
         ));
 
         AmountSpells = SpellList.Count;
