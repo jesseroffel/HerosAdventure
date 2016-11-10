@@ -5,6 +5,7 @@ public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent nav;
     private Transform player;
+    public GameObject Projectile;
 
     public GameObject drop;
     bool itemDropped;
@@ -19,7 +20,7 @@ public class EnemyAI : MonoBehaviour
 
     public float chaseRange;
     public float AttackRange;
-    public float optimalDistance;
+    public float minDistance;
 
     bool chasing;
     bool attacking;
@@ -36,15 +37,16 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        
         distance = Vector3.Distance(transform.position, player.transform.position);
-
+        Debug.Log(distance);
         if (distance <= chaseRange)
         {
             Chasing();
         }
         else
         {
-            //freeRoaming();
+            freeRoaming();
         }
 
         if (distance <= AttackRange)
@@ -69,14 +71,16 @@ public class EnemyAI : MonoBehaviour
     void MeleeAttack()
     {
         Debug.Log("melee attacking");
+        nav.Stop();
     }
 
     void RangedAttack()
     {
+        nav.Stop();
         Debug.Log("ranged attacking");
-        if (distance <= optimalDistance)
+        if (distance <= minDistance)
         {
-
+            Backoff();
         }
         if (distance >= AttackRange)
         {
@@ -93,7 +97,8 @@ public class EnemyAI : MonoBehaviour
     void freeRoaming()
     {
         Debug.Log("free roaming");
-        nav.destination = locations[destination].position;
+        
+        if(locations != null) nav.destination = locations[destination].position;
 
         if (nav.remainingDistance <= 0)
         {
@@ -113,9 +118,10 @@ public class EnemyAI : MonoBehaviour
         RaycastHit hit;
         Vector3 back = Vector3.back;
 
-        if(!Physics.Raycast(transform.position, back, 10))
+        if(!Physics.Raycast(transform.position, back, 5))
         {
-            nav.SetDestination(Vector3.back * 10);
+            Debug.Log("nananan");
+            nav.destination = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10);
         }
     }
 }
