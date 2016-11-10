@@ -241,6 +241,23 @@ public class QuestList : MonoBehaviour {
         return false;
     }
 
+    public bool RegisterItemIDWithQuest(int questid)
+    {
+        foreach (QuestObject activequest in ActiveQuests)
+        {
+            if (activequest.m_RequiresItem)
+            {
+                if (activequest.m_QuestID == questid)
+                {
+                    RegisterItemID(activequest.m_RequiredItemID[0]);
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
     public bool CheckUnlock(int questid)
     {
         bool unlocked = false;
@@ -264,23 +281,6 @@ public class QuestList : MonoBehaviour {
             }
         }
         if (unlocked) { return true; } else { return false; }
-    }
-
-    public bool RegisterItemIDWithQuest(int questid)
-    {
-        foreach (QuestObject activequest in ActiveQuests)
-        {
-            if (activequest.m_RequiresItem)
-            {
-                if (activequest.m_QuestID == questid)
-                {
-                    RegisterItemID(activequest.m_RequiredItemID[0]);
-                    return true;
-                }
-            }
-            
-        }
-        return false;
     }
    
     public bool RegisterItemID(int itemid)
@@ -379,7 +379,6 @@ public class QuestList : MonoBehaviour {
                     activequest.m_QuestRequirementsMet = true;
                     Debug.Log("[QUEST] " + activequest.m_QuestTitle + " has it's all requirements met!");
                 }
-                
             }
         }
         if (RegisteredKill) { return true; } else { return false; }

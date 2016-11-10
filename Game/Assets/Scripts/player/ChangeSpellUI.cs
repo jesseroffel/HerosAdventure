@@ -22,6 +22,11 @@ public class ChangeSpellUI : MonoBehaviour {
         }
     }
 
+    public void SetFill(float amount)
+    {
+        SpellImage.fillAmount = amount;
+    }
+
 
     public void SetSpellImage(Sprite spellsprite)
     {

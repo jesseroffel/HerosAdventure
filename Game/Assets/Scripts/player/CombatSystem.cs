@@ -31,6 +31,7 @@ public class CombatSystem : MonoBehaviour {
     public int MagicSpell = 1;
     
     private int maxspells = 0;
+    private float spelldowncool = 0;
 
     private float propulsionForce = 10.0f;
     private float NextAttack = 0.0f;
@@ -51,6 +52,7 @@ public class CombatSystem : MonoBehaviour {
 
     private Spell currentspell;
     private float MagicSwitchDelay = 0;
+    private float DelayAdd = 1.5f;
 
     // UI
     [Header("Combat Switch UI")]
@@ -175,7 +177,7 @@ public class CombatSystem : MonoBehaviour {
                             Projectile.transform.rotation = ArrowSpawn.rotation;
 
                             Rigidbody rb = Projectile.GetComponent<Rigidbody>();
-                            rb.velocity = (ArrowSpawn.forward * 20) * BowStrengh;
+                            rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh;
 
                             Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
                             if (StrengthPanel) { StrengthPanel.SetActive(false); }
@@ -185,38 +187,47 @@ public class CombatSystem : MonoBehaviour {
                         
                         break;
                     case (int)CombatStyle.Magic:
-                        int type = currentspell.SpellType;
+                        if (spelldowncool == 1.0f) {
+                            int type = currentspell.SpellType;
 
-                        switch (type)
-                        {
-                            case 1:
-                                GameObject Missle = Instantiate(MagicMisslePrefab);
-                                Missle.transform.position = MagicMissleSpawn.position;
-                                Missle.transform.rotation = MagicMissleSpawn.rotation;
-                                Missle.GetComponent<HitRegistrator>().SetSettings(
-                                    3, 
-                                    currentspell.AliveTime,
-                                    currentspell.Change, 
-                                    transform.forward * propulsionForce, 
-                                    currentspell.ID);
-                                break;
-                            case 2:
-                                GameObject AoE = Instantiate(AoEPrefab);
-                                AoE.transform.position = MagicAreaOfEffectSpawn.position;
-                                AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
-                                Vector3 empty = new Vector3(0,0,0);
-                                AoE.GetComponent<HitRegistrator>().SetSettings(
-                                    3,
-                                    currentspell.AliveTime,
-                                    currentspell.Change, 
-                                    empty, 
-                                    currentspell.ID);
-                                break;
-                            case 3:
-                                PlayerStats.health += currentspell.Change;
-                                break;
+                            if (PlayerStats.Mana >= currentspell.ManaCost)
+                            {
+                                spelldowncool = 0;
+                                PlayerStats.ChangeMana(-currentspell.ManaCost);
+                                switch (type)
+                                {
+                                    case 1:
+                                        DelayAdd = 0.01f;
+                                        GameObject Missle = Instantiate(MagicMisslePrefab);
+                                        Missle.transform.position = MagicMissleSpawn.position;
+                                        Missle.transform.rotation = MagicMissleSpawn.rotation;
+                                        Missle.GetComponent<HitRegistrator>().SetSettings(
+                                            3,
+                                            currentspell.AliveTime,
+                                            currentspell.Change,
+                                            transform.forward * propulsionForce,
+                                            currentspell.ID);
+                                        break;
+                                    case 2:
+                                        DelayAdd = 0.005f;
+                                        GameObject AoE = Instantiate(AoEPrefab);
+                                        AoE.transform.position = MagicAreaOfEffectSpawn.position;
+                                        AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
+                                        Vector3 empty = new Vector3(0, 0, 0);
+                                        AoE.GetComponent<HitRegistrator>().SetSettings(
+                                            3,
+                                            currentspell.AliveTime,
+                                            currentspell.Change,
+                                            empty,
+                                            currentspell.ID);
+                                        break;
+                                    case 3:
+                                        PlayerStats.health += currentspell.Change;
+                                        break;
+                                }
+                            }
                         }
-                        PlayerStats.ChangeMana(-currentspell.ManaCost);
+                        
                         break;
                 }
             }
@@ -229,6 +240,13 @@ public class CombatSystem : MonoBehaviour {
                 AttackOrder = 0;
                 if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = true; }
             }
+        }
+
+        if (spelldowncool != 1)
+        {
+            spelldowncool += DelayAdd;
+            if (spelldowncool > 1) { spelldowncool = 1; }
+            ChangeSpellUI.SetFill(spelldowncool);
         }
     }
 
