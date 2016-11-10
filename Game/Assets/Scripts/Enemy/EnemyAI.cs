@@ -39,7 +39,7 @@ public class EnemyAI : MonoBehaviour
     {
         
         distance = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log(distance);
+       /// Debug.Log(distance);
         if (distance <= chaseRange)
         {
             Chasing();
@@ -96,7 +96,7 @@ public class EnemyAI : MonoBehaviour
 
     void freeRoaming()
     {
-        Debug.Log("free roaming");
+       // Debug.Log("free roaming");
         
         if(locations != null) nav.destination = locations[destination].position;
 

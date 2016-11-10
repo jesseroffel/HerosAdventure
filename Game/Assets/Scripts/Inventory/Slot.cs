@@ -47,7 +47,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
     {
         ItemData itemToConsume = eventData.pointerPress.transform.GetChild(0).GetComponent<ItemData>();
 
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
         {
             Debug.Log(itemToConsume.slotID);
             if(itemToConsume.slotID != -1)
@@ -55,6 +55,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
                 inv.UseConsumable(itemToConsume.item);
                 Debug.Log("consumed item");
             }
+        }
+        if(eventData.button == PointerEventData.InputButton.Left)
+        {
+
         }
     }
 }
