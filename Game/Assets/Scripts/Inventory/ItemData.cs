@@ -14,15 +14,12 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private Inventory inv;
     private Tooltip tooltip;
 
-    Transform quickSlot1;
-    Transform quickSlot2;
 
     void Start()
     {
         inv = GameObject.Find("Inventory").GetComponent<Inventory>();
         tooltip = inv.GetComponent<Tooltip>();
-        quickSlot1 = GameObject.Find("QuickSlotPanel").transform.GetChild(0);
-        quickSlot2 = GameObject.Find("QuickSlotPanel").transform.GetChild(1);
+
     }
 
     public void OnBeginDrag(PointerEventData eventData)

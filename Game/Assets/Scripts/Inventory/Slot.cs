@@ -8,9 +8,15 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
     public int id;
     private Inventory inv;
 
+
+    Transform quickSlot1;
+    Transform quickSlot2;
+
     void Start()
     {
         inv = GameObject.Find("Inventory").GetComponent<Inventory>();
+        quickSlot1 = GameObject.Find("QuickSlotPanel").transform.GetChild(0);
+        quickSlot2 = GameObject.Find("QuickSlotPanel").transform.GetChild(1);
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -45,19 +51,25 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ItemData itemToConsume = eventData.pointerPress.transform.GetChild(0).GetComponent<ItemData>();
+        ItemData clickedItem = eventData.pointerPress.transform.GetChild(0).GetComponent<ItemData>();
 
         if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
         {
-            Debug.Log(itemToConsume.slotID);
-            if(itemToConsume.slotID != -1)
+           // Debug.Log(clickedItem.slotID);
+            if(clickedItem.slotID != -1)
             {
-                inv.UseConsumable(itemToConsume.item);
-                Debug.Log("consumed item");
+                if(clickedItem.amount > 0)
+                {
+                    
+                    inv.UseConsumable(clickedItem.item);
+                    clickedItem.amount--;
+                }
             }
         }
-        if(eventData.button == PointerEventData.InputButton.Left)
+        if(eventData.button == PointerEventData.InputButton.Right)
         {
+
+            Debug.Log("test click");
 
         }
     }

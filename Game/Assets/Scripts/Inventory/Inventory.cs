@@ -106,14 +106,15 @@ public class Inventory : MonoBehaviour
     {
         if(itemToConsume.ID == 2)
         {
-            Debug.Log("+ 10 health");
             health.health += itemToConsume.Power;
             RemoveItem(itemToConsume.ID);
+            Debug.Log("consumed item");
         }
         if(itemToConsume.ID == 3)
         {
-            Debug.Log("+ ten mana");
             RemoveItem(itemToConsume.ID);
+            health.Mana += itemToConsume.Power;
+            Debug.Log("consumed item");
         }
         RemoveItem(itemToConsume.ID);
     }
@@ -124,17 +125,20 @@ public class Inventory : MonoBehaviour
         for(int i =0; i < items.Count; i++)
         {
             if(items[i].ID == itemToRemove.ID)
-            {
+            {              
                 ItemData data = slots[i].transform.GetChild(0).GetComponent<ItemData>();
-                if(data.amount > 1)
+                Debug.Log(data.amount);
+                if (data.amount > 1)
                 {
                     data.amount--;
-                    Debug.Log("item amount -1");
+                    data.transform.GetChild(0).GetComponent<Text>().text = data.amount.ToString();
                 }
-                else
+                if(data.amount == 0)
                 {
                     items[i] = new Item();
+                    items.RemoveAt(i);
                     Debug.Log("item Removed");
+                    
                 }                
             }
         }

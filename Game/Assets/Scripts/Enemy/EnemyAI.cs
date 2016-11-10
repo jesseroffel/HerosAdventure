@@ -96,13 +96,14 @@ public class EnemyAI : MonoBehaviour
 
     void freeRoaming()
     {
-       // Debug.Log("free roaming");
-        
-        if(locations != null) nav.destination = locations[destination].position;
-
-        if (nav.remainingDistance <= 0)
+        if(locations != null)
         {
-            destination = (int)Random.Range(0.0f, 5.0f);
+            nav.destination = locations[destination].position;
+
+            if (nav.remainingDistance <= 0)
+            {
+                destination = (int)Random.Range(0.0f, 5.0f);
+            }
         }
     }
 
