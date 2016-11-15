@@ -9,8 +9,8 @@ public class EnemyAI : MonoBehaviour
     public GameObject Projectile;
     public Transform ArrowSpawn;
     public float BowStrengh = 1;
-    private float ArrowSpeed = 10.0f;
-    public float ShootCooldown = 1.0f;
+    private float ArrowSpeed = 1.5f;
+    public float ShootCooldown = 2.0f;
     private float CooldownTime = 0;
 
     private bool CanAttack = false;
@@ -128,7 +128,7 @@ public class EnemyAI : MonoBehaviour
     {
         Vector3 direction = (player.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
     }
 
     void ShootArrow()
@@ -138,10 +138,11 @@ public class EnemyAI : MonoBehaviour
             GameObject Arrow = Instantiate(Projectile);
             Arrow.transform.position = ArrowSpawn.position;
             Arrow.transform.rotation = ArrowSpawn.rotation;
-            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+            Arrow.GetComponent<HitRegistrator>().SetSettings(2, 5, 10, transform.forward * ArrowSpeed,true);
+            Rigidbody rb = Arrow.GetComponent<Rigidbody>();
             rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh;
 
-            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * ArrowSpeed);
+            
 
             CooldownTime = Time.time + ShootCooldown;
         }

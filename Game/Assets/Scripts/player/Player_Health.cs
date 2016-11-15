@@ -46,7 +46,7 @@ public class Player_Health : MonoBehaviour {
         {
             if (health <= 1)
             {
-                scene.ChangeToScene(2);
+                if (scene) { scene.ChangeToScene(2); } else { Debug.LogError("NO SCENE OBJECT!"); }
             }
             respawn();
             if (health > maxHealth)
