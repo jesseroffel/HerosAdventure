@@ -20,6 +20,9 @@ public class HitRegistrator : MonoBehaviour
 
     private List<int> GameobjectIDS = new List<int>();
 
+    public Material[] Materials;
+    private Renderer rend;
+
     // COLORS
     enum CombatType { NoCombat = 0, Melee = 1, Range = 2, Magic = 3 };
 
@@ -51,7 +54,10 @@ public class HitRegistrator : MonoBehaviour
         DamageValue = spell.Change;
         currentTime = Time.time + AliveTime;
         MagicType = spell.ID;
-        Debug.Log(DamageValue);
+
+        rend = transform.GetComponent<Renderer>();
+        rend.enabled = true;
+        rend.sharedMaterial = Materials[MagicType];
     }
 
     public void SetSettings(int type, Spell spell, Vector3 playerf)
@@ -62,6 +68,7 @@ public class HitRegistrator : MonoBehaviour
         currentTime = Time.time + AliveTime;
         MagicType = spell.ID;
         PlayerForce = playerf;
+        rend.sharedMaterial = Materials[MagicType];
     }
 
    
@@ -119,7 +126,7 @@ public class HitRegistrator : MonoBehaviour
         {
             if (collision.isTrigger)
             {
-                if (collision.gameObject.tag == "Enemy" || EnemyShot == true)
+                if (collision.gameObject.tag == "Enemy" || EnemyShot == true && collision.gameObject.tag == "Player")
                 {
                     bool check = CheckGameobjectIds(collision.gameObject.GetInstanceID());
                     if (!check)

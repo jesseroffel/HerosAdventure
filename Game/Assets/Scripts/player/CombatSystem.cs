@@ -71,7 +71,7 @@ public class CombatSystem : MonoBehaviour {
     private bool HoldingDown = false;
     private bool WindowOpen = false;
 
-    private float AttackPower = 15.0f;
+    private float AttackPower = 35.0f;
 
     private Quaternion SwordRot = new Quaternion(50, 0, 0, 0);
 

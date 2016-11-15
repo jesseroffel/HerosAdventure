@@ -13,7 +13,7 @@ public class EnemyHP : MonoBehaviour {
     private Renderer rend;
 
     public float currentHP;
-    private int EnemyID = 1;
+    public int EnemyID = 0;
     private List<int> EffectsApplied = new List<int>();
     private List<float> EffectTime = new List<float>();
     private float MaxHP;
@@ -42,9 +42,17 @@ public class EnemyHP : MonoBehaviour {
         rend.enabled = true;
         rend.sharedMaterial = Materials[0];
         if (MaxHP <= 0) {
-            if (EnemyID == 1)
+            switch(EnemyID)
             {
-                MaxHP = 100;
+                case 1:
+                    MaxHP = 100;
+                    break;
+                case 2:
+                    MaxHP = 300;
+                    break;
+                case 3:
+                    MaxHP = 175;
+                    break;
             }
         }
         currentHP = MaxHP;
