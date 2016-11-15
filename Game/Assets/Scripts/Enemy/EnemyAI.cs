@@ -5,22 +5,34 @@ public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent nav;
     private Transform player;
+    [Header("Enemy Combat")]
     public GameObject Projectile;
+    public Transform ArrowSpawn;
+    public float BowStrengh = 1;
+    private float ArrowSpeed = 10.0f;
+    public float ShootCooldown = 1.0f;
+    private float CooldownTime = 0;
 
+    private bool CanAttack = false;
+
+    [Header("Enemy Drop")]
     public GameObject drop;
     bool itemDropped;
     EnemyHP hp;
 
-    public Transform[] locations;
-    int destination;
-
+    [Header("Enemy Settings")]
     public float speed;
     public bool isRanged;
     float distance;
 
+    [Header("AI Settings")]
     public float chaseRange;
     public float AttackRange;
     public float minDistance;
+
+    [Header("AI Roaming")]
+    public Transform[] locations;
+    int destination;
 
     bool chasing;
     bool attacking;
@@ -51,8 +63,10 @@ public class EnemyAI : MonoBehaviour
 
         if (distance <= AttackRange)
         {
+            CanAttack = true;
             if (isRanged)
             {
+                
                 RangedAttack();
             }
             else
@@ -62,8 +76,11 @@ public class EnemyAI : MonoBehaviour
         }
         if (hp.defeated && !itemDropped)
         {
-            GameObject.Instantiate(drop);
-            drop.transform.position = transform.position;
+            if (drop)
+            {
+                GameObject.Instantiate(drop);
+                drop.transform.position = transform.position;
+            }
             itemDropped = true;
         }
     }
@@ -77,15 +94,17 @@ public class EnemyAI : MonoBehaviour
     void RangedAttack()
     {
         nav.Stop();
-        Debug.Log("ranged attacking");
         if (distance <= minDistance)
         {
             Backoff();
+            CanAttack = false;
         }
         if (distance >= AttackRange)
         {
             Chasing();
+            CanAttack = false;
         }
+        if (CanAttack) { ShootArrow(); }
     }
 
     void Chasing()
@@ -96,7 +115,7 @@ public class EnemyAI : MonoBehaviour
 
     void freeRoaming()
     {
-        if(locations != null)
+        if(locations.Length > 0)
         {
             nav.destination = locations[destination].position;
 
@@ -123,6 +142,22 @@ public class EnemyAI : MonoBehaviour
         {
             Debug.Log("nananan");
             nav.destination = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10);
+        }
+    }
+
+    void ShootArrow()
+    {
+        if (CooldownTime < Time.time)
+        {
+            GameObject Arrow = Instantiate(Projectile);
+            Arrow.transform.position = ArrowSpawn.position;
+            Arrow.transform.rotation = ArrowSpawn.rotation;
+            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+            rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh;
+
+            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * ArrowSpeed);
+
+            CooldownTime = Time.time + ShootCooldown;
         }
     }
 }

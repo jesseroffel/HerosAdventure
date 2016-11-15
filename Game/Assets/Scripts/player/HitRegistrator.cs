@@ -16,8 +16,11 @@ public class HitRegistrator : MonoBehaviour
     private bool StickCheck = false;
     private float ArrowFallSpeed = 1.0f;
 
+    private bool EnemyShot = false;
+
     private List<int> GameobjectIDS = new List<int>();
 
+    // COLORS
     enum CombatType { NoCombat = 0, Melee = 1, Range = 2, Magic = 3 };
 
     public void SetSettings(int type, float alive, float damage, Vector3 playerf)
@@ -30,7 +33,7 @@ public class HitRegistrator : MonoBehaviour
         rigid = gameObject.GetComponent<Rigidbody>();
     }
 
-    public void SetSettings(int type, float alive, float damage, Vector3 playerf, int magictype)
+    public void SetSettings(int type, float alive, float damage, Vector3 playerf, bool EnemyProjectile)
     {
         ProjectileType = type;
         AliveTime = alive;
@@ -38,8 +41,30 @@ public class HitRegistrator : MonoBehaviour
         PlayerForce = playerf;
         currentTime = Time.time + AliveTime;
         rigid = gameObject.GetComponent<Rigidbody>();
-        MagicType = magictype;
+        EnemyShot = EnemyProjectile;
     }
+
+    public void SetSettings(int type, Spell spell)
+    {
+        ProjectileType = type;
+        AliveTime = spell.AliveTime;
+        DamageValue = spell.Change;
+        currentTime = Time.time + AliveTime;
+        MagicType = spell.ID;
+        Debug.Log(DamageValue);
+    }
+
+    public void SetSettings(int type, Spell spell, Vector3 playerf)
+    {
+        ProjectileType = type;
+        AliveTime = spell.AliveTime;
+        DamageValue = spell.Change;
+        currentTime = Time.time + AliveTime;
+        MagicType = spell.ID;
+        PlayerForce = playerf;
+    }
+
+   
 
     // Update is called once per frame
     void Update()
@@ -94,7 +119,7 @@ public class HitRegistrator : MonoBehaviour
         {
             if (collision.isTrigger)
             {
-                if (collision.gameObject.tag == "Enemy")
+                if (collision.gameObject.tag == "Enemy" || EnemyShot == true)
                 {
                     bool check = CheckGameobjectIds(collision.gameObject.GetInstanceID());
                     if (!check)
@@ -102,19 +127,48 @@ public class HitRegistrator : MonoBehaviour
                         switch (ProjectileType)
                         {
                             case 1:
-                                collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                if (EnemyShot) {
+                                    collision.gameObject.GetComponent<Player_Health>().HitPlayer(DamageValue, PlayerForce);
+                                }
+                                else
+                                {
+                                    collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                }
                                 break;
                             case 2:
-                                transform.parent = collision.gameObject.transform;
-                                collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                if (EnemyShot)
+                                {
+                                    collision.gameObject.GetComponent<Player_Health>().HitPlayer(DamageValue, PlayerForce);
+                                } else
+                                {
+                                    //transform.parent = collision.gameObject.transform;
+                                    collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, PlayerForce);
+                                }
                                 break;
                             // SPELLS
                             case 3:
-                                if (MagicType == 2)
+
+                                switch (MagicType)
                                 {
-                                    collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
-                                    Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [SLOWNESS]");
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
+                                        Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [SLOWNESS]");
+                                        break;
+                                    case 3:
+                                        collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
+                                        Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [POISON]");
+                                        //posion
+                                        break;
+                                    case 4:
+                                        collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, Vector3.zero);
+                                        collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
+                                        
+                                        Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [BURN]");
+                                        break;
                                 }
+                                  
                                 break;
                         }
                     }
@@ -123,10 +177,13 @@ public class HitRegistrator : MonoBehaviour
             {
                 if (ProjectileType == (int)CombatType.Range)
                 {
-                    rigid.isKinematic = true;
-                    StickTime = Time.time + 5;
-                    StickCheck = true;
-                    return;
+                    if (!EnemyShot)
+                    {
+                        rigid.isKinematic = true;
+                        StickTime = Time.time + 5;
+                        StickCheck = true;
+                        return;
+                    }
                 }
             }
         }

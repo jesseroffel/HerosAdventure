@@ -26,7 +26,13 @@ public class Player_Health : MonoBehaviour {
 
     public Transform resetPosition;
 
-	void Start ()
+    private bool isHit = false;
+    private float HitTime = 0;
+    private float HitCoolDown = 0;
+    private bool HitKnockback = false;
+    private Vector3 KnockbackForce;
+
+    void Start ()
     {
         if (healthText == null) { healthText = GameObject.Find("healthText").GetComponent<Text>(); }
         if (scene = null) { scene = GameObject.Find("GameHandler").GetComponent<ChangeScene>(); }
@@ -60,13 +66,19 @@ public class Player_Health : MonoBehaviour {
         }
         if (oldmana != Mana || oldmana == 0)
         {
+            if (Mana > MaxMana) { Mana = MaxMana; }
             if (ManaText) { ManaText.text = "Mana: " + Mana.ToString(); }
             if (Manabar) { Manabar.fillAmount = Mana / MaxMana; }
             
         }
+
+        if (isHit && Time.time > HitTime)
+        {
+            isHit = false;
+        }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         health -= damage;
         if (healthText) { healthText.text = "health: " + health.ToString(); }
@@ -100,6 +112,27 @@ public class Player_Health : MonoBehaviour {
     public void ChangeMana(float amount)
     {
         Mana += amount;
+    }
+
+    void FixedUpdate()
+    {
+        if (HitKnockback)
+        {
+            HitKnockback = false;
+            transform.GetComponent<Rigidbody>().AddForce(KnockbackForce, ForceMode.Impulse);
+        }
+    }
+
+    public void HitPlayer(float damage, Vector3 force)
+    {
+        health = health - damage;
+
+        isHit = true;
+        HitTime = Time.time + HitCoolDown;
+        //if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
+        KnockbackForce = force;
+        HitKnockback = true;
+
     }
 
 }

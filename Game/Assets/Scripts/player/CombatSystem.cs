@@ -97,35 +97,39 @@ public class CombatSystem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-	    if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
+        if (FirstPersonControlerScript.CanMove)
         {
-            if (FirstPersonControlerScript.GetInConversation()) {
-                //Debug.Log("Conversation confirm, make animation of this!");
-            } else
+            if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
             {
-                SetAttackAnimation();
+                if (FirstPersonControlerScript.GetInConversation())
+                {
+                    //Debug.Log("Conversation confirm, make animation of this!");
+                }
+                else
+                {
+                    SetAttackAnimation();
+                }
             }
-        }
-        if (CrossPlatformInputManager.GetButtonUp("Fire1"))
-        {
-            HoldingDown = false;
-        }
+            if (CrossPlatformInputManager.GetButtonUp("Fire1"))
+            {
+                HoldingDown = false;
+            }
 
-        if (CrossPlatformInputManager.GetButtonDown("SwitchSpell") && CombatState == (int)CombatStyle.Magic && Time.time > MagicSwitchDelay)
-        {
-            SwitchSpell();
-        }
+            if (CrossPlatformInputManager.GetButtonDown("SwitchSpell") && CombatState == (int)CombatStyle.Magic && Time.time > MagicSwitchDelay)
+            {
+                SwitchSpell();
+            }
 
-        if (CrossPlatformInputManager.GetButton("SwitchCombat") && Time.time > SwitchDisable)
-        {
-            SwitchCombatStyle();
-        }
+            if (CrossPlatformInputManager.GetButton("SwitchCombat") && Time.time > SwitchDisable)
+            {
+                SwitchCombatStyle();
+            }
 
-        if (CrossPlatformInputManager.GetButtonUp("SwitchCombat") )
-        {
-            WindowOpen = false;
-            SwitchCombatPanel.SetActive(false);
+            if (CrossPlatformInputManager.GetButtonUp("SwitchCombat"))
+            {
+                WindowOpen = false;
+                SwitchCombatPanel.SetActive(false);
+            }
         }
 
         if (PrepareAttack)
@@ -203,23 +207,17 @@ public class CombatSystem : MonoBehaviour {
                                         Missle.transform.rotation = MagicMissleSpawn.rotation;
                                         Missle.GetComponent<HitRegistrator>().SetSettings(
                                             3,
-                                            currentspell.AliveTime,
-                                            currentspell.Change,
-                                            transform.forward * propulsionForce,
-                                            currentspell.ID);
+                                            currentspell,
+                                            transform.forward * propulsionForce);
                                         break;
                                     case 2:
                                         DelayAdd = 0.005f;
                                         GameObject AoE = Instantiate(AoEPrefab);
                                         AoE.transform.position = MagicAreaOfEffectSpawn.position;
                                         AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
-                                        Vector3 empty = new Vector3(0, 0, 0);
                                         AoE.GetComponent<HitRegistrator>().SetSettings(
-                                            3,
-                                            currentspell.AliveTime,
-                                            currentspell.Change,
-                                            empty,
-                                            currentspell.ID);
+                                           3,
+                                           currentspell);
                                         break;
                                     case 3:
                                         PlayerStats.health += currentspell.Change;
