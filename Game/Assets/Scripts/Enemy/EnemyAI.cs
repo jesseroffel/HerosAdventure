@@ -28,7 +28,6 @@ public class EnemyAI : MonoBehaviour
     [Header("AI Settings")]
     public float chaseRange;
     public float AttackRange;
-    public float minDistance;
 
     [Header("AI Roaming")]
     public Transform[] locations;
@@ -48,10 +47,8 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update()
-    {
-        
+    {      
         distance = Vector3.Distance(transform.position, player.transform.position);
-       /// Debug.Log(distance);
         if (distance <= chaseRange)
         {
             Chasing();
@@ -65,8 +62,7 @@ public class EnemyAI : MonoBehaviour
         {
             CanAttack = true;
             if (isRanged)
-            {
-                
+            {               
                 RangedAttack();
             }
             else
@@ -74,6 +70,7 @@ public class EnemyAI : MonoBehaviour
                 MeleeAttack();
             }
         }
+
         if (hp.defeated && !itemDropped)
         {
             if (drop)
@@ -94,22 +91,17 @@ public class EnemyAI : MonoBehaviour
     void RangedAttack()
     {
         nav.Stop();
-        if (distance <= minDistance)
-        {
-            Backoff();
-            CanAttack = false;
-        }
         if (distance >= AttackRange)
         {
             Chasing();
             CanAttack = false;
         }
         if (CanAttack) { ShootArrow(); }
+        lookAt(player);
     }
 
     void Chasing()
     {
-        Debug.Log("chasing");
         nav.destination = player.position;
     }
 
@@ -132,17 +124,11 @@ public class EnemyAI : MonoBehaviour
         nav.speed = newspeed;
     }
 
-    void Backoff()
+    void lookAt(Transform player)
     {
-        Debug.Log("backing off");
-        RaycastHit hit;
-        Vector3 back = Vector3.back;
-
-        if(!Physics.Raycast(transform.position, back, 5))
-        {
-            Debug.Log("nananan");
-            nav.destination = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10);
-        }
+        Vector3 direction = (player.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime);
     }
 
     void ShootArrow()
