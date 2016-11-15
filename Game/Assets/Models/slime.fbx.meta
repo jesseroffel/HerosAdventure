@@ -14,7 +14,9 @@ ModelImporter:
     400004: Lamp
     400006: //RootNode
     2300000: Cube
+    2300002: //RootNode
     3300000: Cube
+    3300002: //RootNode
     4300000: Cube
   materials:
     importMaterials: 1
