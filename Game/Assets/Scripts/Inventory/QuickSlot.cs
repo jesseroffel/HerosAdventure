@@ -5,6 +5,14 @@ using System;
 
 public class QuickSlot : MonoBehaviour, IPointerClickHandler
 {
+    public int itemId;
+    Inventory inv;
+
+    void Start()
+    {
+        inv = GameObject.FindGameObjectWithTag("inventory").GetComponent<Inventory>();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         ItemData itemToConsume = eventData.pointerPress.GetComponent<ItemData>();
@@ -16,6 +24,15 @@ public class QuickSlot : MonoBehaviour, IPointerClickHandler
                 Debug.Log("consumed item");
             }
         }
+    }
+
+    public void AddItemToSlot(int id)
+    {
+        for(int i = 0; i < inv.slots.Count; i++)
+        {
+            
+        }
+        Debug.Log(id);
     }
 }
 

@@ -95,6 +95,7 @@ public class Inventory : MonoBehaviour
 
                     ItemData data = slots[i].transform.GetChild(0).GetComponent<ItemData>();
                     data.amount = 1;
+                    slots[i].transform.SetParent(slotPanel.transform);//<==
 
                     break;
                 }

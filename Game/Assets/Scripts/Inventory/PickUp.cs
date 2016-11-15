@@ -23,7 +23,7 @@ public class PickUp : MonoBehaviour
             //inventory.AddItem(itemId);
             if (inventory == null)
             {
-                GameObject.FindGameObjectWithTag("GameMasterObject").GetComponent<Inventory>().AddItem(itemId);
+                GameObject.FindGameObjectWithTag("inventory").GetComponent<Inventory>().AddItem(itemId);
             }
             else
             {

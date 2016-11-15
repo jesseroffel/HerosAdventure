@@ -68,9 +68,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
         }
         if(eventData.button == PointerEventData.InputButton.Right)
         {
+            ItemData favItem = eventData.pointerDrag.GetComponent<ItemData>();
 
-            Debug.Log("test click");
-
+            quickSlot1.GetComponent<QuickSlot>().AddItemToSlot(favItem.item.ID);
         }
     }
 }
