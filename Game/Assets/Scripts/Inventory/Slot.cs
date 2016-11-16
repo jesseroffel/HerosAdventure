@@ -70,7 +70,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
         {
             ItemData favItem = eventData.pointerDrag.GetComponent<ItemData>();
 
-            quickSlot1.GetComponent<QuickSlot>().AddItemToSlot(favItem.item.ID);
+        //    quickSlot1.GetComponent<QuickSlot>().AddItemToSlot(favItem.item.ID);
         }
     }
 }

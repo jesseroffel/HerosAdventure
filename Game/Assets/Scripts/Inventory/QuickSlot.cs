@@ -3,9 +3,10 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
-public class QuickSlot : MonoBehaviour, IPointerClickHandler
+public class QuickSlot : MonoBehaviour
 {
     public int itemId;
+    public string input;
     Inventory inv;
 
     void Start()
@@ -13,26 +14,26 @@ public class QuickSlot : MonoBehaviour, IPointerClickHandler
         inv = GameObject.FindGameObjectWithTag("inventory").GetComponent<Inventory>();
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    void Update()
     {
-        ItemData itemToConsume = eventData.pointerPress.GetComponent<ItemData>();
-        
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if (Input.GetKeyDown(input))
         {
-            if (itemToConsume.slotID != -1)
-            {
-                Debug.Log("consumed item");
-            }
+            Quickslot();
         }
     }
 
-    public void AddItemToSlot(int id)
+    public void Quickslot()
     {
-        for(int i = 0; i < inv.slots.Count; i++)
-        {
-            
-        }
-        Debug.Log(id);
+        if(inv.ItemInInventoryInt(itemId))
+        { 
+             for(int i = 0; i < inv.items.Count; i++)
+             {
+                 if(inv.items[i].ID == itemId)
+                 {
+                     inv.UseConsumable(inv.items[i]);
+                 }
+             }
+        }        
     }
 }
 
