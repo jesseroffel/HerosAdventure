@@ -5,6 +5,7 @@ using System.Collections;
 public class FirstPersonControler : MonoBehaviour
 {
     public float speed;
+    private float oldwalkspeed;
     public float jumpVelocity;
     public bool CanMove;
     public float rayLength =1;
@@ -17,14 +18,12 @@ public class FirstPersonControler : MonoBehaviour
     private bool InteractingWithNPC = false;
     private bool InConversation = false;
 
-    private float TempSpeed;
-    private bool SlowWalk = false;
-
     void Start()
     {
         rb = GameObject.Find("Player").GetComponent<Rigidbody>();
         if (DialogueManager == null) { DialogueManager = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleDialogue>(); }
-      //  Cursor.lockState = CursorLockMode.Locked;
+        //  Cursor.lockState = CursorLockMode.Locked;
+        oldwalkspeed = speed;
     }
 
     void Update()
@@ -133,16 +132,22 @@ public class FirstPersonControler : MonoBehaviour
 
     public bool GetInConversation() { return InConversation; }
 
-    public void SetSlowWalk(bool state) {
-        if (state) {
-            TempSpeed = speed;
-            speed = speed * 0.33f;
-            SlowWalk = true;
-        } else
-        {
-            speed = TempSpeed;
-            TempSpeed = 0;
-            SlowWalk = false;
-        }
+    public void SetWalkSpeed(float newspeed) {
+        speed = newspeed;
+    }
+
+    public float GetWalkSpeed()
+    {
+        return speed;
+    }
+
+    public float GetNormalWalkspeed()
+    {
+        return oldwalkspeed;
+    }
+
+    public void SetSpeedNormal()
+    {
+        speed = oldwalkspeed;
     }
 }

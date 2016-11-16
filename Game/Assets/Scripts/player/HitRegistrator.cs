@@ -68,7 +68,7 @@ public class HitRegistrator : MonoBehaviour
         currentTime = Time.time + AliveTime;
         MagicType = spell.ID;
         PlayerForce = playerf;
-        rend.sharedMaterial = Materials[MagicType];
+        if (MagicType == 2) { rend.sharedMaterial = Materials[MagicType]; }
     }
 
    
@@ -158,6 +158,7 @@ public class HitRegistrator : MonoBehaviour
                                 switch (MagicType)
                                 {
                                     case 1:
+                                        collision.gameObject.GetComponent<EnemyHP>().HitTarget(DamageValue, Vector3.zero);
                                         break;
                                     case 2:
                                         collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
@@ -173,6 +174,12 @@ public class HitRegistrator : MonoBehaviour
                                         collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
                                         
                                         Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [BURN]");
+                                        break;
+
+                                    case 5:
+                                        collision.gameObject.GetComponent<EnemyHP>().AddEffect(MagicType, 10);
+
+                                        Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [BIND]");
                                         break;
                                 }
                                   
@@ -211,6 +218,6 @@ public class HitRegistrator : MonoBehaviour
 
     void MoveStraight()
     {
-        transform.position += transform.forward * 0.01f;
+        transform.position += (transform.forward * 1.50f) * Time.deltaTime;
     }
 }

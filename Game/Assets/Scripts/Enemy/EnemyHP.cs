@@ -181,7 +181,9 @@ public class EnemyHP : MonoBehaviour {
                     case 3:
                         DebufPoison();
                         break;
-
+                    case 5:
+                        DebufBind();
+                        break;
                 }
             }
         }
@@ -224,6 +226,14 @@ public class EnemyHP : MonoBehaviour {
     void DebufBurn()
     {
         currentmat = 4;
+        rend.sharedMaterial = Materials[currentmat];
+    }
+
+    void DebufBind()
+    {
+        currentmat = 5;
+        if (oldspeed == 0) { oldspeed = EAI.speed; }
+        EAI.SetSpeed(0);
         rend.sharedMaterial = Materials[currentmat];
     }
 
@@ -277,6 +287,7 @@ public class EnemyHP : MonoBehaviour {
         switch (debufid)
         {
             case 2:
+            case 5:
                 EAI.SetSpeed(oldspeed);
                 oldspeed = 0;
                 break;

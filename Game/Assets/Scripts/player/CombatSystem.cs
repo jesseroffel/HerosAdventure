@@ -26,21 +26,29 @@ public class CombatSystem : MonoBehaviour {
     //public Transform BackPosition02;
 
     [Header("Attack Settings")]
-    public float Attack01Swing = 0.5f;
-    public float AttackBuildup = 0.5f;
-    public int MagicSpell = 1;
-    
-    private int maxspells = 0;
-    private float spelldowncool = 0;
+    //Melee
+    public int AttackOrder = 1;
+    private float Attack01Swing = 0.60f;
+    private float Attack02Swing = 0.60f;
+    private float Attack03Swing = 0.60f;
+    private float AttackBuildup = 0.5f;
+    private float AttackWait = 0.55f;
+    //private float UIWaitTime = 0;
+    private float NextMeleeAttack = 0;
+    private bool WaitForNextInput = false;
 
     private float propulsionForce = 10.0f;
     private float NextAttack = 0.0f;
     private float WaitForSpawn = 0.3f;
     private float AttackTime = 0.0f;
+
+    private int CombatState = 1;
     private bool PrepareAttack = false;
     private bool Attacking = false;
-    private int CombatState = 1;
-    private int AttackOrder = 0;
+
+    private float MaxCharge = 0;
+    private float CurrentCharge = 0;
+    private float ApplyCharge = 0;
 
     //Switching
     public float SwitchSpeed = 1.0f;
@@ -50,9 +58,16 @@ public class CombatSystem : MonoBehaviour {
     private int SwitchChosenOption = 0;
     private int[] StyleOrder = { 2, 1, 3 };
 
+    //Magic
     private Spell currentspell;
+    public int MagicSpell = 1;
+    private int maxspells = 0;
+    private float spelldowncool = 0;
     private float MagicSwitchDelay = 0;
     private float DelayAdd = 1.5f;
+    private bool PreAttackSpawned = false;
+    private bool SpawningMissle = false;
+    private bool SpawningAoE = false;
 
     // UI
     [Header("Combat Switch UI")]
@@ -62,6 +77,11 @@ public class CombatSystem : MonoBehaviour {
     [Header("Magic Switch UI")]
     public GameObject SwitchMagicSpellWindow;
     private ChangeSpellUI ChangeSpellUI;
+
+    [Header("Melee Combo UI")]
+    public Transform SwordsPanel;
+    private Sprite UnfilledSwordSprite;
+    private Sprite FilledSwordSprite;
 
     [Header("Bow Strength UI")]
     public Image StrengthBar;
@@ -84,10 +104,15 @@ public class CombatSystem : MonoBehaviour {
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
-        if (StrengthBar == null) { Debug.LogError("Text 'StrenghText' is null, set reference"); }
+        if (StrengthBar == null) { Debug.LogError("Image 'StrengthBar' is null, set reference"); }
         if (StrengthPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
 
+        if (SwordsPanel == null) { Debug.LogError("Transform 'SwordsPanel' is null, set reference"); }
+
         if (ChangeSpellUI == null) { ChangeSpellUI = SwitchMagicSpellWindow.GetComponent<ChangeSpellUI>(); }
+
+        if (UnfilledSwordSprite == null) { UnfilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/unfilledsword"); }
+        if (FilledSwordSprite == null) { FilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/filledsword"); }
 
         maxspells = Spellbook.SpellbookObject.AmountSpells;
         currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
@@ -97,18 +122,28 @@ public class CombatSystem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        CheckInput();
+        CheckCurrentAttack();
+        CheckSpellCooldown();
+        CheckNewAttack();
+
+        if (Attacking)
+        {
+            if (Time.time > NextMeleeAttack)
+            {
+            }
+
+        }
+    }
+
+    void CheckInput()
+    {
         if (FirstPersonControlerScript.CanMove)
         {
-            if (CrossPlatformInputManager.GetButton("Fire1") && Time.time > NextAttack)
+            if (CrossPlatformInputManager.GetButton("Fire1"))
             {
-                if (FirstPersonControlerScript.GetInConversation())
-                {
-                    //Debug.Log("Conversation confirm, make animation of this!");
-                }
-                else
-                {
-                    SetAttackAnimation();
-                }
+                SetAttackAnimation();
+                if (AttackOrder != 1) { WaitForNextInput = false; }
             }
             if (CrossPlatformInputManager.GetButtonUp("Fire1"))
             {
@@ -131,49 +166,126 @@ public class CombatSystem : MonoBehaviour {
                 SwitchCombatPanel.SetActive(false);
             }
         }
+    }
 
-        if (PrepareAttack)
+    void CheckCurrentAttack()
+    {
+        if (Attacking)
         {
-            // Melee
+            if (Time.time > NextAttack)
+            {
+                Attacking = false;
+                AttackOrder = 1;
+                AttackPower = 35f;
+                if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = true; }
+                if (CombatState == 1)
+                {
+                    if (SwordsPanel)
+                    {
+                        SwordsPanel.GetChild(0).GetComponent<Image>().sprite = UnfilledSwordSprite;
+                        SwordsPanel.GetChild(1).GetComponent<Image>().sprite = UnfilledSwordSprite;
+                        SwordsPanel.GetChild(2).GetComponent<Image>().sprite = UnfilledSwordSprite;
+                    }
+                }
+                FirstPersonControlerScript.SetSpeedNormal();
+            }
+        }
+    }
+
+    void CheckSpellCooldown()
+    {
+        if (spelldowncool != 1)
+        {
+            spelldowncool += DelayAdd;
+            if (spelldowncool > 1) { spelldowncool = 1; }
+            ChangeSpellUI.SetFill(spelldowncool);
+        }
+    }
+
+    void CheckNewAttack()
+    {
+        if (PrepareAttack && !WaitForNextInput)
+        {
             if (Time.time > AttackTime)
             {
                 Attacking = true;
-                if (CombatState != (int)CombatStyle.Range) { PrepareAttack = false; }
-                NextAttack = Time.time + Attack01Swing;
-                //Vector3 Addpos = transform.position + (transform.forward);
-                
                 switch (CombatState)
                 {
                     case (int)CombatStyle.Melee:
-                        Transform HitDec = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
-                        HitDec.transform.parent = transform;
-                        switch (AttackOrder)
+                        if (Time.time > NextMeleeAttack)
                         {
-                            case 1:
-                                
-                                HitDec.transform.position += new Vector3(0, 0.4f, 0);
-                                HitDec.GetComponent<HitRegistrator>().SetSettings(1,Attack01Swing, AttackPower, transform.forward * propulsionForce);
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                break;
+                            float walkspeed = 0;
+                            switch (AttackOrder)
+                            {
+                                case 1:
+                                    NextMeleeAttack = Time.time + Attack01Swing;
+                                    NextAttack = NextMeleeAttack + AttackWait;
+                                    if (SwordsPanel) { SwordsPanel.GetChild(0).GetComponent<Image>().sprite = FilledSwordSprite; }
+
+                                    walkspeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                                    FirstPersonControlerScript.SetWalkSpeed(walkspeed * 0.80f);
+
+                                    Transform HitDec1 = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                                    HitDec1.transform.parent = transform;
+                                    HitDec1.transform.position += new Vector3(0, 0.4f, 0);
+                                    HitDec1.GetComponent<HitRegistrator>().SetSettings(1, Attack01Swing, AttackPower, transform.forward * propulsionForce);
+
+                                    AttackOrder++;
+                                    WaitForNextInput = true;
+                                    break;
+                                case 2:
+                                    AttackPower = 40f;
+                                    NextMeleeAttack = Time.time + Attack02Swing;
+                                    NextAttack = NextMeleeAttack + AttackWait;
+                                    if (SwordsPanel) { SwordsPanel.GetChild(1).GetComponent<Image>().sprite = FilledSwordSprite; }
+
+                                    walkspeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                                    FirstPersonControlerScript.SetWalkSpeed(walkspeed * 0.6f);
+
+                                    Transform HitDec2 = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                                    HitDec2.transform.parent = transform;
+                                    HitDec2.transform.position += new Vector3(0, 0.4f, 0);
+                                    HitDec2.GetComponent<HitRegistrator>().SetSettings(1, Attack02Swing, AttackPower, transform.forward * propulsionForce);
+                                    AttackPower = 45f;
+                                    AttackOrder++;
+                                    WaitForNextInput = true;                     
+                                    break;
+                                case 3:
+                                    NextMeleeAttack = Time.time + Attack03Swing;
+                                    NextAttack = NextMeleeAttack + AttackWait;
+                                    if (SwordsPanel) { SwordsPanel.GetChild(2).GetComponent<Image>().sprite = FilledSwordSprite; }
+
+                                    walkspeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                                    FirstPersonControlerScript.SetWalkSpeed(walkspeed * 0.4f);
+
+                                    Transform HitDec3 = (Transform)Instantiate(HitRegBlock, transform.position + (transform.forward), transform.rotation);
+                                    HitDec3.transform.parent = transform;
+                                    HitDec3.transform.position += new Vector3(0, 0.4f, 0);
+                                    HitDec3.GetComponent<HitRegistrator>().SetSettings(1, Attack02Swing, AttackPower, transform.forward * propulsionForce);
+
+                                    PrepareAttack = false;
+                                    WaitForNextInput = false;
+                                    break;
+                            }
                         }
+                        //Debug.Log("Time: " + Time.time + " NextMeleeAttack: " + NextMeleeAttack + " NextAttack: " + NextAttack);
                         break;
                     case (int)CombatStyle.Range:
                         if (HoldingDown)
                         {
-                            if (StrengthPanel) {
+                            if (StrengthPanel)
+                            {
                                 if (StrengthPanel.activeSelf == false) { StrengthPanel.SetActive(true); }
                             }
-                            string Text = "";
-                            if (BowStrengh < 1) {
+                            if (BowStrengh < 1)
+                            {
                                 BowStrengh += 0.01f;
                                 if (BowStrengh > 1) { BowStrengh = 1; }
-                                
+
                             }
                             if (StrengthBar) { StrengthBar.fillAmount = BowStrengh; }
-                        } else
+                        }
+                        else
                         {
                             PrepareAttack = false;
                             GameObject Projectile = Instantiate(ArrowPrefab);
@@ -186,65 +298,120 @@ public class CombatSystem : MonoBehaviour {
                             Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
                             if (StrengthPanel) { StrengthPanel.SetActive(false); }
                             BowStrengh = 0;
-                            FirstPersonControlerScript.SetSlowWalk(false);
+
+                            FirstPersonControlerScript.SetSpeedNormal();
                         }
-                        
+
                         break;
                     case (int)CombatStyle.Magic:
-                        if (spelldowncool == 1.0f) {
+                        if (spelldowncool == 1.0f)
+                        {
                             int type = currentspell.SpellType;
 
                             if (PlayerStats.Mana >= currentspell.ManaCost)
                             {
-                                spelldowncool = 0;
-                                PlayerStats.ChangeMana(-currentspell.ManaCost);
-                                switch (type)
+                                if (HoldingDown)
                                 {
-                                    case 1:
-                                        DelayAdd = 0.01f;
-                                        GameObject Missle = Instantiate(MagicMisslePrefab);
-                                        Missle.transform.position = MagicMissleSpawn.position;
-                                        Missle.transform.rotation = MagicMissleSpawn.rotation;
-                                        Missle.GetComponent<HitRegistrator>().SetSettings(
-                                            3,
-                                            currentspell,
-                                            transform.forward * propulsionForce);
-                                        break;
-                                    case 2:
-                                        DelayAdd = 0.005f;
-                                        GameObject AoE = Instantiate(AoEPrefab);
-                                        AoE.transform.position = MagicAreaOfEffectSpawn.position;
-                                        AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
-                                        AoE.GetComponent<HitRegistrator>().SetSettings(
-                                           3,
-                                           currentspell);
-                                        break;
-                                    case 3:
-                                        PlayerStats.health += currentspell.Change;
-                                        break;
+                                    if (MaxCharge == 0){ MaxCharge = currentspell.CastTime; }
+                                    if (CurrentCharge < MaxCharge)
+                                    {
+                                        if (!PreAttackSpawned)
+                                        {
+                                            switch (type)
+                                            {
+                                                case 1:
+                                                    GameObject Missle = Instantiate(MagicMisslePrefab);
+                                                    Missle.transform.parent = MagicMissleSpawn;
+                                                    Missle.transform.position = MagicMissleSpawn.position;
+                                                    Missle.transform.rotation = MagicMissleSpawn.rotation;
+                                                    Missle.GetComponent<HitRegistrator>().enabled = false;
+                                                    SpawningMissle = true;
+                                                    PreAttackSpawned = true;
+                                                    break;
+                                                case 2:
+                                                    GameObject AoE = Instantiate(AoEPrefab);
+                                                    AoE.transform.parent = MagicAreaOfEffectSpawn;
+                                                    AoE.transform.position = MagicAreaOfEffectSpawn.position;
+                                                    AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
+                                                    AoE.GetComponent<HitRegistrator>().enabled = false;
+                                                    SpawningAoE = true;
+                                                    PreAttackSpawned = true;
+                                                    break;
+                                            }
+                                        }
+
+                                        if (SpawningMissle)
+                                        {
+                                            if (MagicMissleSpawn.transform.childCount == 1)
+                                            {
+                                                Transform Movement = MagicMissleSpawn.transform.GetChild(0);
+                                                Movement.localScale += new Vector3(CurrentCharge, CurrentCharge, CurrentCharge);
+                                                ApplyCharge = Movement.lossyScale.x;
+                                                Debug.Log(Movement.localScale);
+                                            }
+                                        }
+
+                                        if (SpawningAoE)
+                                        {
+                                            if (MagicAreaOfEffectSpawn.transform.childCount == 1)
+                                            {
+                                                Transform Movement = MagicAreaOfEffectSpawn.transform.GetChild(0);
+                                                Movement.localScale += new Vector3(CurrentCharge, 0, CurrentCharge);
+                                                ApplyCharge = Movement.lossyScale.x;
+                                            }
+                                        }
+                                        CurrentCharge += 0.01f;
+
+                                    }
+                                } else
+                                {
+
+                                    if (SpawningAoE) { Destroy(MagicAreaOfEffectSpawn.transform.GetChild(0).gameObject); }
+                                    if (SpawningMissle) { Destroy(MagicMissleSpawn.transform.GetChild(0).gameObject); }
+                                    SpawningAoE = false;
+                                    SpawningMissle = false;
+                                    PreAttackSpawned = false;
+                                    PrepareAttack = false;
+                                    spelldowncool = 0;
+                                    MaxCharge = 0;
+                                    PlayerStats.ChangeMana(-currentspell.ManaCost);
+                                    switch (type)
+                                    {
+                                        case 1:
+                                            DelayAdd = 0.01f;
+                                            GameObject Missle = Instantiate(MagicMisslePrefab);
+
+
+                                            Missle.transform.position = MagicMissleSpawn.position;
+                                            Missle.transform.rotation = MagicMissleSpawn.rotation;
+                                            Missle.transform.localScale = new Vector3(ApplyCharge, ApplyCharge, ApplyCharge);
+                                            Missle.GetComponent<HitRegistrator>().SetSettings(
+                                                3,
+                                                currentspell,
+                                                transform.forward * propulsionForce);
+                                            break;
+                                        case 2:
+                                            DelayAdd = 0.005f;
+                                            GameObject AoE = Instantiate(AoEPrefab);
+
+                                            AoE.transform.position = MagicAreaOfEffectSpawn.position;
+                                            AoE.transform.rotation = MagicAreaOfEffectSpawn.rotation;
+                                            AoE.transform.localScale = new Vector3(ApplyCharge, 0.05f, ApplyCharge);
+                                            AoE.GetComponent<HitRegistrator>().SetSettings(
+                                               3,
+                                               currentspell);
+                                            break;
+                                        case 3:
+                                            PlayerStats.health += currentspell.Change;
+                                            break;
+                                    }
+                                    CurrentCharge = 0;
                                 }
                             }
                         }
-                        
                         break;
                 }
             }
-        }
-        if (Attacking)
-        {
-            if (Time.time > NextAttack)
-            {
-                Attacking = false;
-                AttackOrder = 0;
-                if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = true; }
-            }
-        }
-
-        if (spelldowncool != 1)
-        {
-            spelldowncool += DelayAdd;
-            if (spelldowncool > 1) { spelldowncool = 1; }
-            ChangeSpellUI.SetFill(spelldowncool);
         }
     }
 
@@ -292,18 +459,14 @@ public class CombatSystem : MonoBehaviour {
             chosen = 3;
         }
 
-        //Debug.Log("Left: " + StyleOrder[0] + " Mid: " + StyleOrder[1] + " Right: " + StyleOrder[2]);
-
-        //CombatState++;
-        //if (CombatState == 4) { CombatState = 1; }
-
-        //Set old weapon inactive
+        //Set old style inactive
         if (SwitchCheck)
         {
             switch (oldstyle)
             {
                 case (int)CombatStyle.Melee:
                     SwordModel.SetActive(false);
+                    SwordsPanel.gameObject.SetActive(false);
                     break;
                 case (int)CombatStyle.Range:
                     BowModel.SetActive(false);
@@ -316,11 +479,12 @@ public class CombatSystem : MonoBehaviour {
                     Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(false) failed");
                     break;
             }
-            //Set new weapon active
+            //Set new style active
             switch (CombatState)
             {
                 case (int)CombatStyle.Melee:
                     SwordModel.SetActive(true);
+                    SwordsPanel.gameObject.SetActive(true);
                     Debug.Log("[PLAYER] Combat: Melee Mode");
                     break;
                 case (int)CombatStyle.Range:
@@ -337,6 +501,7 @@ public class CombatSystem : MonoBehaviour {
                     break;
             }
         }
+
         if (WindowOpen && SwitchCheck) {
             if (SwitchCombatPanel)
             {
@@ -371,29 +536,36 @@ public class CombatSystem : MonoBehaviour {
 
     void SetAttackAnimation()
     {
-        NextAttack = Time.time + AttackBuildup;
-        HoldingDown = true;
-        PrepareAttack = true;
-        //if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
-        //Set animation
-        if (CombatState == 1)
+        if (Time.time > NextAttack || Time.time > NextMeleeAttack)
         {
-            AttackOrder++;
-            AttackTime = Time.time + WaitForSpawn;
-            switch (AttackOrder)
+            NextAttack = Time.time + AttackBuildup;
+            //NextMeleeAttack = NextAttack;
+            HoldingDown = true;
+            PrepareAttack = true;
+            WaitForNextInput = false;
+            //if (FirstPersonControlerScript) { FirstPersonControlerScript.CanMove = false; }
+            //Set animation
+            if (CombatState == 1)
             {
-                case 1:
-                    PlayerAnimator.SetTrigger("AttackMelee01Trigger");
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
+                switch (AttackOrder)
+                {
+                    case 1:
+                        AttackTime = Time.time + WaitForSpawn;
+                        PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                        break;
+                    case 2:
+                        PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                        break;
+                    case 3:
+                        PlayerAnimator.SetTrigger("AttackMelee01Trigger");
+                        break;
+                }
             }
-        }
-        if (CombatState == 2)
-        {
-            FirstPersonControlerScript.SetSlowWalk(true);
+            if (CombatState == 2)
+            {
+                float walkspeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                FirstPersonControlerScript.SetWalkSpeed(walkspeed * 0.33f);
+            }
         }
     }
 }

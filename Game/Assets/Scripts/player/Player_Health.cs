@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour {
+    public Image HitScreen;
+
     [Header("Health Bar")]
     public Image healthbar;
     public ChangeScene scene;
@@ -32,17 +34,21 @@ public class Player_Health : MonoBehaviour {
     private bool HitKnockback = false;
     private Vector3 KnockbackForce;
 
+    private bool PlayHit = false;
+    private bool ShowHitScreen = true;
+    private float HitValue = 1;
+
     void Start ()
     {
         if (healthText == null) { healthText = GameObject.Find("healthText").GetComponent<Text>(); }
         if (scene = null) { scene = GameObject.Find("GameHandler").GetComponent<ChangeScene>(); }
         if (healthbar == null) { healthbar = GameObject.FindGameObjectWithTag("healthbar").GetComponent<Image>(); ; }
-
+        oldhp = health;
     }
 	
     void Update()
     {
-        if (oldhp != health|| oldhp == 0)
+        if (oldhp != health)
         {
             if (health <= 1)
             {
@@ -57,6 +63,8 @@ public class Player_Health : MonoBehaviour {
 
             //healthbar.transform.localScale = new Vector3(health / 100, 1, 1);
             healthbar.fillAmount = health / maxHealth;
+            PlayHit = true;
+            oldhp = health;
         }
 
         if (Mana < MaxMana && ManaTimer < Time.time)
@@ -75,6 +83,11 @@ public class Player_Health : MonoBehaviour {
         if (isHit && Time.time > HitTime)
         {
             isHit = false;
+        }
+
+        if (PlayHit)
+        {
+            ShowHit();
         }
     }
 
@@ -135,4 +148,23 @@ public class Player_Health : MonoBehaviour {
 
     }
 
+    void ShowHit()
+    {
+        if (ShowHitScreen) { ShowHitScreen = false; HitScreen.gameObject.SetActive(true); }
+        if (HitValue <= 0)
+        {
+            HitValue = 1;
+            PlayHit = false;
+            ShowHitScreen = true;
+            HitScreen.gameObject.SetActive(false);
+            Color newcolor = new Color(1, 0, 0, 1);
+            HitScreen.color = newcolor;
+        } else
+        {
+            Color newcolor = new Color(1, 0, 0, HitValue);
+            HitScreen.color = newcolor;
+            HitValue -= 0.025f;
+        }
+        
+    }
 }

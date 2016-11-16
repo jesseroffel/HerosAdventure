@@ -24,8 +24,8 @@ public class Spellbook : MonoBehaviour {
             "Magic Missle",
             10,
             25f,
-            0.5f,
-            0,
+            0.15f,
+            5,
             1,
             "MagicMissle"
         ));
@@ -33,9 +33,9 @@ public class Spellbook : MonoBehaviour {
             SpellList.Count + 1,
             2,
             "Circle of Slowing Down",
-            50,
+            35,
             0,
-            0.25f,
+            0.75f,
             5,
             2,
             "aoeslowness"
@@ -46,8 +46,8 @@ public class Spellbook : MonoBehaviour {
             "Circle of Poisoning",
             100,
             0,
-            0.25f,
-            2.5f,
+            0.5f,
+            3.0f,
             3,
             "aoepoison"
         ));
@@ -55,12 +55,24 @@ public class Spellbook : MonoBehaviour {
             SpellList.Count + 1,
             2,
             "Circle of Fire",
-            100,
+            65,
             0,
-            0.25f,
+            0.5f,
             2.5f,
             4,
             "aoefire"
+        ));
+
+        SpellList.Add(new Spell(
+            SpellList.Count + 1,
+            2,
+            "Bound to the ground",
+            100,
+            50,
+            0.5f,
+            2,
+            6,
+            "bind"
         ));
         SpellList.Add(new Spell(
             SpellList.Count + 1,
@@ -73,6 +85,8 @@ public class Spellbook : MonoBehaviour {
             0,
             "heal"
         ));
+
+        
 
         AmountSpells = SpellList.Count;
     }
