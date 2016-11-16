@@ -25,6 +25,10 @@ public class EnemyHP : MonoBehaviour {
     private bool HitKnockback = false;
     private Vector3 KnockbackForce;
 
+    // BossPrecautions
+    private bool IsBoss = false;
+    private bool Invincible = false;
+
     //Effects
     EnemyAI EAI;
 
@@ -40,7 +44,7 @@ public class EnemyHP : MonoBehaviour {
         //SetEnemyID();
         rend = GetComponent<Renderer>();
         rend.enabled = true;
-        rend.sharedMaterial = Materials[0];
+        //rend.sharedMaterial = Materials[0];
         if (MaxHP <= 0) {
             switch(EnemyID)
             {
@@ -116,27 +120,30 @@ public class EnemyHP : MonoBehaviour {
 
     public void HitTarget(float damage, Vector3 force)
     {
-        currentHP = currentHP - damage;
-        if (currentHP > 0)
+        if (!Invincible)
         {
-            Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage);
-        }
-        else
-        {
-            if (currentHP < 0) { currentHP = 0; }
-            Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage + " [MAXHP] " + MaxHP);
-            defeated = true;
-            // Notify Questlist of kill for quests
-            QuestList.QuestListObject.RegisterKillID(EnemyID);
+            currentHP = currentHP - damage;
+            if (currentHP > 0)
+            {
+                Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage);
+            }
+            else
+            {
+                if (currentHP < 0) { currentHP = 0; }
+                Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage + " [MAXHP] " + MaxHP);
+                if (!IsBoss) { defeated = true; }
+                // Notify Questlist of kill for quests
+                QuestList.QuestListObject.RegisterKillID(EnemyID);
 
+                rend.sharedMaterial = Materials[1];
+            }
+            isHit = true;
+            HitTime = Time.time + HitCoolDown;
             rend.sharedMaterial = Materials[1];
+            //if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
+            KnockbackForce = force;
+            HitKnockback = true;
         }
-        isHit = true;
-        HitTime = Time.time + HitCoolDown;
-        rend.sharedMaterial = Materials[1];
-        //if (HitMateral) { rend.material.CopyPropertiesFromMaterial(HitMateral); }
-        KnockbackForce = force;
-        HitKnockback = true;
     }
 
     void shrinkobject()
@@ -229,8 +236,14 @@ public class EnemyHP : MonoBehaviour {
     void DebufPoison()
     {
         currentmat = 3;
-        if (poison == false) { poison = true; }
-        poisondamage += 10;
+        if (poison == false) {
+            poison = true;
+            if (IsBoss) { poisondamage += (MaxHP * 0.020f); } else { poisondamage += (MaxHP * 0.075f); }
+        } else
+        {
+            if (IsBoss) { poisondamage += (MaxHP * 0.045f); } else { poisondamage += (MaxHP * 0.125f); }
+        }
+        
         rend.sharedMaterial = Materials[currentmat];
         poisonwait = Time.time + 1;
         //rend.sharedMaterial.CopyPropertiesFromMaterial(Materials[0]);
@@ -273,4 +286,24 @@ public class EnemyHP : MonoBehaviour {
         }
     }
 
+
+    public void SetIsBoss(bool value)
+    {
+        if (value) { IsBoss = true; } else { IsBoss = false; }
+    }
+
+    public void SetIsInvincible(bool value)
+    {
+        if (value) { Invincible = true; } else { Invincible = false; }
+    }
+
+    public float GetHP()
+    {
+        return currentHP;
+    }
+
+    public void SetHP(float HP)
+    {
+        currentHP = HP;
+    }
 }
