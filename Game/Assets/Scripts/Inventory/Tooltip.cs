@@ -16,15 +16,10 @@ public class Tooltip : MonoBehaviour
         tooltip.SetActive(false);
     }
 
-    void Update()
-    {
-
-    }
-
     public void Activate(Item item)
     {
         this.item = item;
-        ConstructDataString();
+        ConstructTooltip();
         tooltip.SetActive(true);
     }
 
@@ -33,7 +28,7 @@ public class Tooltip : MonoBehaviour
         tooltip.SetActive(false);
     }
 
-    public void ConstructDataString()
+    public void ConstructTooltip()
     {
         title = item.Title;
         description = item.Description;

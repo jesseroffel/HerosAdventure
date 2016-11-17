@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
     GameObject slotPanel;
     ItemDatabase database;
     Player_Health health;
+
     public GameObject inventorySlot;
     public GameObject inventoryItem;
 
@@ -16,8 +17,6 @@ public class Inventory : MonoBehaviour
 
     public List<Item> items = new List<Item>();
     public List<GameObject> slots = new List<GameObject>();
-
-
 
     void Start()
     {
@@ -39,14 +38,14 @@ public class Inventory : MonoBehaviour
         AddItem(3);
         AddItem(3);
 
-        inventoryPanel.active = false;  
+        inventoryPanel.SetActive(false);
     }
 
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            inventoryPanel.SetActive(!inventoryPanel.active);
+            inventoryPanel.SetActive(!inventoryPanel.activeSelf);
             Cursor.lockState = CursorLockMode.None;            
         }
         if(inventoryPanel.active)

@@ -11,7 +11,7 @@ public class QuickSlot : MonoBehaviour
 
     void Start()
     {
-        inv = GameObject.FindGameObjectWithTag("inventory").GetComponent<Inventory>();
+        inv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
     }
 
     void Update()

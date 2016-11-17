@@ -9,14 +9,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
     private Inventory inv;
 
 
-    Transform quickSlot1;
-    Transform quickSlot2;
+ //   Transform quickSlot1;
+  //  Transform quickSlot2;
 
     void Start()
     {
-        inv = GameObject.Find("Inventory").GetComponent<Inventory>();
-        quickSlot1 = GameObject.Find("QuickSlotPanel").transform.GetChild(0);
-        quickSlot2 = GameObject.Find("QuickSlotPanel").transform.GetChild(1);
+        inv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
+    //    quickSlot1 = GameObject.Find("QuickSlotPanel").transform.GetChild(0);
+    //    quickSlot2 = GameObject.Find("QuickSlotPanel").transform.GetChild(1);
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -55,12 +55,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
 
         if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
         {
-           // Debug.Log(clickedItem.slotID);
             if(clickedItem.slotID != -1)
             {
                 if(clickedItem.amount > 0)
-                {
-                    
+                {                    
                     inv.UseConsumable(clickedItem.item);
                     clickedItem.amount--;
                 }
@@ -68,7 +66,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerClickHandler
         }
         if(eventData.button == PointerEventData.InputButton.Right)
         {
-            ItemData favItem = eventData.pointerDrag.GetComponent<ItemData>();
+         //   ItemData favItem = eventData.pointerDrag.GetComponent<ItemData>();
 
         //    quickSlot1.GetComponent<QuickSlot>().AddItemToSlot(favItem.item.ID);
         }

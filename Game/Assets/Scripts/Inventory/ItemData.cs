@@ -17,7 +17,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     void Start()
     {
-        inv = GameObject.Find("Inventory").GetComponent<Inventory>();
+        inv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
         tooltip = inv.GetComponent<Tooltip>();
 
     }
@@ -45,8 +45,8 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData eventData)
     {
        this.transform.SetParent(inv.slots[slotID].transform);
-        this.transform.position = inv.slots[slotID].transform.position;
-        GetComponent<CanvasGroup>().blocksRaycasts = true;
+       this.transform.position = inv.slots[slotID].transform.position;
+       GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -56,7 +56,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         if(Input.GetKeyDown(KeyCode.F))
         {
             
-        }     
+        }    
     }
 
     public void OnPointerExit(PointerEventData eventData)
