@@ -3,13 +3,17 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class Boss : MonoBehaviour {
+
     [Header("Boss Requirements")]
     public EnemyHP EnemyHPScript;
     public GameObject BossGUI;
     public Image Healthbar;
     public Image FadeOutScreen;
+    public GameObject Player;
+
     [Header("Boss Objects")]
     public GameObject ShieldObject;
+    private Transform HomeLocation;
 
     private int Fase = 1;
     private int AttackSelector = 0;
@@ -18,6 +22,7 @@ public class Boss : MonoBehaviour {
     private float AttackTimeWait = 0;
     private float AttackTime = 0;
     private bool CanAttack = true;
+
     [Header("Boss Stats")]
     public float BossHP = 1000;
     private float OldBossHP = 0;
@@ -40,12 +45,13 @@ public class Boss : MonoBehaviour {
     void Start () {
         BossCurrentHP = BossHP;
         OldBossHP = BossHP;
-        if (EnemyHPScript && BossGUI && Healthbar)
+        if (EnemyHPScript && BossGUI && Healthbar && Player)
         {
             EnemyHPScript.SetHP(BossHP);
             EnemyHPScript.SetIsBoss(true);
             BossGUI.SetActive(true);
             Healthbar.fillAmount = 1;
+            HomeLocation = transform;
         } else
         {
             Active = false;

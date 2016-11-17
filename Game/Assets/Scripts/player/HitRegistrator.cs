@@ -218,6 +218,6 @@ public class HitRegistrator : MonoBehaviour
 
     void MoveStraight()
     {
-        transform.position += (transform.forward * 1.50f) * Time.deltaTime;
+        transform.position += (transform.forward * 3.0f) * Time.deltaTime;
     }
 }

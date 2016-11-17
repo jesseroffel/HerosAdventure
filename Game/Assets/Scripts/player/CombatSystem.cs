@@ -50,13 +50,8 @@ public class CombatSystem : MonoBehaviour {
     private float CurrentCharge = 0;
     private float ApplyCharge = 0;
 
-    //Switching
-    public float SwitchSpeed = 1.0f;
-    private float SwitchDisable = 0;
-    private bool FinishSwitch = false;
-    private bool SwitchChosen = false;
-    private int SwitchChosenOption = 0;
-    private int[] StyleOrder = { 2, 1, 3 };
+    //Range
+    private float WaitForNextArrow = 0;
 
     //Magic
     private Spell currentspell;
@@ -69,27 +64,42 @@ public class CombatSystem : MonoBehaviour {
     private bool SpawningMissle = false;
     private bool SpawningAoE = false;
 
+    //Switching
+    public float SwitchSpeed = 1.0f;
+    private float SwitchDisable = 0;
+    private bool FinishSwitch = false;
+    private bool SwitchChosen = false;
+    private int SwitchChosenOption = 0;
+    private int[] StyleOrder = { 2, 1, 3 };
+
     // UI
     [Header("Combat Switch UI")]
     public GameObject SwitchCombatPanel;
     private CombatSwitchUI CombatSwitchUIScript;
 
     [Header("Magic Switch UI")]
-    public GameObject SwitchMagicSpellWindow;
+    public GameObject SwitchMagicSpellPanel;
     private ChangeSpellUI ChangeSpellUI;
 
-    [Header("Melee Combo UI")]
+    [Header("Melee Attack UI")]
     public Transform SwordsPanel;
     private Sprite UnfilledSwordSprite;
     private Sprite FilledSwordSprite;
 
-    [Header("Bow Strength UI")]
-    public Image StrengthBar;
-    public GameObject StrengthPanel;
-
+    [Header("Bow Attack UI")]
+    public GameObject BowChargePanel;
+    public Image ArrowChargeMeter;
     private float BowStrengh = 0;
+
+    [Header("Magic Attack UI")]
+    public GameObject MagicChargePanel;
+    public Image MagicChargeMeter;
+    private float MagicCharged = 0;
+
+
     private bool HoldingDown = false;
     private bool WindowOpen = false;
+    private bool SetWalkSpeed = false;
 
     private float AttackPower = 35.0f;
 
@@ -104,12 +114,12 @@ public class CombatSystem : MonoBehaviour {
         if (PlayerAnimator == null) { Debug.LogError("Animator 'PlayerAnimator' is null, set reference"); }
         if (HitRegBlock == null) { Debug.LogError("Transform 'HitRegBlock' is null, set reference"); }
         if (FirstPersonControlerScript == null) { Debug.LogError("Player_move 'playermovescript' is null, set reference"); }
-        if (StrengthBar == null) { Debug.LogError("Image 'StrengthBar' is null, set reference"); }
-        if (StrengthPanel == null) { Debug.LogError("GameObject 'StrenghPanel' is null, set reference"); }
+        if (ArrowChargeMeter == null) { Debug.LogError("Image 'ArrowChargeMeter' is null, set reference"); }
+        if (BowChargePanel == null) { Debug.LogError("GameObject 'BowChargePanel' is null, set reference"); }
 
         if (SwordsPanel == null) { Debug.LogError("Transform 'SwordsPanel' is null, set reference"); }
 
-        if (ChangeSpellUI == null) { ChangeSpellUI = SwitchMagicSpellWindow.GetComponent<ChangeSpellUI>(); }
+        if (ChangeSpellUI == null) { ChangeSpellUI = SwitchMagicSpellPanel.GetComponent<ChangeSpellUI>(); }
 
         if (UnfilledSwordSprite == null) { UnfilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/unfilledsword"); }
         if (FilledSwordSprite == null) { FilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/filledsword"); }
@@ -271,37 +281,48 @@ public class CombatSystem : MonoBehaviour {
                         //Debug.Log("Time: " + Time.time + " NextMeleeAttack: " + NextMeleeAttack + " NextAttack: " + NextAttack);
                         break;
                     case (int)CombatStyle.Range:
-                        if (HoldingDown)
+                        if (Time.time > WaitForNextArrow)
                         {
-                            if (StrengthPanel)
+                            if (HoldingDown)
                             {
-                                if (StrengthPanel.activeSelf == false) { StrengthPanel.SetActive(true); }
+                                if (SetWalkSpeed)
+                                {
+                                    SetWalkSpeed = false;
+                                    float NewWalkSpeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                                    FirstPersonControlerScript.SetWalkSpeed(NewWalkSpeed * 0.33f);
+                                }
+                                if (BowChargePanel)
+                                {
+                                    if (BowChargePanel.activeSelf == false) { BowChargePanel.SetActive(true); }
+                                }
+                                if (BowStrengh < 1)
+                                {
+                                    BowStrengh += 0.01f;
+                                    if (BowStrengh > 1) { BowStrengh = 1; }
+
+                                }
+                                if (ArrowChargeMeter) { ArrowChargeMeter.fillAmount = BowStrengh; }
                             }
-                            if (BowStrengh < 1)
+                            else
                             {
-                                BowStrengh += 0.01f;
-                                if (BowStrengh > 1) { BowStrengh = 1; }
+                                WaitForNextArrow = Time.time + 0.75f;
+                                SetWalkSpeed = true;
+                                PrepareAttack = false;
+                                GameObject Projectile = Instantiate(ArrowPrefab);
+                                Projectile.transform.position = ArrowSpawn.position;
+                                Projectile.transform.rotation = ArrowSpawn.rotation;
 
+                                Rigidbody rb = Projectile.GetComponent<Rigidbody>();
+                                if (BowStrengh < 0.25f) { rb.velocity = (ArrowSpawn.forward * 50) * 0.25f; } else { rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh; }
+                                
+
+                                Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
+                                if (BowChargePanel) { BowChargePanel.SetActive(false); }
+                                BowStrengh = 0;
+
+                                FirstPersonControlerScript.SetSpeedNormal();
                             }
-                            if (StrengthBar) { StrengthBar.fillAmount = BowStrengh; }
                         }
-                        else
-                        {
-                            PrepareAttack = false;
-                            GameObject Projectile = Instantiate(ArrowPrefab);
-                            Projectile.transform.position = ArrowSpawn.position;
-                            Projectile.transform.rotation = ArrowSpawn.rotation;
-
-                            Rigidbody rb = Projectile.GetComponent<Rigidbody>();
-                            rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh;
-
-                            Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
-                            if (StrengthPanel) { StrengthPanel.SetActive(false); }
-                            BowStrengh = 0;
-
-                            FirstPersonControlerScript.SetSpeedNormal();
-                        }
-
                         break;
                     case (int)CombatStyle.Magic:
                         if (spelldowncool == 1.0f)
@@ -312,7 +333,19 @@ public class CombatSystem : MonoBehaviour {
                             {
                                 if (HoldingDown)
                                 {
-                                    if (MaxCharge == 0){ MaxCharge = currentspell.CastTime; }
+                                    if (SetWalkSpeed) {
+                                        SetWalkSpeed = false;
+                                        float NewWalkSpeed = FirstPersonControlerScript.GetNormalWalkspeed();
+                                        FirstPersonControlerScript.SetWalkSpeed(NewWalkSpeed * 0.45f);
+                                    }
+                                    if (MaxCharge == 0) { MaxCharge = currentspell.CastTime; }
+                                    if (MagicChargePanel) { if (MagicChargePanel.activeSelf == false) { MagicChargePanel.SetActive(true); } }
+                                    if (MagicCharged < 1)
+                                    {
+                                        MagicCharged = CurrentCharge / MaxCharge;
+                                        if (MagicCharged > 1) { MagicCharged = 1; }
+                                    }
+                                    if (MagicChargeMeter) { MagicChargeMeter.fillAmount = MagicCharged; }
                                     if (CurrentCharge < MaxCharge)
                                     {
                                         if (!PreAttackSpawned)
@@ -347,7 +380,6 @@ public class CombatSystem : MonoBehaviour {
                                                 Transform Movement = MagicMissleSpawn.transform.GetChild(0);
                                                 Movement.localScale += new Vector3(CurrentCharge, CurrentCharge, CurrentCharge);
                                                 ApplyCharge = Movement.lossyScale.x;
-                                                Debug.Log(Movement.localScale);
                                             }
                                         }
 
@@ -372,9 +404,14 @@ public class CombatSystem : MonoBehaviour {
                                     SpawningMissle = false;
                                     PreAttackSpawned = false;
                                     PrepareAttack = false;
+                                    SetWalkSpeed = true;
                                     spelldowncool = 0;
                                     MaxCharge = 0;
+                                    CurrentCharge = 0;
+                                    MagicCharged = 0;
                                     PlayerStats.ChangeMana(-currentspell.ManaCost);
+                                    FirstPersonControlerScript.SetSpeedNormal();
+                                    if (MagicChargePanel) { MagicChargePanel.SetActive(false); }
                                     switch (type)
                                     {
                                         case 1:
@@ -560,11 +597,6 @@ public class CombatSystem : MonoBehaviour {
                         PlayerAnimator.SetTrigger("AttackMelee01Trigger");
                         break;
                 }
-            }
-            if (CombatState == 2)
-            {
-                float walkspeed = FirstPersonControlerScript.GetNormalWalkspeed();
-                FirstPersonControlerScript.SetWalkSpeed(walkspeed * 0.33f);
             }
         }
     }

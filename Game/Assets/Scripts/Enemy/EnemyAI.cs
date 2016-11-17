@@ -5,12 +5,15 @@ public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent nav;
     private Transform player;
+
     [Header("Enemy Combat")]
     public GameObject Projectile;
+    public Transform SwordAttackPrefab;
     public Transform ArrowSpawn;
     public float BowStrengh = 1;
     private float ArrowSpeed = 1.5f;
     public float ShootCooldown = 2.0f;
+    public float SlashCooldown = 2.0f;
     private float CooldownTime = 0;
 
     private bool CanAttack = false;
@@ -86,6 +89,7 @@ public class EnemyAI : MonoBehaviour
     {
         Debug.Log("melee attacking");
         nav.Stop();
+        SwordAttack();
     }
 
     void RangedAttack()
@@ -129,6 +133,25 @@ public class EnemyAI : MonoBehaviour
         Vector3 direction = (player.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
+    }
+
+    void SwordAttack()
+    {
+        if (CooldownTime < Time.time)
+        {
+            if (SwordAttackPrefab)
+            {
+                Transform EnemySwordAttack = (Transform)Instantiate(SwordAttackPrefab, transform.position + (transform.forward), transform.rotation);
+                EnemySwordAttack.transform.parent = transform;
+                EnemySwordAttack.transform.position += new Vector3(0, 0.4f, 0);
+                EnemySwordAttack.GetComponent<HitRegistrator>().SetSettings(1, 0.75f, 10, transform.forward * 10, true);
+            }
+            
+
+
+
+            CooldownTime = Time.time + SlashCooldown;
+        }
     }
 
     void ShootArrow()
