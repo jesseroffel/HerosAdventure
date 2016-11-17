@@ -232,6 +232,7 @@ public class EnemyHP : MonoBehaviour {
     void DebufBind()
     {
         currentmat = 5;
+        EAI.IsFrozen = true;
         if (oldspeed == 0) { oldspeed = EAI.speed; }
         EAI.SetSpeed(0);
         rend.sharedMaterial = Materials[currentmat];
@@ -290,6 +291,7 @@ public class EnemyHP : MonoBehaviour {
             case 5:
                 EAI.SetSpeed(oldspeed);
                 oldspeed = 0;
+                EAI.IsFrozen = false;
                 break;
             case 3:
                 poison = false;
@@ -316,5 +318,6 @@ public class EnemyHP : MonoBehaviour {
     public void SetHP(float HP)
     {
         currentHP = HP;
+        MaxHP = currentHP;
     }
 }

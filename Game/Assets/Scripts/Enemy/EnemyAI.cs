@@ -17,6 +17,7 @@ public class EnemyAI : MonoBehaviour
     private float CooldownTime = 0;
 
     private bool CanAttack = false;
+    public bool IsFrozen = false;
 
     [Header("Enemy Drop")]
     public GameObject drop;
@@ -50,38 +51,41 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update()
-    {      
-        distance = Vector3.Distance(transform.position, player.transform.position);
-        if (distance <= chaseRange)
+    {
+        if (!IsFrozen)
         {
-            Chasing();
-        }
-        else
-        {
-            freeRoaming();
-        }
-
-        if (distance <= AttackRange)
-        {
-            CanAttack = true;
-            if (isRanged)
-            {               
-                RangedAttack();
+            distance = Vector3.Distance(transform.position, player.transform.position);
+            if (distance <= chaseRange)
+            {
+                Chasing();
             }
             else
             {
-                MeleeAttack();
+                freeRoaming();
             }
-        }
 
-        if (hp.defeated && !itemDropped)
-        {
-            if (drop)
+            if (distance <= AttackRange)
             {
-                GameObject.Instantiate(drop);
-                drop.transform.position = transform.position;
+                CanAttack = true;
+                if (isRanged)
+                {
+                    RangedAttack();
+                }
+                else
+                {
+                    MeleeAttack();
+                }
             }
-            itemDropped = true;
+
+            if (hp.defeated && !itemDropped)
+            {
+                if (drop)
+                {
+                    GameObject.Instantiate(drop);
+                    drop.transform.position = transform.position;
+                }
+                itemDropped = true;
+            }
         }
     }
 

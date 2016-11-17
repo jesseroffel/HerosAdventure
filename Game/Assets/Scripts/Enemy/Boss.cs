@@ -14,9 +14,14 @@ public class Boss : MonoBehaviour {
     [Header("Boss Objects")]
     public GameObject ShieldObject;
     private Transform HomeLocation;
+    public Transform BossMissle;
+    public Transform RangeSkeleton;
+    public Transform MeleeSkeleton;
+    public Transform Slime;
 
     private int Fase = 1;
     private int AttackSelector = 0;
+    private int PreviousAttack = 0;
     private float NextAttackDelay = 0;
     private float NextAttackTime = 0;
     private float AttackTimeWait = 0;
@@ -32,14 +37,20 @@ public class Boss : MonoBehaviour {
 
     private bool Active = true;
     public bool Beaten = false;
-
     private bool Invincible = false;
+    private int SpawnedEnemiesActive = 0;
 
     public float TimeSlowValue = 1;
     private float FadeOutValue = 0;
     public bool FadeOut = false;
 
     private bool GoToFinishScreen = false;
+
+    private int CurrentRadius = 0;
+    private int CurrentIndex = 0;
+    private float SpawnRadius = 2.0f;
+    private int RadiusDistance = 0;
+    private int SpawnAmount = 0;
 
     // Use this for initialization
     void Start () {
@@ -52,6 +63,7 @@ public class Boss : MonoBehaviour {
             BossGUI.SetActive(true);
             Healthbar.fillAmount = 1;
             HomeLocation = transform;
+            LookAt();
         } else
         {
             Active = false;
@@ -139,6 +151,21 @@ public class Boss : MonoBehaviour {
         }
     }
 
+    void LookAt()
+    {
+        transform.LookAt(Player.transform);
+        //float rot = transform.rotation.eulerAngles.x;
+        //if (rot > 0) { transform.Rotate(-rot, 0, 0, Space.World); } else { transform.Rotate(rot, 0, 0, Space.World); }
+        //Vector3 relativePos = Player.transform.position - transform.position;
+        //Quaternion rotation = Quaternion.LookRotation(relativePos);
+        //transform.rotation = rotation;
+
+        //Vector3 lookAtPosition = Player.transform.position;
+        //lookAtPosition.y = transform.position.y;
+        //lookAtPosition.z = transform.position.z;
+        //transform.LookAt(lookAtPosition);
+    }
+
     void Attack()
     {
         if (CanAttack)
@@ -148,7 +175,7 @@ public class Boss : MonoBehaviour {
             switch (Fase)
             {
                 case 1:
-                    AttackSelector = Random.Range(1, 4);
+                    do { AttackSelector = Random.Range(3, 5); } while (AttackSelector == PreviousAttack);
                     break;
                 case 2:
                     AttackSelector = Random.Range(1, 6);
@@ -157,7 +184,7 @@ public class Boss : MonoBehaviour {
                     AttackSelector = Random.Range(1, 8);
                     break;
             }
-
+            PreviousAttack = AttackSelector;
             switch (AttackSelector)
             {
                 case 1:
@@ -166,17 +193,30 @@ public class Boss : MonoBehaviour {
                     StartCoroutine(MagicSpell(AttackTime));
                     break;
                 case 2:
-                    AttackTime = 1.0f;
+                    AttackTime = 2.0f;
                     NextAttackTime = 2.5f;
+                    StartCoroutine(QuickShield(AttackTime));
                     break;
                 case 3:
                     AttackTime = 2.5f;
                     NextAttackTime = 1;
-
+                    StartCoroutine(CircleMissleAttack(AttackTime));
                     break;
                 case 4:
                     AttackTime = 5;
                     NextAttackTime = 5;
+                    StartCoroutine(SpawnRangeSkeletons(AttackTime));
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    AttackTime = 5;
+                    NextAttackTime = 5;
+                    StartCoroutine(MultipleCircleMissle(AttackTime));
+                    break;
+                case 7:
+                    break;
+                case 8:
                     break;
                 default:
                     Debug.LogError("[BOSS] Got an invalid AttackSelector number:" + AttackSelector);
@@ -196,9 +236,153 @@ public class Boss : MonoBehaviour {
         }
     }
 
+    Vector3 CalcCircle(Vector3 center, float radius, int angle)
+    {
+        float ang = angle;
+        Vector3 pos;
+        pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
+        pos.y = center.y;
+        pos.z = center.z + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
+        return pos;
+    }
+
+    int CalcDistance(int input)
+    {
+        int am = input;
+        int calc = 360 / am;
+        return calc;
+    }
+
     IEnumerator MagicSpell(float attacktime)
     {
         Debug.Log("[BOSSATTACK] Cast MagicSpell with attacktime " + attacktime);
+        for (int i = 0; i < 3; i++)
+        {
+            for (int o = 0; o < 10; o++)
+            {
+                LookAt();
+                yield return new WaitForSeconds(0.1f);
+            }
+            Transform Ball = (Transform)Instantiate(BossMissle, transform.position + (transform.forward), transform.rotation);
+            Ball.transform.position += new Vector3(0, 0.4f, 0);
+            Ball.GetComponent<HitRegistrator>().SetSettings(4, 5, 25, Vector3.zero, true);
+        }
+        Debug.Log("Finished");
         yield return new WaitForSeconds(attacktime);
+    }
+
+    IEnumerator QuickShield(float attacktime)
+    {
+        if (ShieldObject.activeSelf == false) {
+            ShieldObject.SetActive(true);
+            EnemyHPScript.SetIsInvincible(true);
+        }
+        LookAt();
+        Debug.Log("[BOSSATTACK] Cast QuickShield with attacktime " + attacktime);
+        yield return new WaitForSeconds(attacktime);
+        ShieldObject.SetActive(false);
+        EnemyHPScript.SetIsInvincible(false);
+        yield return new WaitForSeconds(0);
+    }
+
+    IEnumerator SpawnRangeSkeletons(float attacktime)
+    {
+        SpawnAmount = 6;
+        CurrentIndex = 1;
+        CurrentRadius = 0;
+        SpawnRadius = 8;
+        RadiusDistance = CalcDistance(SpawnAmount);
+        for (int i = 0; i < SpawnAmount; i++)
+        {
+            Vector3 Calcpos = CalcCircle(transform.position, SpawnRadius, CurrentRadius);
+
+            Transform Skeleton = (Transform)Instantiate(RangeSkeleton, Calcpos, Quaternion.identity);
+            Skeleton.Rotate(0, CurrentRadius, 0, Space.World);
+
+            if (CurrentRadius != 360)
+            {
+                CurrentRadius = CurrentIndex * RadiusDistance;
+                CurrentIndex++;
+            }
+        }
+
+        Debug.Log("[BOSSATTACK] Cast SpawnRangeSkeletons with attacktime " + attacktime);
+        yield return new WaitForSeconds(attacktime);
+    }
+
+    IEnumerator CircleMissleAttack(float attacktime)
+    {
+
+        SpawnAmount = 6;
+        CurrentIndex = 1;
+        CurrentRadius = 0;
+        SpawnRadius = 2;
+        RadiusDistance = CalcDistance(SpawnAmount);
+        for (int i = 0; i < SpawnAmount;i++)
+        {
+            Vector3 Calcpos = CalcCircle(transform.position, SpawnRadius, CurrentRadius);
+
+            Transform Ball = (Transform)Instantiate(BossMissle, Calcpos, Quaternion.identity);
+            Ball.Rotate(0, CurrentRadius, 0, Space.World);
+            Ball.GetComponent<HitRegistrator>().SetSettings(4, 5, 25, Vector3.zero, true);
+
+            if (CurrentRadius != 360)
+            {
+                CurrentRadius = CurrentIndex * RadiusDistance;
+                CurrentIndex++;
+            }
+        }
+        Debug.Log("[BOSSATTACK] Cast CircleMissleAttack with attacktime " + attacktime + " and SpawnAmount: " + SpawnAmount);
+        yield return new WaitForSeconds(attacktime);
+    }
+
+    IEnumerator MultipleCircleMissle(float attacktime)
+    {
+        int rings = 5;// Random.Range(2, 6);
+        int ringsdis = CalcDistance(rings);
+        int ringindex = 1;
+        SpawnRadius = 2;
+        for (int s = 0; s < rings; s++)
+        {
+            SpawnAmount = 6;
+            CurrentIndex = 1;
+
+            if (ringindex != 1)
+            {
+                int curin = ringindex - 1;
+                int added = curin * ringsdis;
+                CurrentRadius += added;
+                if (CurrentRadius > 360) { CurrentRadius = CurrentRadius - 360; }
+            } else
+            {
+                CurrentRadius = 0;
+            }
+
+            RadiusDistance = CalcDistance(SpawnAmount);
+            for (int i = 0; i < SpawnAmount; i++)
+            {
+                Vector3 Calcpos = CalcCircle(transform.position, SpawnRadius, CurrentRadius);
+
+                Transform Ball = (Transform)Instantiate(BossMissle, Calcpos, Quaternion.identity);
+                Ball.Rotate(0, CurrentRadius, 0, Space.World);
+                Ball.GetComponent<HitRegistrator>().SetSettings(4, 5, 25, Vector3.zero, true);
+
+                if (ringindex < 2)
+                {
+                    if (CurrentRadius != 360)
+                    {
+                        CurrentRadius = CurrentIndex * RadiusDistance;
+                        CurrentIndex++;
+                    }
+                }
+            }
+            transform.Rotate(0, ringsdis, 0, Space.World);
+            ringindex++;
+            yield return new WaitForSeconds(0.33f);
+        }
+        
+        Debug.Log("[BOSSATTACK] Cast CircleMissleAttack with attacktime " + attacktime + " and SpawnAmount: " + SpawnAmount);
+        yield return new WaitForSeconds(attacktime);
+
     }
 }

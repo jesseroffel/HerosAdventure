@@ -14,6 +14,7 @@ public class HitRegistrator : MonoBehaviour
     private float StickTime = 0;
     private bool Active = true;
     private bool StickCheck = false;
+    private bool DontCheckAlive = false;
     private float ArrowFallSpeed = 1.0f;
 
     private bool EnemyShot = false;
@@ -45,6 +46,7 @@ public class HitRegistrator : MonoBehaviour
         currentTime = Time.time + AliveTime;
         rigid = gameObject.GetComponent<Rigidbody>();
         EnemyShot = EnemyProjectile;
+
     }
 
     public void SetSettings(int type, Spell spell)
@@ -58,6 +60,8 @@ public class HitRegistrator : MonoBehaviour
         rend = transform.GetComponent<Renderer>();
         rend.enabled = true;
         rend.sharedMaterial = Materials[MagicType];
+
+        if (ProjectileType == 4 && MagicType == 2) { DontCheckAlive = true; }
     }
 
     public void SetSettings(int type, Spell spell, Vector3 playerf)
@@ -69,6 +73,7 @@ public class HitRegistrator : MonoBehaviour
         MagicType = spell.ID;
         PlayerForce = playerf;
         if (MagicType == 2) { rend.sharedMaterial = Materials[MagicType]; }
+        if (ProjectileType == 4 && MagicType == 2) { DontCheckAlive = true; }
     }
 
    
@@ -76,24 +81,29 @@ public class HitRegistrator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Active && StickCheck == false)
+        if (!DontCheckAlive)
         {
-            if (Time.time > currentTime)
+            if (Active && StickCheck == false)
             {
-                Destroy(gameObject);
+                if (Time.time > currentTime)
+                {
+                    Destroy(gameObject);
+                    DontCheckAlive = true;
+                }
+            }
+            if (StickCheck)
+            {
+                if (StickTime < Time.time)
+                {
+                    StickCheck = false;
+                    rigid.isKinematic = false;
+                    rigid.velocity = Vector3.zero;
+                    rigid.angularVelocity = Vector3.zero;
+                    currentTime = Time.time + AliveTime;
+                }
             }
         }
-        if (StickCheck)
-        {
-            if (StickTime < Time.time)
-            {
-                StickCheck = false;
-                rigid.isKinematic = false;
-                rigid.velocity = Vector3.zero;
-                rigid.angularVelocity = Vector3.zero;
-                currentTime = Time.time + AliveTime;
-            }
-        }
+        
         //if (ProjectileType == 2)
         //{
             //Debug.Log(transform.rotation.x);
@@ -107,8 +117,12 @@ public class HitRegistrator : MonoBehaviour
         {
             if (MagicType == 1)
             {
-                MoveStraight();
+                MoveStraight(3.0f);
             }
+        }
+        if (ProjectileType == 4)
+        {
+            MoveStraight(5.0f);
         }
     }
 
@@ -182,7 +196,20 @@ public class HitRegistrator : MonoBehaviour
                                         Debug.Log("[MAGIC] " + collision.gameObject.name + " Got Effect [BIND]");
                                         break;
                                 }
-                                  
+                                break;
+                            case 4:
+                                switch(MagicType)
+                                {
+                                    case 1:
+                                        collision.gameObject.GetComponent<Player_Health>().HitPlayer(DamageValue, PlayerForce);
+                                        break;
+                                    case 2:
+                                        Vector3 opposite = -collision.gameObject.GetComponent<Rigidbody>().velocity;
+                                        Vector3 backforce = opposite.normalized * 10;
+                                        collision.gameObject.GetComponent<Rigidbody>().AddForce(backforce * Time.deltaTime);
+                                        break;
+
+                                }
                                 break;
                         }
                     }
@@ -216,8 +243,8 @@ public class HitRegistrator : MonoBehaviour
         return false;
     }
 
-    void MoveStraight()
+    void MoveStraight(float speed)
     {
-        transform.position += (transform.forward * 3.0f) * Time.deltaTime;
+        transform.position += (transform.forward * speed) * Time.deltaTime;
     }
 }
