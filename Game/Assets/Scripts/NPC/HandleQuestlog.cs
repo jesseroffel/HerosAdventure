@@ -59,7 +59,7 @@ public class HandleQuestlog : MonoBehaviour {
             QRP.transform.localScale = DefaultScale;
             HandleQLObjective objectivedetails = QRP.GetComponent<HandleQLObjective>();
             objectivedetails.SetAmount(currentitems[i], 1);
-            ItemDatabase ID = GameObject.FindGameObjectWithTag("inventory").GetComponent<ItemDatabase>();
+            ItemDatabase ID = GameObject.FindGameObjectWithTag("Inventory").GetComponent<ItemDatabase>();
             string ItemName = ID.FetchItemNameByID(id);
             objectivedetails.SetObjective(ItemName + " found");
         }

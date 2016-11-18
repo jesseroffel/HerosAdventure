@@ -24,18 +24,42 @@ public class QuestList : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+        
         //QuestData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Quests.json"));
         //ConstructQuestDatabase();
         DatabaseQuests.Add(new QuestObject(
             DatabaseQuests.Count + 1,           // QuestID
-            "Old man's lost item",              // Quest Title
+            "A sticky situation",              // Quest Title
             new int[] { 1 },                    // Quest Type(s)
             true,                               // Quest Starter?
             false,                              // Quest Progresser?
             true,                               // Quest Completer?
             1,                                  // Quest Progression Start State
             0,                                  // Quest Total Progressions
-            new int[] { 0, 2 },                 // Other Quest ID unlock(s) at completion, leave empty if none
+            new int[] { 3 },                 // Other Quest ID unlock(s) at completion, leave empty if none
+            false,                              // Requires Quest ID to start?
+            new int[] { },                      // Required Quest ID(s) to start, leave empty if none
+            true,                              // Requires Kill to complete?
+            new int[] {10 },                      // Required Enemy kill amount to complete, leave empty if none
+            new int[] { 1},                      // Required EnemyID(s) for kill tracking, leave empty if none
+            false,                              // Requires item to complete?
+            new int[] { },                      // Required item id(s) to complete, leave empty if none
+            new string[] { "I hope you understand what the mayor said to you, that creature in the tower..","Anyway, you will need some killing experience, so I got a little task for you.","Close to this town there are slimes roaming around, you need to kill a few.. hmm let's say..","Yes, kill 10 slimes for me to prove you're skilled enough to begin this adventure" },      // Dialogue strings about quest
+            "",                             // Dialogue when start conditions are not met
+            "Remember, don't come back before you killed 10 slimes!",                            // Dialogue when quest is already started
+            "Ah look at you, I can see you beating that creature before no time",                         // Dialogue when completing quest
+            "Speak to all the people in town, some have tasks for you but they may need your trust first"                         // Dialogue after completion quest
+        ));
+        DatabaseQuests.Add(new QuestObject(
+            DatabaseQuests.Count + 1,           // QuestID
+            "The Lost Item",              // Quest Title
+            new int[] { 1 },                    // Quest Type(s)
+            true,                               // Quest Starter?
+            false,                              // Quest Progresser?
+            true,                               // Quest Completer?
+            1,                                  // Quest Progression Start State
+            0,                                  // Quest Total Progressions
+            new int[] { 4 },                 // Other Quest ID unlock(s) at completion, leave empty if none
             false,                              // Requires Quest ID to start?
             new int[] { },                      // Required Quest ID(s) to start, leave empty if none
             false,                              // Requires Kill to complete?
