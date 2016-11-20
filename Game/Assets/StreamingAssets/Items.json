@@ -57,14 +57,14 @@
 	},
 		{
 		"id": 4,
-		"title": "Red gem",
+		"title": "hearth of the mountain",
 		"value": 0,
 		"stats":{
 			"attack": 0,
 			"defence": 0,
 			"power" : 0
 		},
-		"description": "this red gem contains great power. if only i could get it out",
+		"description": "this red gem contains great power. only a worthy hero can use this gem",
 		"stackable": false,
 		"consumable": false,
 		"slug": "red_gem"

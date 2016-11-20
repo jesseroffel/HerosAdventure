@@ -5,6 +5,7 @@ public class portal : MonoBehaviour
 {
     public Transform entrance;
     public Transform exit;
+
     GameObject player;
 
     void Start()
@@ -21,6 +22,6 @@ public class portal : MonoBehaviour
             else
             {
                 player.transform.position = entrance.transform.position;
-             }
+            }
     }
 }
