@@ -19,6 +19,9 @@ public class EnemyAI : MonoBehaviour
     private bool CanAttack = false;
     public bool IsFrozen = false;
 
+    private bool IsDead;
+    private Transform spawnLocation;
+
     [Header("Enemy Drop")]
     public GameObject drop;
     bool itemDropped;
@@ -48,6 +51,8 @@ public class EnemyAI : MonoBehaviour
         hp = GetComponent<EnemyHP>();
         nav.speed = speed;
         itemDropped = false;
+        IsDead = false;
+        spawnLocation = transform;
     }
 
     void Update()
@@ -117,12 +122,11 @@ public class EnemyAI : MonoBehaviour
     {
         if(locations.Length > 0)
         {
-            nav.destination = locations[destination].position;
-
             if (nav.remainingDistance <= 0)
             {
                 destination = (int)Random.Range(0.0f, 5.0f);
             }
+            nav.destination = locations[destination].position;
         }
     }
 
@@ -172,6 +176,15 @@ public class EnemyAI : MonoBehaviour
             
 
             CooldownTime = Time.time + ShootCooldown;
+        }
+    }
+
+    void Respawn()
+    {
+        if(IsDead)
+        {
+            this.gameObject.transform.position = spawnLocation.position;
+            this.gameObject.SetActive(true);
         }
     }
 }
