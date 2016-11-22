@@ -36,7 +36,7 @@ public class QuestList : MonoBehaviour {
             true,                               // Quest Completer?
             1,                                  // Quest Progression Start State
             0,                                  // Quest Total Progressions
-            new int[] { 3 },                 // Other Quest ID unlock(s) at completion, leave empty if none
+            new int[] {  },                 // Other Quest ID unlock(s) at completion, leave empty if none
             false,                              // Requires Quest ID to start?
             new int[] { },                      // Required Quest ID(s) to start, leave empty if none
             true,                              // Requires Kill to complete?
@@ -59,7 +59,7 @@ public class QuestList : MonoBehaviour {
             true,                               // Quest Completer?
             1,                                  // Quest Progression Start State
             0,                                  // Quest Total Progressions
-            new int[] { 4 },                 // Other Quest ID unlock(s) at completion, leave empty if none
+            new int[] {  },                 // Other Quest ID unlock(s) at completion, leave empty if none
             false,                              // Requires Quest ID to start?
             new int[] { },                      // Required Quest ID(s) to start, leave empty if none
             false,                              // Requires Kill to complete?

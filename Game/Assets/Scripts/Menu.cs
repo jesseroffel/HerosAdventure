@@ -177,7 +177,7 @@ public class Menu : MonoBehaviour {
             }
             //if (i == 9) { StartCoroutine(FadeOutCamera()); }
         }
-
+        Cameras[CameraIndex].transform.position = OldCamPos;
         CameraIndex++;
         if (CameraIndex == MaxCams) { CameraIndex = 0; }
 

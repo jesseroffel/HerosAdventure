@@ -204,14 +204,11 @@ public class NPCController : MonoBehaviour {
             }
             if (m_DialogueFinished && m_GotConfirm)
             {
-                if (DialogueFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
-                {
-                    AudioSource.PlayOneShot(DialogueFxs[1], AudioVolume);
-                }
+
                 ResetDialogue();
                 if (!QuestNotReady)
                 {
-                    if (!m_QuestActivated) {
+                    if (!m_QuestActivated && currentquest != null) {
                         ActivateQuest(m_QuestID);
                         bool check = QuestList.QuestListObject.CheckInventory(currentquest);
                         // TODO, CHECK INVENTORY ON QUEST ITEMS
@@ -232,7 +229,11 @@ public class NPCController : MonoBehaviour {
                         QuestList.QuestListObject.FinishQuest(m_QuestID);
                         Debug.Log("[QUEST] Finished Quest: " + currentquest.m_QuestTitle);
                     }
-                 }
+                }
+                if (DialogueFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                {
+                    AudioSource.PlayOneShot(DialogueFxs[1], AudioVolume);
+                }
             }
         }
     } 
