@@ -10,6 +10,11 @@ public class EnemyAI : MonoBehaviour
     public GameObject Projectile;
     public Transform SwordAttackPrefab;
     public Transform ArrowSpawn;
+    public AudioClip[] CombatFxs;
+    private AudioSource AudioSource;
+    private int SoundSelector = 0;
+    private float AudioVolume = 0.5f;
+
     public float BowStrengh = 1;
     private float ArrowSpeed = 1.5f;
     public float ShootCooldown = 2.0f;
@@ -147,6 +152,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (CooldownTime < Time.time)
         {
+			if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+            {
+                SoundSelector = Random.Range(0, 3);
+                AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+            }
+
             if (SwordAttackPrefab)
             {
                 Transform EnemySwordAttack = (Transform)Instantiate(SwordAttackPrefab, transform.position + (transform.forward), transform.rotation);
@@ -166,6 +177,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (CooldownTime < Time.time)
         {
+			if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+            {
+                SoundSelector = Random.Range(3, 5);
+                AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+            }
+
             GameObject Arrow = Instantiate(Projectile);
             Arrow.transform.position = ArrowSpawn.position;
             Arrow.transform.rotation = ArrowSpawn.rotation;

@@ -5,7 +5,9 @@ using System.Collections;
 
 public class NPCController : MonoBehaviour {
     [Header("NPC Current Model")]
-    public GameObject Model;
+    public AudioClip[] DialogueFxs;
+    private AudioSource AudioSource;
+    public float AudioVolume = 0.5f;
     //public GameObject SpeakIcon;
     //public GameObject QuestIcon;
     private HandleDialogue DialogueHandler;
@@ -68,6 +70,7 @@ public class NPCController : MonoBehaviour {
 
     void Start()
     {
+        if (AudioSource == null) { AudioSource = GetComponent<AudioSource>(); }
         if (fetchnpcinformation) { SetNPCInformation(); }
     }
 
@@ -183,6 +186,10 @@ public class NPCController : MonoBehaviour {
 
             if (m_WaitForInput && m_GotConfirm && m_DialogueFinished == false)
             {
+                if (DialogueFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                {
+                    AudioSource.PlayOneShot(DialogueFxs[2], AudioVolume);
+                }
                 m_LineFinished = false;
                 m_WaitForInput = false;
                 m_GotConfirm = false;
@@ -197,6 +204,10 @@ public class NPCController : MonoBehaviour {
             }
             if (m_DialogueFinished && m_GotConfirm)
             {
+                if (DialogueFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                {
+                    AudioSource.PlayOneShot(DialogueFxs[1], AudioVolume);
+                }
                 ResetDialogue();
                 if (!QuestNotReady)
                 {
@@ -235,6 +246,10 @@ public class NPCController : MonoBehaviour {
         DialogueHandler.SetDialogueName(m_npcName);
         DialogueHandler.SetQuestName(m_QuestTitle);
         DialogueHandler.SetDialogueWindow(true);
+        if (DialogueFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+        {
+            AudioSource.PlayOneShot(DialogueFxs[0], AudioVolume);
+        }
         StartCoroutine(DisplayDialog(text));
     }
 

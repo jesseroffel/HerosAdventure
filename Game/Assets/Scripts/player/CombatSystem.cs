@@ -8,6 +8,8 @@ public class CombatSystem : MonoBehaviour {
     public FirstPersonControler FirstPersonControlerScript;
     public Animator PlayerAnimator;
     public Player_Health PlayerStats;
+    public AudioClip[] CombatFxs;
+    private AudioSource AudioSource;
     [Header("Combat Prefabs")]
     public Transform HitRegBlock;
     public GameObject ArrowPrefab;
@@ -102,6 +104,8 @@ public class CombatSystem : MonoBehaviour {
     private bool SetWalkSpeed = false;
 
     private float AttackPower = 35.0f;
+    private int SoundSelector = 0;
+    private float AudioVolume = 0.5f;
 
     private Quaternion SwordRot = new Quaternion(50, 0, 0, 0);
 
@@ -123,7 +127,7 @@ public class CombatSystem : MonoBehaviour {
 
         if (UnfilledSwordSprite == null) { UnfilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/unfilledsword"); }
         if (FilledSwordSprite == null) { FilledSwordSprite = Resources.Load<Sprite>("Sprites/UI/filledsword"); }
-
+        if (AudioSource == null) { AudioSource = GetComponent<AudioSource>(); }
         maxspells = Spellbook.SpellbookObject.AmountSpells;
         currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
         ChangeSpellUI.SetSpellName(currentspell.SpellName);
@@ -225,6 +229,11 @@ public class CombatSystem : MonoBehaviour {
                         if (Time.time > NextMeleeAttack)
                         {
                             float walkspeed = 0;
+                            if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                            {
+                                SoundSelector = Random.Range(1, 4);
+                                AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+                            }
                             switch (AttackOrder)
                             {
                                 case 1:
@@ -305,6 +314,11 @@ public class CombatSystem : MonoBehaviour {
                             }
                             else
                             {
+                                if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                                {
+                                    SoundSelector = Random.Range(4, 6);
+                                    AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+                                }
                                 WaitForNextArrow = Time.time + 0.75f;
                                 SetWalkSpeed = true;
                                 PrepareAttack = false;
@@ -397,7 +411,11 @@ public class CombatSystem : MonoBehaviour {
                                     }
                                 } else
                                 {
-
+                                    if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                                    {
+                                        SoundSelector = Random.Range(6, 10);
+                                        AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+                                    }
                                     if (SpawningAoE) { Destroy(MagicAreaOfEffectSpawn.transform.GetChild(0).gameObject); }
                                     if (SpawningMissle) { Destroy(MagicMissleSpawn.transform.GetChild(0).gameObject); }
                                     SpawningAoE = false;
@@ -537,6 +555,12 @@ public class CombatSystem : MonoBehaviour {
                     Debug.LogWarning("[PLAYER] Invalid combatstyle, Model SetActive(true) failed");
                     break;
             }
+
+            if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+            {
+                SoundSelector = 10;
+                AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+            }
         }
 
         if (WindowOpen && SwitchCheck) {
@@ -569,6 +593,11 @@ public class CombatSystem : MonoBehaviour {
         currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
         ChangeSpellUI.SetSpellName(currentspell.SpellName);
         ChangeSpellUI.SetSpellImage(currentspell.Sprite);
+        if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+        {
+            SoundSelector = 11;
+            AudioSource.PlayOneShot(CombatFxs[SoundSelector], 0.1f);
+        }
     }
 
     void SetAttackAnimation()

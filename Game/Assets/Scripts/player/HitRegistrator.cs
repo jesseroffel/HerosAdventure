@@ -221,7 +221,7 @@ public class HitRegistrator : MonoBehaviour
                     if (!EnemyShot)
                     {
                         rigid.isKinematic = true;
-                        StickTime = Time.time + 5;
+                        StickTime = Time.time + 0.5f;
                         StickCheck = true;
                         return;
                     }

@@ -10,6 +10,9 @@ public class Boss : MonoBehaviour {
     public Image Healthbar;
     public Image FadeOutScreen;
     public GameObject Player;
+    public AudioClip[] BossFxs;
+    private AudioSource AudioSource;
+    public float AudioVolume = 0.5f;
 
     [Header("Boss Objects")]
     public GameObject ShieldObject;
@@ -45,6 +48,7 @@ public class Boss : MonoBehaviour {
     public bool FadeOut = false;
 
     private bool GoToFinishScreen = false;
+    private int SoundSelector = 0;
 
     private int CurrentRadius = 0;
     private int CurrentIndex = 0;
@@ -69,7 +73,7 @@ public class Boss : MonoBehaviour {
             Active = false;
             Debug.LogWarning("BossFight couldn't start, assign objects!");
         }
-
+        if (AudioSource == null) { AudioSource = GetComponent<AudioSource>(); }
     }
 	
 	// Update is called once per frame
@@ -185,6 +189,11 @@ public class Boss : MonoBehaviour {
                     break;
             }
             PreviousAttack = AttackSelector;
+            if (BossFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+            {
+                SoundSelector = Random.Range(1, 4);
+                AudioSource.PlayOneShot(BossFxs[SoundSelector], AudioVolume);
+            }
             switch (AttackSelector)
             {
                 case 1:
@@ -233,6 +242,16 @@ public class Boss : MonoBehaviour {
             {
                 CanAttack = true;
             }
+            SoundSelector = Random.Range(1, 101);
+            if (SoundSelector < 5 && !AudioSource.isPlaying)
+            {
+                if (BossFxs.Length > 0 && AudioSource)
+                {
+                    SoundSelector = Random.Range(1, 4);
+                    AudioSource.PlayOneShot(BossFxs[SoundSelector], AudioVolume);
+                }
+            }
+
         }
     }
 

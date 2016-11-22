@@ -4,6 +4,10 @@ using System.Collections.Generic;
 public class EnemyHP : MonoBehaviour {
 
     public Material[] Materials;
+    public AudioClip[] HitFxs;
+    private AudioSource AudioSource;
+    private int SoundSelector = 0;
+    private float AudioVolume = 0.5f;
     // 0 = own
     // 1 = hit
     // 2 = slowness
@@ -65,6 +69,7 @@ public class EnemyHP : MonoBehaviour {
         {
             EAI = gameObject.GetComponent<EnemyAI>();
         }
+        if (AudioSource == null) { AudioSource = GetComponent<AudioSource>(); }
     }
 	
 	void Update () {
@@ -136,6 +141,11 @@ public class EnemyHP : MonoBehaviour {
                 QuestList.QuestListObject.RegisterKillID(EnemyID);
 
                 rend.sharedMaterial = Materials[1];
+            }
+            if (HitFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+            {
+                SoundSelector = 0;
+                AudioSource.PlayOneShot(HitFxs[SoundSelector], AudioVolume);
             }
             isHit = true;
             HitTime = Time.time + HitCoolDown;
