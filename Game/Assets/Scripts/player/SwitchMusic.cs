@@ -4,6 +4,7 @@ using System.Collections;
 public class SwitchMusic : MonoBehaviour {
     public AudioClip Switchtothisclip;
     public float AudioVolume = 0.5f;
+    private float currentvolume = 0;
     private AudioSource AudioSource;
     // Use this for initialization
     void Start()
@@ -20,9 +21,7 @@ public class SwitchMusic : MonoBehaviour {
                 if (AudioSource.clip) {
                     if (AudioSource.clip.name != Switchtothisclip.name)
                     {
-                        AudioSource.clip = Switchtothisclip;
-                        AudioSource.Stop();
-                        AudioSource.Play();
+                        StartCoroutine(Switching());
                     }
                 } else
                 {
@@ -32,6 +31,26 @@ public class SwitchMusic : MonoBehaviour {
                 
 
             }
+        }
+    }
+
+    IEnumerator Switching()
+    {
+        currentvolume = 0.5f;
+        for (int i = 0; i < 50;i++)
+        {
+            currentvolume -= 0.01f;
+            AudioSource.volume = currentvolume;
+            yield return new WaitForSeconds(0.05f);
+        }
+        AudioSource.Stop();
+        AudioSource.clip = Switchtothisclip;
+        AudioSource.Play();
+        for (int i = 0; i < 50; i++)
+        {
+            currentvolume += 0.01f;
+            AudioSource.volume = currentvolume;
+            yield return new WaitForSeconds(0.05f);
         }
     }
 }

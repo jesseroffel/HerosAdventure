@@ -11,6 +11,7 @@ public class Boss : MonoBehaviour {
     public Image FadeOutScreen;
     public GameObject Player;
     public AudioClip[] BossFxs;
+    public AudioClip[] BossThemes;
     private AudioSource AudioSource;
     public float AudioVolume = 0.5f;
 
@@ -38,7 +39,8 @@ public class Boss : MonoBehaviour {
     private float Switch1HP = 800;
     private float Switch2HP = 350;
 
-    private bool Active = true;
+    public bool Active = false;
+    private bool setgui = false;
     public bool Beaten = false;
     private bool Invincible = false;
     private int SpawnedEnemiesActive = 0;
@@ -64,10 +66,15 @@ public class Boss : MonoBehaviour {
         {
             EnemyHPScript.SetHP(BossHP);
             EnemyHPScript.SetIsBoss(true);
-            BossGUI.SetActive(true);
+
             Healthbar.fillAmount = 1;
             HomeLocation = transform;
-            LookAt();
+            if (Active)
+            {
+                BossGUI.SetActive(true);
+                LookAt();
+            }
+
         } else
         {
             Active = false;
@@ -80,6 +87,12 @@ public class Boss : MonoBehaviour {
 	void Update () {
         if (Active && !Beaten)
         {
+            if (setgui)
+            {
+                setgui = false;
+                BossGUI.SetActive(true);
+                LookAt();
+            }
             CheckHealth();
             Attack();
         }
@@ -101,6 +114,11 @@ public class Boss : MonoBehaviour {
                 {
                     BossCurrentHP = Switch1HP;
                     Fase++;
+
+                    SoundSelector = 1;
+                    AudioSource.Stop();
+                    AudioSource.clip = BossThemes[SoundSelector];
+                    AudioSource.Play();
                     Debug.Log("[BOSS] Fase 1 beaten.");
                 }
                 break;
@@ -109,6 +127,11 @@ public class Boss : MonoBehaviour {
                 {
                     BossCurrentHP = Switch2HP;
                     Fase++;
+
+                    SoundSelector = 2;
+                    AudioSource.Stop();
+                    AudioSource.clip = BossThemes[SoundSelector];
+                    AudioSource.Play();
                     Debug.Log("[BOSS] Fase 2 beaten.");
                 }
                 break;
@@ -119,6 +142,9 @@ public class Boss : MonoBehaviour {
                     BossCurrentHP = 0;
                     Fase++;
                     BossGUI.SetActive(false);
+                    AudioSource.Stop();
+                    SoundSelector = 5;
+                    AudioSource.PlayOneShot(BossThemes[SoundSelector], AudioVolume);
                     Debug.Log("[BOSS] Fase 3 beaten.");
                 }
                 break;
@@ -179,13 +205,13 @@ public class Boss : MonoBehaviour {
             switch (Fase)
             {
                 case 1:
-                    do { AttackSelector = Random.Range(3, 5); } while (AttackSelector == PreviousAttack);
+                    do { AttackSelector = Random.Range(1, 3); } while (AttackSelector == PreviousAttack);
                     break;
                 case 2:
-                    AttackSelector = Random.Range(1, 6);
+                    do { AttackSelector = Random.Range(1, 4); } while (AttackSelector == PreviousAttack);
                     break;
                 case 3:
-                    AttackSelector = Random.Range(1, 8);
+                    do { AttackSelector = Random.Range(1, 5); } while (AttackSelector == PreviousAttack);
                     break;
             }
             PreviousAttack = AttackSelector;
@@ -214,14 +240,15 @@ public class Boss : MonoBehaviour {
                 case 4:
                     AttackTime = 5;
                     NextAttackTime = 5;
-                    StartCoroutine(SpawnRangeSkeletons(AttackTime));
+                    StartCoroutine(MultipleCircleMissle(AttackTime));
+
                     break;
                 case 5:
                     break;
                 case 6:
-                    AttackTime = 5;
-                    NextAttackTime = 5;
-                    StartCoroutine(MultipleCircleMissle(AttackTime));
+                    //AttackTime = 5;
+                    //NextAttackTime = 5;
+                    //StartCoroutine(SpawnRangeSkeletons(AttackTime));
                     break;
                 case 7:
                     break;
@@ -403,5 +430,11 @@ public class Boss : MonoBehaviour {
         Debug.Log("[BOSSATTACK] Cast CircleMissleAttack with attacktime " + attacktime + " and SpawnAmount: " + SpawnAmount);
         yield return new WaitForSeconds(attacktime);
 
+    }
+
+    public void SetBossActive()
+    {
+        setgui = true;
+        Active = true;
     }
 }

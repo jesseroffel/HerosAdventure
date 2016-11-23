@@ -17,12 +17,11 @@ public class Menu : MonoBehaviour {
     private bool WaitingForInput = false;
     private bool InMenu = false;
     private bool FadeOut = false;
-    private bool FirstFade = true;
+    private bool GoToGame = false;
     private float Fade = 1;
     private float MusicFade = 0;
     private int CameraIndex = 0;
     private int MaxCams = 0;
-    private bool GetCamPos = true;
     private bool GetCamera = true;
     private Vector3 OldCamPos;
 
@@ -46,19 +45,22 @@ public class Menu : MonoBehaviour {
             }
         }
 
-        if (IntroEnded == false && InMenu == false)
+        if (IntroEnded == false && InMenu == false && GoToGame == false)
         {
             FadeIn();
             if (CrossPlatformInputManager.GetButtonUp("Fire1"))
             {
                 Fade = 0;
-                Color ne = Fadescreen.color;
-                ne.a = Fade;
-                Fadescreen.color = ne;
+                if (Fadescreen)
+                {
+                    Color ne = Fadescreen.color;
+                    ne.a = Fade;
+                    Fadescreen.color = ne;
+                }
 
                 IntroEnded = true;
-                AudioSource.volume = 0.5f;
-                Titlecredits.SetActive(true);
+                if (AudioSource) { AudioSource.volume = 0.5f; }
+                if (Titlecredits) { Titlecredits.SetActive(true); }
                 WaitingForInput = true;
             }
         }
@@ -81,15 +83,16 @@ public class Menu : MonoBehaviour {
         if (Fade > 0)
         {
             Fade -= 0.15f * Time.deltaTime;
-            Color ne = Fadescreen.color;
-            ne.a = Fade;
-            Fadescreen.color = ne;
+            if (Fadescreen) {
+                Color ne = Fadescreen.color; 
+                ne.a = Fade;
+                Fadescreen.color = ne;
+            }
             MusicFade += 0.075f * Time.deltaTime;
-            AudioSource.volume = MusicFade;
+            if (AudioSource) { AudioSource.volume = MusicFade; }
         }
         if (Fade <= 0)
         {
-            FirstFade = false;
             IntroEnded = true;
             Titlecredits.SetActive(true);
             WaitingForInput = true;
@@ -158,6 +161,24 @@ public class Menu : MonoBehaviour {
         Application.Quit();
     }
 
+    public void LoadGame()
+    {
+        Fade = 1;
+        if (Fadescreen)
+        {
+            Color ne = Fadescreen.color;
+            ne.a = Fade;
+            Fadescreen.color = ne;
+        }
+
+        IntroEnded = true;
+        if (AudioSource) { AudioSource.volume = 0.0f; }
+        GoToGame = false;
+        SceneManager.LoadScene(GameSceneIndex);
+    }
+
+
+
     IEnumerator MoveCamera(int camera)
     {
         if (GetCamera)
@@ -166,23 +187,23 @@ public class Menu : MonoBehaviour {
             OldCamPos = Cameras[CameraIndex].transform.position;
             CameraObject.transform.parent = Cameras[CameraIndex].transform;
             CameraObject.transform.localPosition = Vector3.zero;
+            CameraObject.transform.localRotation = Quaternion.identity;
         }
-        //if (!FirstFade) { StartCoroutine(FadeInCamera()); }
+
         for(int i = 0; i < 10; i++)
         {
             for (int o = 0; o < 100; o++)
             {
-                Cameras[CameraIndex].transform.position += (transform.forward * 0.25f) * Time.deltaTime;
+                Cameras[CameraIndex].transform.position += (Cameras[CameraIndex].transform.forward * 3.25f) * Time.deltaTime;
                 yield return new WaitForSeconds(0.01f);
             }
-            //if (i == 9) { StartCoroutine(FadeOutCamera()); }
         }
+
         Cameras[CameraIndex].transform.position = OldCamPos;
         CameraIndex++;
         if (CameraIndex == MaxCams) { CameraIndex = 0; }
 
         GetCamera = true;
-        Debug.Log("Switching to new Camera");
         yield return new WaitForSeconds(2);
     }
 }
