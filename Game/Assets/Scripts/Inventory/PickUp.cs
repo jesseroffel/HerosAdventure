@@ -14,6 +14,7 @@ public class PickUp : MonoBehaviour
     void Start()
     {
         inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
+        ItemFoundPanel = GameObject.FindGameObjectWithTag("ItemFoundPanel");
     }
 
     void OnTriggerEnter(Collider col)
@@ -23,7 +24,7 @@ public class PickUp : MonoBehaviour
             //inventory.AddItem(itemId);
             if (inventory == null)
             {
-                GameObject.FindGameObjectWithTag("inventory").GetComponent<Inventory>().AddItem(itemId);
+                GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>().AddItem(itemId);
             }
             else
             {
@@ -46,7 +47,7 @@ public class PickUp : MonoBehaviour
             Unlock.transform.position = new Vector3(0, 0, 0);
 
 
-            string ItemText = GameObject.FindGameObjectWithTag("inventory").GetComponent<ItemDatabase>().FetchItemNameByID(id);
+            string ItemText = GameObject.FindGameObjectWithTag("Inventory").GetComponent<ItemDatabase>().FetchItemNameByID(id);
             Transform Title = Unlock.transform.GetChild(1);
             Title.GetComponent<Text>().text = ItemText;
 

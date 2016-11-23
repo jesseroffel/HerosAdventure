@@ -15,13 +15,18 @@ public class portal : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
-            if(transform.position == entrance.transform.position)
+        if(col.tag == "Player")
+        {
+            if (transform.position == entrance.transform.position)
             {
                 player.transform.position = exit.transform.position;
+                player.transform.rotation = exit.transform.rotation;
             }
             else
             {
-                player.transform.position = entrance.transform.position;
+                player.transform.localPosition = entrance.transform.position;
+                player.transform.rotation = exit.transform.rotation;
             }
+        }
     }
 }

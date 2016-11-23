@@ -71,14 +71,14 @@
 	},
 	{
 		"id": 5,
-		"title": "Blue gem",
+		"title": "hearth of the forrest",
 		"value": 0,
 		"stats":{
 			"attack": 0,
 			"defence": 0,
 			"power" : 0
 		},
-		"description": "this blue gem contains great power. if only i could get it out",
+		"description": "this blue gem contains great power. only a worthy hero can use this gem",
 		"stackable": false,
 		"consumable": false,
 		"slug": "blue_gem"
@@ -92,7 +92,7 @@
 			"defence": 0,
 			"power" : 0
 		},
-		"description": "this Green gem contains great power. if only i could get it out",
+		"description": "this green gem contains great power. only a worthy hero can use this gem",
 		"stackable": false,
 		"consumable": false,
 		"slug": "green_gem"

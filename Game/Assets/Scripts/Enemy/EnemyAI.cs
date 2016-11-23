@@ -5,6 +5,7 @@ public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent nav;
     private Transform player;
+    //private Animator anim;
 
     [Header("Enemy Combat")]
     public GameObject Projectile;
@@ -58,6 +59,7 @@ public class EnemyAI : MonoBehaviour
         itemDropped = false;
         IsDead = false;
         spawnLocation = transform;
+        //anim = GetComponent<Animator>();
     }
 
     void Update()
@@ -68,10 +70,12 @@ public class EnemyAI : MonoBehaviour
             if (distance <= chaseRange)
             {
                 Chasing();
+                //anim.SetBool("walk", true);
             }
             else
             {
                 freeRoaming();
+               // anim.SetBool("walk", true);
             }
 
             if (distance <= AttackRange)
@@ -80,10 +84,12 @@ public class EnemyAI : MonoBehaviour
                 if (isRanged)
                 {
                     RangedAttack();
+                  //  anim.SetBool("walk", false);
                 }
                 else
                 {
                     MeleeAttack();
+                    //anim.SetBool("walk", false);
                 }
             }
 
