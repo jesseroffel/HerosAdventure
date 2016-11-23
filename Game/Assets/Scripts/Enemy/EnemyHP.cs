@@ -5,6 +5,7 @@ public class EnemyHP : MonoBehaviour {
 
     public Material[] Materials;
     public AudioClip[] HitFxs;
+    public GameObject HitModel;
     private AudioSource AudioSource;
     private int SoundSelector = 0;
     private float AudioVolume = 0.5f;
@@ -46,7 +47,10 @@ public class EnemyHP : MonoBehaviour {
     // Use this for initialization
     void Start () {
         //SetEnemyID();
-        rend = GetComponent<Renderer>();
+        if (!HitModel) { rend = GetComponent<Renderer>(); } else
+        {
+            rend = HitModel.GetComponent<Renderer>();
+        }
         rend.enabled = true;
         //rend.sharedMaterial = Materials[0];
         if (MaxHP <= 0) {
