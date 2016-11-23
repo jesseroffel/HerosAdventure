@@ -401,8 +401,9 @@ public class CombatSystem : MonoBehaviour {
                                             if (MagicMissleSpawn.transform.childCount == 1)
                                             {
                                                 Transform Movement = MagicMissleSpawn.transform.GetChild(0);
-                                                Movement.localScale += new Vector3(CurrentCharge, CurrentCharge, CurrentCharge);
+                                                Movement.localScale += new Vector3(CurrentCharge, CurrentCharge * 0.15f, CurrentCharge);
                                                 ApplyCharge = Movement.lossyScale.x;
+                                                Debug.Log(Movement.localScale);
                                             }
                                         }
 
@@ -445,7 +446,8 @@ public class CombatSystem : MonoBehaviour {
 
                                             Missle.transform.position = MagicMissleSpawn.position;
                                             Missle.transform.rotation = MagicMissleSpawn.rotation;
-                                            Missle.transform.localScale = new Vector3(ApplyCharge, ApplyCharge, ApplyCharge);
+                                            Missle.transform.localScale += new Vector3(ApplyCharge, ApplyCharge, ApplyCharge);
+                                            
                                             Missle.GetComponent<HitRegistrator>().SetSettings(
                                                 3,
                                                 currentspell,

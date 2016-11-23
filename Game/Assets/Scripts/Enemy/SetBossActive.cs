@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SetBossActive : MonoBehaviour {
     public Boss Bossscript;
+    public GameObject Block;
     private bool Active = true;
 
     void OnTriggerEnter(Collider collision)
@@ -14,6 +15,7 @@ public class SetBossActive : MonoBehaviour {
                 if (collision.gameObject.tag == "Player")
                 {
                     Bossscript.SetBossActive();
+                    Block.SetActive(true);
                     Active = false;
                 }
             }

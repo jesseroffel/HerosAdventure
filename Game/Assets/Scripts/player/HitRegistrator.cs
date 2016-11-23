@@ -117,12 +117,12 @@ public class HitRegistrator : MonoBehaviour
         {
             if (MagicType == 1)
             {
-                MoveStraight(3.0f);
+                MoveStraight(35.0f);
             }
         }
         if (ProjectileType == 4)
         {
-            MoveStraight(5.0f);
+            MoveStraight(40.0f);
         }
     }
 
