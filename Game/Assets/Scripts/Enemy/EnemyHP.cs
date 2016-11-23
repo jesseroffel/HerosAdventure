@@ -136,7 +136,7 @@ public class EnemyHP : MonoBehaviour {
             {
                 if (currentHP < 0) { currentHP = 0; }
                 Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage + " [MAXHP] " + MaxHP);
-                if (!IsBoss) { defeated = true; }
+                if (!IsBoss) { defeated = true; Invincible = true; }
                 // Notify Questlist of kill for quests
                 QuestList.QuestListObject.RegisterKillID(EnemyID);
 
@@ -158,9 +158,9 @@ public class EnemyHP : MonoBehaviour {
 
     void shrinkobject()
     {
-        if (transform.localScale.x > 0.1f && transform.localScale.y > 0.1f && transform.localScale.z > 0.1f)
+        if (transform.localScale.x > 1f && transform.localScale.y > 1f && transform.localScale.z > 1f)
         {
-            transform.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+            transform.localScale -= new Vector3(1f, 1f, 1f);
         }
         else
         {

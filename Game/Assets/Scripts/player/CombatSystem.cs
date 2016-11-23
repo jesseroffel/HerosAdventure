@@ -39,7 +39,7 @@ public class CombatSystem : MonoBehaviour {
     private float NextMeleeAttack = 0;
     private bool WaitForNextInput = false;
 
-    private float propulsionForce = 10.0f;
+    public float propulsionForce = 100.0f;
     private float NextAttack = 0.0f;
     private float WaitForSpawn = 0.3f;
     private float AttackTime = 0.0f;
@@ -327,7 +327,7 @@ public class CombatSystem : MonoBehaviour {
                                 Projectile.transform.rotation = ArrowSpawn.rotation;
 
                                 Rigidbody rb = Projectile.GetComponent<Rigidbody>();
-                                if (BowStrengh < 0.25f) { rb.velocity = (ArrowSpawn.forward * 50) * 0.25f; } else { rb.velocity = (ArrowSpawn.forward * 50) * BowStrengh; }
+                                if (BowStrengh < 0.25f) { rb.velocity = (ArrowSpawn.forward * 350) * 0.25f; } else { rb.velocity = (ArrowSpawn.forward * 200) * BowStrengh; }
                                 
 
                                 Projectile.GetComponent<HitRegistrator>().SetSettings(2, 10, 10, transform.forward * propulsionForce);
@@ -353,7 +353,16 @@ public class CombatSystem : MonoBehaviour {
                                         FirstPersonControlerScript.SetWalkSpeed(NewWalkSpeed * 0.45f);
                                     }
                                     if (MaxCharge == 0) { MaxCharge = currentspell.CastTime; }
-                                    if (MagicChargePanel) { if (MagicChargePanel.activeSelf == false) { MagicChargePanel.SetActive(true); } }
+                                    if (MagicChargePanel) {
+                                        if (MagicChargePanel.activeSelf == false) {
+                                            MagicChargePanel.SetActive(true);
+                                            if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
+                                            {
+                                                SoundSelector = Random.Range(6, 10);
+                                                AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
+                                            }
+                                        }
+                                    }
                                     if (MagicCharged < 1)
                                     {
                                         MagicCharged = CurrentCharge / MaxCharge;
@@ -411,11 +420,7 @@ public class CombatSystem : MonoBehaviour {
                                     }
                                 } else
                                 {
-                                    if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
-                                    {
-                                        SoundSelector = Random.Range(6, 10);
-                                        AudioSource.PlayOneShot(CombatFxs[SoundSelector], AudioVolume);
-                                    }
+                                    
                                     if (SpawningAoE) { Destroy(MagicAreaOfEffectSpawn.transform.GetChild(0).gameObject); }
                                     if (SpawningMissle) { Destroy(MagicMissleSpawn.transform.GetChild(0).gameObject); }
                                     SpawningAoE = false;
@@ -427,6 +432,7 @@ public class CombatSystem : MonoBehaviour {
                                     MaxCharge = 0;
                                     CurrentCharge = 0;
                                     MagicCharged = 0;
+                                    HoldingDown = false;
                                     PlayerStats.ChangeMana(-currentspell.ManaCost);
                                     FirstPersonControlerScript.SetSpeedNormal();
                                     if (MagicChargePanel) { MagicChargePanel.SetActive(false); }
