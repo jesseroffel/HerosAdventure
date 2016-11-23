@@ -61,6 +61,9 @@ public class EnemyHP : MonoBehaviour {
                 case 3:
                     MaxHP = 175;
                     break;
+                case 4:
+                    MaxHP = 1000;
+                    break;
             }
         }
         currentHP = MaxHP;
@@ -127,7 +130,7 @@ public class EnemyHP : MonoBehaviour {
     {
         if (!Invincible)
         {
-            currentHP = currentHP - damage;
+            if (!IsBoss) { currentHP = currentHP - damage; } else { damage = damage * 0.75f;  currentHP = currentHP - damage; }
             if (currentHP > 0)
             {
                 Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage);

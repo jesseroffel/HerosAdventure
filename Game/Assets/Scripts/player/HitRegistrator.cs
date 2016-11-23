@@ -64,6 +64,21 @@ public class HitRegistrator : MonoBehaviour
         if (ProjectileType == 4 && MagicType == 2) { DontCheckAlive = true; }
     }
 
+    public void SetSettings(int type, int magictype, float damage, float alive, bool enemyshot)
+    {
+        ProjectileType = type;
+        AliveTime = alive;
+        DamageValue = damage;
+        currentTime = Time.time + AliveTime;
+        MagicType = magictype;
+        EnemyShot = enemyshot;
+        //rend = transform.GetComponent<Renderer>();
+        //rend.enabled = true;
+        //rend.sharedMaterial = Materials[MagicType];
+
+        //if (ProjectileType == 4 && MagicType == 2) { DontCheckAlive = true; }
+    }
+
     public void SetSettings(int type, Spell spell, Vector3 playerf)
     {
         ProjectileType = type;
@@ -122,7 +137,7 @@ public class HitRegistrator : MonoBehaviour
         }
         if (ProjectileType == 4)
         {
-            MoveStraight(40.0f);
+            MoveStraight(45.0f);
         }
     }
 
@@ -142,6 +157,7 @@ public class HitRegistrator : MonoBehaviour
             {
                 if (collision.gameObject.tag == "Enemy" || EnemyShot == true && collision.gameObject.tag == "Player")
                 {
+
                     bool check = CheckGameobjectIds(collision.gameObject.GetInstanceID());
                     if (!check)
                     {

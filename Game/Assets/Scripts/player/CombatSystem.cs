@@ -132,6 +132,7 @@ public class CombatSystem : MonoBehaviour {
         currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
         ChangeSpellUI.SetSpellName(currentspell.SpellName);
         ChangeSpellUI.SetSpellImage(currentspell.Sprite);
+        ChangeSpellUI.SetCost(currentspell.ManaCost);
     }
 	
 	// Update is called once per frame
@@ -154,7 +155,7 @@ public class CombatSystem : MonoBehaviour {
     {
         if (FirstPersonControlerScript.CanMove)
         {
-            if (CrossPlatformInputManager.GetButton("Fire1"))
+            if (CrossPlatformInputManager.GetButtonDown("Fire1"))
             {
                 SetAttackAnimation();
                 if (AttackOrder != 1) { WaitForNextInput = false; }
@@ -253,6 +254,7 @@ public class CombatSystem : MonoBehaviour {
                                     WaitForNextInput = true;
                                     break;
                                 case 2:
+                                    PlayerAnimator.SetTrigger("AttackMelee01Trigger");
                                     AttackPower = 40f;
                                     NextMeleeAttack = Time.time + Attack02Swing;
                                     NextAttack = NextMeleeAttack + AttackWait;
@@ -270,6 +272,7 @@ public class CombatSystem : MonoBehaviour {
                                     WaitForNextInput = true;                     
                                     break;
                                 case 3:
+                                    PlayerAnimator.SetTrigger("AttackMelee01Trigger");
                                     NextMeleeAttack = Time.time + Attack03Swing;
                                     NextAttack = NextMeleeAttack + AttackWait;
                                     if (SwordsPanel) { SwordsPanel.GetChild(2).GetComponent<Image>().sprite = FilledSwordSprite; }
@@ -601,6 +604,7 @@ public class CombatSystem : MonoBehaviour {
         currentspell = Spellbook.SpellbookObject.GetSpellByID(MagicSpell);
         ChangeSpellUI.SetSpellName(currentspell.SpellName);
         ChangeSpellUI.SetSpellImage(currentspell.Sprite);
+        ChangeSpellUI.SetCost(currentspell.ManaCost);
         if (CombatFxs.Length > 0 && AudioSource && !AudioSource.isPlaying)
         {
             SoundSelector = 11;
@@ -625,12 +629,6 @@ public class CombatSystem : MonoBehaviour {
                 {
                     case 1:
                         AttackTime = Time.time + WaitForSpawn;
-                        PlayerAnimator.SetTrigger("AttackMelee01Trigger");
-                        break;
-                    case 2:
-                        PlayerAnimator.SetTrigger("AttackMelee01Trigger");
-                        break;
-                    case 3:
                         PlayerAnimator.SetTrigger("AttackMelee01Trigger");
                         break;
                 }

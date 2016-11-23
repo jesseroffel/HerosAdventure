@@ -6,6 +6,7 @@ public class ChangeSpellUI : MonoBehaviour {
     public Image MagicSlot;
     public Image SpellImage;
     public Text SpellName;
+    public Text SpellCost;
 
     public bool MagicMode = false;
 
@@ -36,6 +37,11 @@ public class ChangeSpellUI : MonoBehaviour {
     public void SetSpellName(string name)
     {
         SpellName.text = name;
+    }
+
+    public void SetCost(float cost)
+    {
+        SpellCost.text = cost.ToString();
     }
 
     public void SetMagicMode(bool state)

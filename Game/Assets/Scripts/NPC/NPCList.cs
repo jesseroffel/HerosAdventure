@@ -74,6 +74,33 @@ public class NPCList : MonoBehaviour {
             0,                               // QUEST ID
             new string[] { "You look like you use multiple combat styles, I got some tips for you", "Switching to another combatstyle can be handy in battle, some are more useful " }
         ));
+        DatabaseNPCs.Add(new NPCObject(
+            DatabaseNPCs.Count + 1,         // ID
+            "Vlad",                    // NPC Name
+            true,                           // SEX
+            true,                           // INTERACTABLE
+            0.03f,                            // Talkspeed between characters
+            0,                               // QUEST ID
+            new string[] { "You got a nice inventory there, did you know you can open it with key I?" }
+        ));
+        DatabaseNPCs.Add(new NPCObject(
+            DatabaseNPCs.Count + 1,         // ID
+            "Dwuan",                    // NPC Name
+            true,                           // SEX
+            true,                           // INTERACTABLE
+            0.03f,                            // Talkspeed between characters
+            0,                               // QUEST ID
+            new string[] { "To open this door, you need to find the crystals..", "Once you have collected all the crystals you can push through this game" }
+        ));
+        DatabaseNPCs.Add(new NPCObject(
+            DatabaseNPCs.Count + 1,         // ID
+            "Gwevan",                    // NPC Name
+            true,                           // SEX
+            true,                           // INTERACTABLE
+            0.03f,                            // Talkspeed between characters
+            0,                               // QUEST ID
+            new string[] { "Watch where you walk in this country, danger is ahead." }
+        ));
         NPCCount = DatabaseNPCs.Count;
     }
     

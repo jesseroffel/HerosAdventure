@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour {
 
     [Header("Boss Requirements")]
     public EnemyHP EnemyHPScript;
     public GameObject BossGUI;
+    public GameObject Projecttilespawn;
     public Image Healthbar;
     public Image FadeOutScreen;
     public GameObject Player;
@@ -39,6 +41,8 @@ public class Boss : MonoBehaviour {
     private float Switch1HP = 800;
     private float Switch2HP = 350;
 
+    private float AttackSpeed = 1;
+
     public bool Active = false;
     private bool setgui = false;
     public bool Beaten = false;
@@ -62,24 +66,7 @@ public class Boss : MonoBehaviour {
     void Start () {
         BossCurrentHP = BossHP;
         OldBossHP = BossHP;
-        if (EnemyHPScript && BossGUI && Healthbar && Player)
-        {
-            EnemyHPScript.SetHP(BossHP);
-            EnemyHPScript.SetIsBoss(true);
-
-            Healthbar.fillAmount = 1;
-            HomeLocation = transform;
-            if (Active)
-            {
-                BossGUI.SetActive(true);
-                LookAt();
-            }
-
-        } else
-        {
-            Active = false;
-            Debug.LogWarning("BossFight couldn't start, assign objects!");
-        }
+        
         if (AudioSource == null) { AudioSource = GetComponent<AudioSource>(); }
     }
 	
@@ -103,6 +90,7 @@ public class Boss : MonoBehaviour {
 
     }
 
+
     void CheckHealth()
     {
         if (OldBossHP != BossHP) { OldBossHP = BossHP; BossCurrentHP = BossHP; }
@@ -114,7 +102,7 @@ public class Boss : MonoBehaviour {
                 {
                     BossCurrentHP = Switch1HP;
                     Fase++;
-
+                    AttackSpeed = 0.65f;
                     SoundSelector = 1;
                     AudioSource.Stop();
                     AudioSource.clip = BossThemes[SoundSelector];
@@ -127,7 +115,7 @@ public class Boss : MonoBehaviour {
                 {
                     BossCurrentHP = Switch2HP;
                     Fase++;
-
+                    AttackSpeed = 0.35f;
                     SoundSelector = 2;
                     AudioSource.Stop();
                     AudioSource.clip = BossThemes[SoundSelector];
@@ -136,12 +124,14 @@ public class Boss : MonoBehaviour {
                 }
                 break;
             case 3:
-                if (BossCurrentHP < 0)
+                if (BossCurrentHP <= 0)
                 {
                     Beaten = true;
                     BossCurrentHP = 0;
                     Fase++;
+                    FadeOut = true;
                     BossGUI.SetActive(false);
+                    gameObject.SetActive(false);
                     AudioSource.Stop();
                     SoundSelector = 5;
                     AudioSource.PlayOneShot(BossThemes[SoundSelector], AudioVolume);
@@ -169,31 +159,25 @@ public class Boss : MonoBehaviour {
         {
             if (FadeOutValue < 1)
             {
-                FadeOutValue += ((0.01f * TimeSlowValue) * TimeSlowValue) * Time.deltaTime;
+                FadeOutValue -= 0.15f * Time.deltaTime;
                 Color ne = FadeOutScreen.color;
                 ne.a = FadeOutValue;
                 FadeOutScreen.color = ne;
             }
+            if (FadeOutValue >= 1) { GoToFinishScreen = true; }
         }
         if (GoToFinishScreen)
         {
-            // sceneaanger.changescne 
+            SceneManager.LoadScene(0);
         }
     }
 
     void LookAt()
     {
-        transform.LookAt(Player.transform);
-        //float rot = transform.rotation.eulerAngles.x;
-        //if (rot > 0) { transform.Rotate(-rot, 0, 0, Space.World); } else { transform.Rotate(rot, 0, 0, Space.World); }
-        //Vector3 relativePos = Player.transform.position - transform.position;
-        //Quaternion rotation = Quaternion.LookRotation(relativePos);
-        //transform.rotation = rotation;
-
-        //Vector3 lookAtPosition = Player.transform.position;
-        //lookAtPosition.y = transform.position.y;
-        //lookAtPosition.z = transform.position.z;
-        //transform.LookAt(lookAtPosition);
+        Vector3 direction = (Player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation,  10);
+        transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
     }
 
     void Attack()
@@ -223,22 +207,22 @@ public class Boss : MonoBehaviour {
             switch (AttackSelector)
             {
                 case 1:
-                    AttackTime = 3.0f;
+                    AttackTime = 3.0f * AttackSpeed;
                     NextAttackTime = 2.5f;
                     StartCoroutine(MagicSpell(AttackTime));
                     break;
                 case 2:
-                    AttackTime = 2.0f;
+                    AttackTime = 2.0f * AttackSpeed;
                     NextAttackTime = 2.5f;
                     StartCoroutine(QuickShield(AttackTime));
                     break;
                 case 3:
-                    AttackTime = 2.5f;
+                    AttackTime = 2.5f * AttackSpeed;
                     NextAttackTime = 1;
                     StartCoroutine(CircleMissleAttack(AttackTime));
                     break;
                 case 4:
-                    AttackTime = 5;
+                    AttackTime = 5 * AttackSpeed;
                     NextAttackTime = 5;
                     StartCoroutine(MultipleCircleMissle(AttackTime));
 
@@ -309,9 +293,13 @@ public class Boss : MonoBehaviour {
                 LookAt();
                 yield return new WaitForSeconds(0.1f);
             }
-            Transform Ball = (Transform)Instantiate(BossMissle, transform.position + (transform.forward), transform.rotation);
-            Ball.transform.position += new Vector3(0, 0.4f, 0);
-            Ball.GetComponent<HitRegistrator>().SetSettings(4, 5, 25, Vector3.zero, true);
+            Transform Ball = (Transform)Instantiate(BossMissle, Projecttilespawn.transform.position + Projecttilespawn.transform.forward , transform.rotation);
+            Ball.GetComponent<HitRegistrator>().SetSettings(
+                4, 
+                1,
+                10,  
+                5,
+                true);
         }
         Debug.Log("Finished");
         yield return new WaitForSeconds(attacktime);
@@ -368,9 +356,13 @@ public class Boss : MonoBehaviour {
         {
             Vector3 Calcpos = CalcCircle(transform.position, SpawnRadius, CurrentRadius);
 
-            Transform Ball = (Transform)Instantiate(BossMissle, Calcpos, Quaternion.identity);
+            Transform Ball = (Transform)Instantiate(BossMissle, Calcpos, transform.rotation);
             Ball.Rotate(0, CurrentRadius, 0, Space.World);
-            Ball.GetComponent<HitRegistrator>().SetSettings(4, 5, 25, Vector3.zero, true);
+            Ball.GetComponent<HitRegistrator>().SetSettings(4,
+                1,
+                10,
+                5,
+                true);
 
             if (CurrentRadius != 360)
             {
@@ -383,6 +375,43 @@ public class Boss : MonoBehaviour {
     }
 
     IEnumerator MultipleCircleMissle(float attacktime)
+    {
+        for (int o = 0; o < 5; o++)
+        {
+            SpawnAmount = 6;
+            CurrentIndex = 1;
+            CurrentRadius = 0;
+            SpawnRadius = 2;
+            RadiusDistance = CalcDistance(SpawnAmount);
+            for (int i = 0; i < SpawnAmount; i++)
+            {
+                Vector3 Calcpos = CalcCircle(transform.position, SpawnRadius, CurrentRadius);
+
+                Transform Ball = (Transform)Instantiate(BossMissle, Calcpos, Quaternion.identity);
+                Ball.Rotate(0, CurrentRadius, 0, Space.World);
+                Ball.GetComponent<HitRegistrator>().SetSettings(
+                4,
+                1,
+                10,
+                5,
+                true);
+
+                if (CurrentRadius != 360)
+                {
+                    CurrentRadius = CurrentIndex * RadiusDistance;
+                    CurrentIndex++;
+                }
+                LookAt();
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+        
+        Debug.Log("[BOSSATTACK] Cast CircleMissleAttack with attacktime " + attacktime + " and SpawnAmount: " + SpawnAmount);
+        yield return new WaitForSeconds(attacktime);
+
+    }
+
+    IEnumerator MultipleCircleMisslebroken(float attacktime)
     {
         int rings = 5;// Random.Range(2, 6);
         int ringsdis = CalcDistance(rings);
@@ -436,5 +465,24 @@ public class Boss : MonoBehaviour {
     {
         setgui = true;
         Active = true;
+        if (EnemyHPScript && BossGUI && Healthbar && Player)
+        {
+            EnemyHPScript.SetHP(BossHP);
+            EnemyHPScript.SetIsBoss(true);
+
+            Healthbar.fillAmount = 1;
+            HomeLocation = transform;
+            if (Active)
+            {
+                BossGUI.SetActive(true);
+                LookAt();
+            }
+
+        }
+        else
+        {
+            Active = false;
+            Debug.LogWarning("BossFight couldn't start, assign objects!");
+        }
     }
 }
