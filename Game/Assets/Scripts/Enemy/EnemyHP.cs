@@ -5,6 +5,7 @@ public class EnemyHP : MonoBehaviour {
 
     public Material[] Materials;
     public AudioClip[] HitFxs;
+    public GameObject HitModel;
     private AudioSource AudioSource;
     private int SoundSelector = 0;
     private float AudioVolume = 0.5f;
@@ -46,7 +47,10 @@ public class EnemyHP : MonoBehaviour {
     // Use this for initialization
     void Start () {
         //SetEnemyID();
-        rend = GetComponent<Renderer>();
+        if (!HitModel) { rend = GetComponent<Renderer>(); } else
+        {
+            rend = HitModel.GetComponent<Renderer>();
+        }
         rend.enabled = true;
         //rend.sharedMaterial = Materials[0];
         if (MaxHP <= 0) {
@@ -60,6 +64,9 @@ public class EnemyHP : MonoBehaviour {
                     break;
                 case 3:
                     MaxHP = 175;
+                    break;
+                case 4:
+                    MaxHP = 1000;
                     break;
             }
         }
@@ -127,7 +134,7 @@ public class EnemyHP : MonoBehaviour {
     {
         if (!Invincible)
         {
-            currentHP = currentHP - damage;
+            if (!IsBoss) { currentHP = currentHP - damage; } else { damage = damage * 0.75f;  currentHP = currentHP - damage; }
             if (currentHP > 0)
             {
                 Debug.Log("[ENEMY] " + gameObject.name + " damaged. [HP] " + currentHP + " [DAMAGE] " + damage);

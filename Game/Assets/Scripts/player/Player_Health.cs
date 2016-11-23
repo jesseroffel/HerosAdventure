@@ -59,7 +59,8 @@ public class Player_Health : MonoBehaviour {
             {
                 health = maxHealth;
             }
-            healthText.text = "Health: " + health.ToString();
+            int newhealth = (int)health;
+            healthText.text = "Health: " + newhealth.ToString();
 
             //healthbar.transform.localScale = new Vector3(health / 100, 1, 1);
             healthbar.fillAmount = health / maxHealth;
@@ -75,7 +76,7 @@ public class Player_Health : MonoBehaviour {
         if (oldmana != Mana || oldmana == 0)
         {
             if (Mana > MaxMana) { Mana = MaxMana; }
-            if (ManaText) { ManaText.text = "Mana: " + Mana.ToString(); }
+            if (ManaText) { int newmana = (int)Mana; ManaText.text = "Mana: " + newmana.ToString(); }
             if (Manabar) { Manabar.fillAmount = Mana / MaxMana; }
             
         }
