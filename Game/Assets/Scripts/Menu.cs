@@ -131,7 +131,7 @@ public class Menu : MonoBehaviour {
         }
     }
 
-    void ToLoadScreen()
+    public void ToLoadScreen()
     {
         if (Fade > 0)
         {
@@ -146,6 +146,11 @@ public class Menu : MonoBehaviour {
         {
             SceneManager.LoadScene(GameSceneIndex);
         }
+    }
+
+    public void GOTOGAME()
+    {
+        SceneManager.LoadScene(GameSceneIndex);
     }
 
     public void StartNewGame()
