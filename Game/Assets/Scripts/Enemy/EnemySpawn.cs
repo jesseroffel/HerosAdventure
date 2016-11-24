@@ -7,6 +7,7 @@ public class EnemySpawn : MonoBehaviour {
     [Header("Player Objects for Enemy")]
     public Transform PlayerTarget;
     public Player_Health hp;
+    public Transform[] Roamlocations;
     [Header("Spawner Settings")]
     public float RespawnTime = 5.0f;
     public int SpawnLimit = 0;              // SPAWNS AFTER KILL
@@ -99,6 +100,7 @@ public class EnemySpawn : MonoBehaviour {
 
         GameObject Enemy = (GameObject)Instantiate(EnemyPrefab, position, quant);
         Enemy.transform.parent = gameObject.transform;
+        Enemy.GetComponent<EnemyAI>().locations = Roamlocations;
     }
 
     Vector3 CalcCircle(Vector3 center, float radius, int angle)

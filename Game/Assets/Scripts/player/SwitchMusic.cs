@@ -36,8 +36,8 @@ public class SwitchMusic : MonoBehaviour {
 
     IEnumerator Switching()
     {
-        currentvolume = 0.5f;
-        for (int i = 0; i < 50;i++)
+        currentvolume = 0.25f;
+        for (int i = 0; i < 25;i++)
         {
             currentvolume -= 0.01f;
             AudioSource.volume = currentvolume;
@@ -46,7 +46,7 @@ public class SwitchMusic : MonoBehaviour {
         AudioSource.Stop();
         AudioSource.clip = Switchtothisclip;
         AudioSource.Play();
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 25; i++)
         {
             currentvolume += 0.01f;
             AudioSource.volume = currentvolume;

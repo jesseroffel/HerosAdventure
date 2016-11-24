@@ -6,6 +6,7 @@ public class PickUp : MonoBehaviour
 {
     public int itemId;
     Inventory inventory;
+    private bool active = true;
     [Header("[HUD] Item Unlocked")]
     public GameObject ItemFoundPanel;
     public GameObject ItemFoundPrefab;
@@ -14,12 +15,12 @@ public class PickUp : MonoBehaviour
     void Start()
     {
         inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
-        ItemFoundPanel = GameObject.FindGameObjectWithTag("ItemFoundPanel");
+        //ItemFoundPanel = GameObject.FindGameObjectWithTag("ItemFoundPanel");
     }
 
     void OnTriggerEnter(Collider col)
     {
-        if (col.tag == "Player")
+        if (col.tag == "Player" && active)
         {
             //inventory.AddItem(itemId);
             if (inventory == null)
@@ -30,8 +31,10 @@ public class PickUp : MonoBehaviour
             {
                 inventory.AddItem(itemId);
             }
-            ShowPickUp(itemId);
+            active = false;
             QuestList.QuestListObject.RegisterItemID(itemId);
+            ShowPickUp(itemId);
+
             Destroy(this.gameObject);
         }
     }

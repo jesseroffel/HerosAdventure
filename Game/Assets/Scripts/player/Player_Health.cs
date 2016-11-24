@@ -23,7 +23,7 @@ public class Player_Health : MonoBehaviour {
     public float Mana = 200;
     public float MaxMana = 200;
     private float oldmana = 0;
-    public float ManaChargePerSecond = 1;
+    public float ManaChargePerSecond = 2.5f;
     private float ManaTimer = 0;
 
     public Transform resetPosition;

@@ -15,15 +15,7 @@ public class QuestList : MonoBehaviour {
     private List<QuestObject> ActiveQuests = new List<QuestObject>();
 
     void Start () {
-        if (QuestListObject == null)
-        {
-            DontDestroyOnLoad(gameObject);
-            QuestListObject = this;
-        }
-        else if (QuestListObject != this)
-        {
-            Destroy(gameObject);
-        }
+        
         
         //QuestData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Quests.json"));
         //ConstructQuestDatabase();
@@ -97,6 +89,9 @@ public class QuestList : MonoBehaviour {
             "Ah great, you've killed 5 slimes... ( GAME OVER, THANKS FOR PLAYING )"                      // Dialogue after completion quest
         ));
         QuestCount = DatabaseQuests.Count;
+
+        QuestListObject = this;
+
     }
 
     public bool CheckCompletedQuest(int questid)
@@ -128,19 +123,27 @@ public class QuestList : MonoBehaviour {
 
     public bool CheckInventory(QuestObject quest)
     {
+        if (inventoryscript == null) { inventoryscript = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>(); }
         if (inventoryscript)
         {
-            if (quest.m_RequiresItem)
+            if (quest != null)
             {
-                int[] id = quest.m_RequiredItemID;
-                int count = id.Length;
-                bool endcheck = true;
-                for (int i = 0; i < count; i++)
+                if (quest.m_RequiresItem)
                 {
-                    bool contains = inventoryscript.InventoryContains(id[i]);
-                    if (!contains) { endcheck = false; }
+                    int[] id = quest.m_RequiredItemID;
+                    int count = id.Length;
+                    bool endcheck = true;
+                    for (int i = 0; i < count; i++)
+                    {
+                        bool contains = inventoryscript.InventoryContains(id[i]);
+                        if (!contains) { endcheck = false; }
+                    }
+                    if (endcheck) { return true; } else { return false; }
                 }
-                if (endcheck) { return true; } else { return false; }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -155,6 +158,7 @@ public class QuestList : MonoBehaviour {
     public void SetQuestLogActive(int questid)
     {
         bool check = false;
+        if (QuestLogScript == null) { QuestLogScript = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleQuestlog>();  }
         foreach (QuestObject activequest in ActiveQuests)
         {
             if (activequest.m_QuestID == questid)
@@ -182,6 +186,7 @@ public class QuestList : MonoBehaviour {
 
     public void UpdateQuestLog(int questid)
     {
+        if (QuestLogScript == null) { QuestLogScript = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleQuestlog>(); }
         foreach (QuestObject activequest in ActiveQuests)
         {
             if (activequest.m_QuestID == questid)
@@ -223,6 +228,7 @@ public class QuestList : MonoBehaviour {
 
     public bool FinishQuest(int questid)
     {
+        if (inventoryscript == null) { inventoryscript = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>(); }
         foreach (QuestObject activequest in ActiveQuests)
         {
             if (activequest.m_QuestID == questid)
@@ -284,6 +290,8 @@ public class QuestList : MonoBehaviour {
 
     public bool CheckUnlock(int questid)
     {
+        if (inventoryscript == null) { inventoryscript = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>(); }
+        if (QuestLogScript == null) { QuestLogScript = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleQuestlog>(); }
         bool unlocked = false;
         string title = "";
         int[] requnlockcheckid;
@@ -309,6 +317,8 @@ public class QuestList : MonoBehaviour {
    
     public bool RegisterItemID(int itemid)
     {
+        if (inventoryscript == null) { inventoryscript = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>(); }
+        if (QuestLogScript == null) { QuestLogScript = GameObject.FindGameObjectWithTag("HUD").GetComponent<HandleQuestlog>(); }
         bool Registereditemid = false;
         foreach (QuestObject activequest in ActiveQuests)
         {

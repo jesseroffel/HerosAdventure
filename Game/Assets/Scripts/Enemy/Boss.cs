@@ -14,6 +14,7 @@ public class Boss : MonoBehaviour {
     public GameObject Player;
     public AudioClip[] BossFxs;
     public AudioClip[] BossThemes;
+    public AudioSource PlayerMusic;
     private AudioSource AudioSource;
     public float AudioVolume = 0.5f;
 
@@ -38,8 +39,8 @@ public class Boss : MonoBehaviour {
     public float BossHP = 1000;
     private float OldBossHP = 0;
     private float BossCurrentHP = 0;
-    private float Switch1HP = 800;
-    private float Switch2HP = 350;
+    private float Switch1HP = 1200;
+    private float Switch2HP = 600;
 
     private float AttackSpeed = 1;
 
@@ -104,9 +105,9 @@ public class Boss : MonoBehaviour {
                     Fase++;
                     AttackSpeed = 0.65f;
                     SoundSelector = 1;
-                    AudioSource.Stop();
-                    AudioSource.clip = BossThemes[SoundSelector];
-                    AudioSource.Play();
+                    PlayerMusic.Stop();
+                    PlayerMusic.clip = BossThemes[SoundSelector];
+                    PlayerMusic.Play();
                     Debug.Log("[BOSS] Fase 1 beaten.");
                 }
                 break;
@@ -117,9 +118,9 @@ public class Boss : MonoBehaviour {
                     Fase++;
                     AttackSpeed = 0.35f;
                     SoundSelector = 2;
-                    AudioSource.Stop();
-                    AudioSource.clip = BossThemes[SoundSelector];
-                    AudioSource.Play();
+                    PlayerMusic.Stop();
+                    PlayerMusic.clip = BossThemes[SoundSelector];
+                    PlayerMusic.Play();
                     Debug.Log("[BOSS] Fase 2 beaten.");
                 }
                 break;
@@ -131,10 +132,10 @@ public class Boss : MonoBehaviour {
                     Fase++;
                     FadeOut = true;
                     BossGUI.SetActive(false);
-                    gameObject.SetActive(false);
-                    AudioSource.Stop();
-                    SoundSelector = 5;
-                    AudioSource.PlayOneShot(BossThemes[SoundSelector], AudioVolume);
+
+                    PlayerMusic.Stop();
+                    SoundSelector = 4;
+                    AudioSource.PlayOneShot(BossFxs[SoundSelector], AudioVolume);
                     Debug.Log("[BOSS] Fase 3 beaten.");
                 }
                 break;
@@ -153,7 +154,7 @@ public class Boss : MonoBehaviour {
             Time.fixedDeltaTime = TimeSlowValue;
             Time.timeScale = TimeSlowValue;
             TimeSlowValue -= 0.01f;
-            if (TimeSlowValue < 0.25) { TimeSlowValue = 0.25f; }
+            if (TimeSlowValue < 0.25) { TimeSlowValue = 0.25f; SceneManager.LoadScene(0); }
         }
         if (FadeOut)
         {

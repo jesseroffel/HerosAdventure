@@ -70,7 +70,7 @@ public class HandleQuestlog : MonoBehaviour {
             int eid = regenemyid[i];
             int rka = regkillamount[i];
             GameObject QRP = Instantiate(ObjectiveReqPrefab);
-            QRP.transform.parent = Quest.transform.GetChild(1);
+            QRP.transform.SetParent(Quest.transform.GetChild(1));
             QRP.transform.localScale = DefaultScale;
             HandleQLObjective objectivedetails = QRP.GetComponent<HandleQLObjective>();
             objectivedetails.SetAmount(currentkills[0], rka);

@@ -135,7 +135,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (nav.remainingDistance <= 0)
             {
-                destination = (int)Random.Range(0.0f, 5.0f);
+                if (!isRanged) { destination = (int)Random.Range(0.0f, 5.0f); } else { destination = (int)Random.Range(0.0f, 2.0f); }
             }
             nav.destination = locations[destination].position;
         }

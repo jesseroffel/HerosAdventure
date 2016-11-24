@@ -406,7 +406,7 @@ public class CombatSystem : MonoBehaviour {
                                                 Transform Movement = MagicMissleSpawn.transform.GetChild(0);
                                                 Movement.localScale += new Vector3(CurrentCharge, CurrentCharge * 0.15f, CurrentCharge);
                                                 ApplyCharge = Movement.lossyScale.x;
-                                                Debug.Log(Movement.localScale);
+                                                //Debug.Log(Movement.localScale);
                                             }
                                         }
 

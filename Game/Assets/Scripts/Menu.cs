@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+
 using UnityEngine.UI;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
@@ -81,11 +81,14 @@ public class Menu : MonoBehaviour {
         if (Fade > 0)
         {
             Fade -= 0.15f * Time.deltaTime;
-            Color ne = Fadescreen.color;
-            ne.a = Fade;
-            Fadescreen.color = ne;
+            if (Fadescreen)
+            {
+                Color ne = Fadescreen.color;
+                ne.a = Fade;
+                Fadescreen.color = ne;
+            }
             MusicFade += 0.075f * Time.deltaTime;
-            AudioSource.volume = MusicFade;
+            if (AudioSource) { AudioSource.volume = MusicFade; }
         }
         if (Fade <= 0)
         {
@@ -142,16 +145,9 @@ public class Menu : MonoBehaviour {
             Fadescreen.color = ne;
             MusicFade -= 0.05f * Time.deltaTime;
             AudioSource.volume = Fade;
-        } else
-        {
-            SceneManager.LoadScene(GameSceneIndex);
-        }
+        } 
     }
 
-    public void GOTOGAME()
-    {
-        SceneManager.LoadScene(GameSceneIndex);
-    }
 
     public void StartNewGame()
     {
@@ -171,13 +167,14 @@ public class Menu : MonoBehaviour {
             OldCamPos = Cameras[CameraIndex].transform.position;
             CameraObject.transform.parent = Cameras[CameraIndex].transform;
             CameraObject.transform.localPosition = Vector3.zero;
+            CameraObject.transform.localRotation = Quaternion.identity;
         }
         //if (!FirstFade) { StartCoroutine(FadeInCamera()); }
         for(int i = 0; i < 10; i++)
         {
             for (int o = 0; o < 100; o++)
             {
-                Cameras[CameraIndex].transform.position += (transform.forward * 0.25f) * Time.deltaTime;
+                Cameras[CameraIndex].transform.position += (Cameras[CameraIndex].transform.forward * 5f) * Time.deltaTime;
                 yield return new WaitForSeconds(0.01f);
             }
             //if (i == 9) { StartCoroutine(FadeOutCamera()); }

@@ -155,7 +155,7 @@ public class HitRegistrator : MonoBehaviour
         {
             if (collision.isTrigger)
             {
-                if (collision.gameObject.tag == "Enemy" || EnemyShot == true && collision.gameObject.tag == "Player")
+                if (collision.gameObject.tag == "Enemy" && EnemyShot == false || EnemyShot == true && collision.gameObject.tag == "Player")
                 {
 
                     bool check = CheckGameobjectIds(collision.gameObject.GetInstanceID());
