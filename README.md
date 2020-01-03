@@ -1,11 +1,9 @@
 # Hero's Adventure
+
+This project can be viewed on my portfolio website: http://jesseroffel.com/projects
+
 This is a Unity 5.4.1 C# Project
-
-Our Trello page can be visited at: https://trello.com/b/6lmXo0rL/exam-rpg
-
 Music and Sound Effects are made by Freaky Studio: http://freaky.studio/
-
-This project can be viewed on my portfolio website: http://jezze.net/
 
 This is our end exam project for our game development education. 
 The exam conditions are the following:
