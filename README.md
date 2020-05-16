@@ -5,8 +5,8 @@ This project can be viewed on my portfolio website: http://jesseroffel.com/proje
 This is a Unity 5.4.1 C# Project
 Music and Sound Effects are made by Freaky Studio: http://freaky.studio/
 
-This is our end exam project for our game development education. 
-The exam conditions are the following:
+This is an end exam project for the game development education: ROC-A12. 
+The exam conditions were the following:
 
 1. The exam has a duration of 10 weeks, 8 of them is spend on programming.
 2. We need to find a class inside our school as the target audience.
